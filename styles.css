@@ -59,46 +59,10 @@ body {
     align-items: center;
 }
 
-.logo-shape {
-    position: relative;
+.logo-image {
     width: 60px;
     height: 35px;
-    background: linear-gradient(135deg, #2d5016 0%, #7a9a3a 100%);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: skew(-5deg);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.logo-shape::before,
-.logo-shape::after {
-    content: '';
-    position: absolute;
-    height: 2px;
-    background: #ffd700;
-    width: 70px;
-}
-
-.logo-shape::before {
-    top: -2px;
-    right: -5px;
-    transform: skew(5deg);
-}
-
-.logo-shape::after {
-    bottom: -2px;
-    left: -5px;
-    transform: skew(5deg);
-}
-
-.logo-text {
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    transform: skew(5deg);
+    object-fit: contain;
 }
 
 .company-name {
@@ -801,13 +765,9 @@ body {
         text-align: center;
     }
     
-    .logo-shape {
+    .logo-image {
         width: 50px;
         height: 30px;
-    }
-    
-    .logo-text {
-        font-size: 16px;
     }
     
     .company-title {
