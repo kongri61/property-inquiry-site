@@ -51,7 +51,7 @@ body {
 .company-info {
     display: flex;
     align-items: center;
-    gap: 1px;
+    gap: -9px;
 }
 
 .company-logo {
@@ -757,7 +757,7 @@ body {
     
     .company-info {
         flex-direction: column;
-        gap: 1px;
+        gap: -9px;
         align-items: center;
     }
     
