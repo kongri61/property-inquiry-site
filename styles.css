@@ -47,11 +47,86 @@ body {
     margin-bottom: 20px;
 }
 
+/* 회사 정보 스타일 */
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.company-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-shape {
+    position: relative;
+    width: 60px;
+    height: 35px;
+    background: linear-gradient(135deg, #2d5016 0%, #7a9a3a 100%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: skew(-5deg);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.logo-shape::before,
+.logo-shape::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    background: #ffd700;
+    width: 70px;
+}
+
+.logo-shape::before {
+    top: -2px;
+    right: -5px;
+    transform: skew(5deg);
+}
+
+.logo-shape::after {
+    bottom: -2px;
+    left: -5px;
+    transform: skew(5deg);
+}
+
+.logo-text {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    transform: skew(5deg);
+}
+
+.company-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.company-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.2;
+}
+
+.company-subtitle {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.2;
+}
+
 .main-title {
     font-size: 28px;
     font-weight: bold;
     color: #333;
     margin: 0;
+    flex-grow: 1;
+    text-align: center;
 }
 
 /* 인증 버튼 (로그인/로그아웃) */
@@ -716,8 +791,36 @@ body {
         text-align: center;
     }
     
+    .company-info {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .company-name {
+        text-align: center;
+    }
+    
+    .logo-shape {
+        width: 50px;
+        height: 30px;
+    }
+    
+    .logo-text {
+        font-size: 16px;
+    }
+    
+    .company-title {
+        font-size: 16px;
+    }
+    
+    .company-subtitle {
+        font-size: 11px;
+    }
+    
     .main-title {
         font-size: 24px;
+        order: -1;
     }
     
     .header-info {
