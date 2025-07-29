@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매물 의뢰하기</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 메인 콘텐츠 -->
+        <div id="mainContent" class="main-content-wrapper">
+            <!-- 헤더 -->
+            <header class="header">
+                <div class="header-top">
+                    <h1 class="main-title">매물 의뢰하기</h1>
+                    <button class="auth-btn" onclick="toggleAuth()">로그인</button>
+                </div>
+                <div class="header-info">
+                    <span class="total-count">전체 문의 수: <span id="totalCount">58</span>개</span>
+                    <button class="write-btn" onclick="showWriteModal()">문의작성</button>
+                </div>
+            </header>
+
+            <!-- 메인 콘텐츠 -->
+            <main class="main-content">
+                <!-- 목록 페이지 -->
+                <div id="listPage" class="list-page">
+                    <div class="table-container">
+                        <table class="inquiry-table">
+                            <thead>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>구분</th>
+                                    <th>거래종류</th>
+                                    <th>제목</th>
+                                    <th>작성자</th>
+                                    <th>등록일</th>
+                                    <th id="deleteHeader" style="display: none;">삭제</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inquiryList">
+                                <!-- 동적으로 생성될 내용 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 페이지네이션 -->
+                    <div class="pagination">
+                        <button class="page-btn" onclick="changePage(1)">1</button>
+                        <button class="page-btn" onclick="changePage(2)">2</button>
+                        <button class="page-btn" onclick="changePage(3)">3</button>
+                        <button class="page-btn" onclick="changePage(4)">4</button>
+                        <button class="page-btn" onclick="changePage(5)">5</button>
+                        <button class="page-btn" onclick="changePage(6)">6</button>
+                        <button class="page-btn next" onclick="nextPage()">&gt;</button>
+                        <button class="page-btn last" onclick="lastPage()">&gt;&gt;</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 로그인 모달 -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>로그인</h2>
+                <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label>아이디</label>
+                        <input type="text" id="loginId" placeholder="아이디를 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="submit-btn">로그인</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 문의작성 모달 -->
+    <div id="writeModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>매물 의뢰하기</h2>
+                <button class="close-btn" onclick="closeWriteModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 탭 버튼 -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('buy')">구해요</button>
+                    <button class="tab-btn" onclick="switchTab('sell')">팔아요</button>
+                </div>
+
+                <!-- 구해요 폼 -->
+                <form id="buyForm" class="inquiry-form">
+                    <div class="form-group">
+                        <label>거래유형 <span class="required">* 필수</span></label>
+                        <div class="radio-group">
+                            <button type="button" class="radio-btn active" onclick="selectRadio(this, 'monthly')">월세</button>
+                            <button type="button" class="radio-btn" onclick="selectRadio(this, 'sale')">매매</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>위치 <span class="required">* 필수</span></label>
+                        <div class="location-inputs">
+                            <select class="location-select">
+                                <option>시/도</option>
+                                <option>서울특별시</option>
+                                <option>부산광역시</option>
+                                <option>대구광역시</option>
+                                <option>인천광역시</option>
+                                <option>광주광역시</option>
+                                <option>대전광역시</option>
+                                <option>울산광역시</option>
+                                <option>세종특별자치시</option>
+                                <option>경기도</option>
+                                <option>강원도</option>
+                                <option>충청북도</option>
+                                <option>충청남도</option>
+                                <option>전라북도</option>
+                                <option>전라남도</option>
+                                <option>경상북도</option>
+                                <option>경상남도</option>
+                                <option>제주특별자치도</option>
+                            </select>
+                            <select class="location-select">
+                                <option>구/군</option>
+                            </select>
+                            <select class="location-select" id="neighborhoodSelect">
+                                <option>동/읍/면</option>
+                            </select>
+                            <input type="text" placeholder="상세주소" class="address-input">
+                        </div>
+                        <label class="address-label">상세주소</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>희망금액</label>
+                        <input type="text" placeholder="미입력시 협의" class="price-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>매물종류 <span class="required">* 필수</span></label>
+                        <div class="property-buttons">
+                            <button type="button" class="property-btn">상가 임대</button>
+                            <button type="button" class="property-btn">사무실 임대</button>
+                            <button type="button" class="property-btn">상가 매매</button>
+                            <button type="button" class="property-btn">건물매매</button>
+                            <button type="button" class="property-btn">기타</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>이름 <span class="required">* 필수</span></label>
+                        <input type="text" placeholder="이름" class="name-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>연락처 <span class="required">* 필수</span></label>
+                        <input type="text" placeholder="연락처" class="contact-input" oninput="formatPhoneNumber(this)" maxlength="13">
+                    </div>
+
+                    <div class="form-group">
+                        <label>제목 <span class="required">* 필수</span></label>
+                        <input type="text" placeholder="제목" class="title-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>상세내용 <span class="required">* 필수</span></label>
+                        <textarea placeholder="상세내용을 입력해주세요" class="content-textarea"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>첨부파일</label>
+                        <div class="file-input-container">
+                            <input type="text" placeholder="파일을 선택해주세요" class="file-input" readonly>
+                            <button type="button" class="file-btn">파일선택</button>
+                            <button type="button" class="file-delete-btn" onclick="deleteFile()" style="display: none;">삭제</button>
+                        </div>
+                    </div>
+
+                    <!-- 개인정보 수집 안내 -->
+                    <div class="privacy-section">
+                        <h3>개인정보 수집 안내 <span class="required">* 필수</span></h3>
+                        <div class="privacy-content">
+                            <h4>개인정보의 수집 및 이용 동의</h4>
+                            <p>본인은 개인정보보호법에 따라 개인정보의 수집 및 이용에 동의합니다. 동의를 거부할 권리가 있으나, 서비스 이용을 위한 최소한의 개인정보 수집 및 이용에 대한 동의를 거부할 경우 서비스 이용이 제한됩니다.</p>
+                            
+                            <ul>
+                                <li>수집하려는 개인정보 항목: 휴대폰 번호</li>
+                                <li>개인정보의 수집 목적: 문의신청</li>
+                                <li>개인정보의 보유기간: 사용 후 바로 삭제</li>
+                            </ul>
+
+                            <h4>개인정보 제3자 제공 동의</h4>
+                            <p>본사는 서비스 제공을 위해서 아래와 같이 개인정보를 수집합니다. 정보주체는 본 개인 정보의 수집 및 이용에 관한 동의를 거부하실 권리가 있으나, 서비스 제공에 필요한 최소한의 개인정보이므로 동의를 해주셔야 서비스를 이용하실 수 있습니다.</p>
+                            
+                            <ul>
+                                <li>개인정보를 제공받는 자 : 본사 중개사무소</li>
+                                <li>개인정보를 제공받는 자의 개인정보 이용 목적 : 매물중개목적</li>
+                                <li>제공하는 개인정보의 항목 : 휴대폰 번호</li>
+                                <li>개인정보를 제공받는 자의 개인정보 보유 및 이용기간: 5년</li>
+                                <li>동의 거부권 및 불이익 : 해당 내용에 동의하지 않을 시, 매물 중개 의뢰가 불가능합니다.</li>
+                            </ul>
+
+                            <h4>개인정보 처리 위탁</h4>
+                            <p>본사는 서비스 향상을 위해 개인정보 처리업무를 외부 전문업체에 위탁할 수 있습니다. 위탁 시에는 위탁업체와 위탁업무의 내용을 서면으로 정하고, 개인정보가 안전하게 처리될 수 있도록 필요한 사항을 규정하여 관리하고 있습니다.</p>
+                            
+                            <ul>
+                                <li>위탁업체: IT 시스템 관리업체</li>
+                                <li>위탁업무의 내용: 시스템 유지보수 및 보안관리</li>
+                                <li>위탁기간: 서비스 제공 기간</li>
+                            </ul>
+
+                            <h4>개인정보의 파기</h4>
+                            <p>개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 파기합니다. 전자적 파일 형태의 정보는 복구 및 재생이 불가능한 방법으로 영구 삭제하며, 종이에 출력된 개인정보는 분쇄기로 분쇄하거나 소각을 통하여 파기합니다.</p>
+
+                            <h4>정보주체의 권리</h4>
+                            <p>정보주체는 개인정보주체로서 다음과 같은 권리를 행사할 수 있습니다.</p>
+                            
+                            <ul>
+                                <li>개인정보 열람요구</li>
+                                <li>오류 등이 있을 경우 정정 요구</li>
+                                <li>삭제요구</li>
+                                <li>처리정지 요구</li>
+                            </ul>
+
+                            <h4>개인정보 보호책임자</h4>
+                            <p>개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+                            
+                            <ul>
+                                <li>개인정보 보호책임자</li>
+                                <li>성명: 홍길동</li>
+                                <li>직책: 개인정보보호책임자</li>
+                                <li>연락처: 02-1234-5678</li>
+                                <li>이메일: privacy@example.com</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="terms-agreement">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="termsAgree">
+                                <label for="termsAgree">이용약관 동의</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 버튼 -->
+                    <div class="form-buttons">
+                        <button type="button" class="cancel-btn" onclick="closeWriteModal()">취소</button>
+                        <button type="submit" class="submit-btn">의뢰하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상세보기 모달 -->
+    <div id="detailModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>문의 상세보기</h2>
+                <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="detailContent">
+                    <!-- 동적으로 생성될 내용 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
