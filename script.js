@@ -596,6 +596,14 @@ document.addEventListener('DOMContentLoaded', function() {
             loadInquiries();
             updateTotalCount();
             
+            // 새 매물이 첫 페이지 맨 위에 표시되도록 강제 새로고침
+            setTimeout(() => {
+                console.log('새 매물 첫 페이지 표시를 위한 강제 업데이트');
+                currentPage = 1;
+                loadInquiries();
+                updateTotalCount();
+            }, 100);
+            
             // 모바일에서 DOM 업데이트 강제 적용
             setTimeout(() => {
                 console.log('지연된 목록 업데이트 실행');
@@ -840,12 +848,22 @@ function loadInquiries() {
         const row = document.createElement('tr');
         const deleteButton = currentUser ? `<button class="delete-btn" onclick="deleteInquiry(${inquiry.id})">삭제</button>` : '';
         
+        // 작성자 이름 처리 - 첫 글자만 표시
+        let authorDisplay = inquiry.author;
+        if (inquiry.author && inquiry.author.includes('**')) {
+            // 이미 **가 포함된 경우 (기존 데이터)
+            authorDisplay = inquiry.author;
+        } else if (inquiry.author) {
+            // 새로 등록된 데이터의 경우 첫 글자만 표시
+            authorDisplay = inquiry.author.charAt(0) + '**';
+        }
+        
         row.innerHTML = `
             <td>${inquiry.id}</td>
             <td><span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '내놈' : '구함'}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.category}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.title}</span></td>
-            <td>${inquiry.author}</td>
+            <td>${authorDisplay}</td>
             <td>${inquiry.date}</td>
             <td>${deleteButton}</td>
         `;
