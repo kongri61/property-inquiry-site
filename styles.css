@@ -183,6 +183,16 @@ body {
     color: #666;
 }
 
+/* 거래종류 컬럼 너비 조정 */
+.inquiry-table th:nth-child(3),
+.inquiry-table td:nth-child(3) {
+    width: 120px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* 태그 스타일 */
 .tag {
     display: inline-block;
@@ -833,8 +843,8 @@ body {
     
     .inquiry-table th:nth-child(3),
     .inquiry-table td:nth-child(3) {
-        width: 80px;
-        max-width: 80px;
+        width: 120px;
+        max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
