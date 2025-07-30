@@ -6,7 +6,7 @@ const defaultInquiries = [
     {
         id: 58,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰',
         author: '박**',
         date: '2025-06-11',
@@ -14,7 +14,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '인천광역시 남동구 구월동',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-1234-5678',
             content: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰합니다. 위치가 좋고 교통이 편리합니다. 관심 있으신 분 연락 부탁드립니다.'
         }
@@ -22,7 +22,7 @@ const defaultInquiries = [
     {
         id: 57,
         type: 'sell',
-        category: '건물 매매 전부 보기',
+        category: '건물 매매',
         title: '토지와 2종 근생 사무실용도 통건물 매도 의뢰',
         author: '김**',
         date: '2025-06-02',
@@ -30,7 +30,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '경기도 성남시 분당구',
             price: '협의',
-            propertyType: '건물 매매 전부 보기',
+            propertyType: '건물 매매',
             contact: '010-2345-6789',
             content: '토지와 2종 근생 사무실용도 통건물 매도 의뢰합니다. 사무실로 사용하기 좋은 위치입니다.'
         }
@@ -38,7 +38,7 @@ const defaultInquiries = [
     {
         id: 56,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '뷰티샵',
         author: '이**',
         date: '2025-05-29',
@@ -46,7 +46,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '서울특별시 강남구',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-3456-7890',
             content: '뷰티샵 매도 의뢰합니다. 고객층이 안정적이고 수익성이 좋습니다.'
         }
@@ -54,7 +54,7 @@ const defaultInquiries = [
     {
         id: 55,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '상가 1개호 팝니다',
         author: '유**',
         date: '2025-05-25',
@@ -62,7 +62,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '인천광역시 연수구',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-4567-8901',
             content: '상가 1개호 팝니다. 위치가 좋고 임대 수익이 안정적입니다.'
         }
@@ -70,7 +70,7 @@ const defaultInquiries = [
     {
         id: 54,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '상가 매매 희망합니다.',
         author: '장**',
         date: '2025-05-20',
@@ -78,7 +78,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '경기도 부천시',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-5678-9012',
             content: '상가 매매 희망합니다. 좋은 조건으로 거래하겠습니다.'
         }
@@ -86,7 +86,7 @@ const defaultInquiries = [
     {
         id: 53,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '인하대학교 근접 상가 건물 매매',
         author: '진**',
         date: '2025-05-15',
@@ -94,7 +94,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '인천광역시 미추홀구',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-6789-0123',
             content: '인하대학교 근접 상가 건물 매매합니다. 학생들이 많이 지나다니는 위치입니다.'
         }
@@ -102,7 +102,7 @@ const defaultInquiries = [
     {
         id: 52,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '문의 남깁니다.',
         author: '홍**',
         date: '2025-05-10',
@@ -110,7 +110,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '서울특별시 마포구',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-7890-1234',
             content: '문의 남깁니다. 상가 매매에 관심 있으신 분 연락 부탁드립니다.'
         }
@@ -118,7 +118,7 @@ const defaultInquiries = [
     {
         id: 51,
         type: 'buy',
-        category: '상가 임대 전부 보기',
+        category: '상가 임대',
         title: '인천시청역 근방으로 구합니다',
         author: '박**',
         date: '2025-05-05',
@@ -126,7 +126,7 @@ const defaultInquiries = [
             transactionType: '월세',
             location: '인천광역시 남동구',
             price: '협의',
-            propertyType: '상가 임대 전부 보기',
+            propertyType: '상가 임대',
             contact: '010-8901-2345',
             content: '인천시청역 근방으로 상가를 구합니다. 월세로 임대 가능한 곳 연락 부탁드립니다.'
         }
@@ -134,7 +134,7 @@ const defaultInquiries = [
     {
         id: 50,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '매매 원합니다',
         author: '김**',
         date: '2025-05-01',
@@ -142,7 +142,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '경기도 안산시',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-9012-3456',
             content: '매매 원합니다. 좋은 조건으로 거래하겠습니다.'
         }
@@ -150,7 +150,7 @@ const defaultInquiries = [
     {
         id: 49,
         type: 'sell',
-        category: '상가 매매 전부 보기',
+        category: '상가 매매',
         title: '상가 매매',
         author: '이**',
         date: '2025-04-28',
@@ -158,7 +158,7 @@ const defaultInquiries = [
             transactionType: '매매',
             location: '인천광역시 부평구',
             price: '협의',
-            propertyType: '상가 매매 전부 보기',
+            propertyType: '상가 매매',
             contact: '010-0123-4567',
             content: '상가 매매합니다. 관심 있으신 분 연락 부탁드립니다.'
         }
@@ -529,25 +529,62 @@ document.addEventListener('DOMContentLoaded', function() {
     // 로그인 폼 이벤트 리스너
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        console.log('로그인 폼 찾음, 이벤트 리스너 추가');
+        
+        // 기존 이벤트 리스너 제거 (중복 방지)
+        loginForm.removeEventListener('submit', loginForm._submitHandler);
+        
+        // 새로운 이벤트 리스너 추가
+        loginForm._submitHandler = function(e) {
             e.preventDefault();
-            console.log('로그인 폼 제출됨');
+            e.stopPropagation();
+            console.log('=== 로그인 폼 제출됨 ===');
             
-            const loginId = document.getElementById('loginId').value;
-            const loginPassword = document.getElementById('loginPassword').value;
+            const loginIdInput = document.getElementById('loginId');
+            const loginPasswordInput = document.getElementById('loginPassword');
             
-            console.log('입력된 아이디:', loginId);
-            console.log('입력된 비밀번호:', loginPassword);
-            console.log('기기 타입:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? '모바일' : 'PC');
+            if (!loginIdInput || !loginPasswordInput) {
+                console.error('로그인 입력 필드를 찾을 수 없음');
+                alert('로그인 입력 필드를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+                return;
+            }
             
-            // 로그인 검증 (공백 제거 후 비교)
+            const loginId = loginIdInput.value;
+            const loginPassword = loginPasswordInput.value;
+            
+            console.log('=== 로그인 입력값 ===');
+            console.log('원본 아이디:', `"${loginId}"`);
+            console.log('원본 비밀번호:', `"${loginPassword}"`);
+            console.log('아이디 길이:', loginId.length);
+            console.log('비밀번호 길이:', loginPassword.length);
+            
+            // 공백 제거 후 비교
             const trimmedId = loginId.trim();
             const trimmedPassword = loginPassword.trim();
             
-            console.log('공백 제거된 아이디:', trimmedId);
-            console.log('공백 제거된 비밀번호:', trimmedPassword);
+            console.log('=== 공백 제거 후 ===');
+            console.log('공백 제거된 아이디:', `"${trimmedId}"`);
+            console.log('공백 제거된 비밀번호:', `"${trimmedPassword}"`);
+            console.log('공백 제거된 아이디 길이:', trimmedId.length);
+            console.log('공백 제거된 비밀번호 길이:', trimmedPassword.length);
             
-            if (trimmedId === 'kongri61' && trimmedPassword === 'rlaehdghk61@') {
+            // 기기 정보
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            console.log('기기 타입:', isMobile ? '모바일' : 'PC');
+            console.log('User Agent:', navigator.userAgent);
+            
+            // 로그인 검증
+            const expectedId = 'kongri61';
+            const expectedPassword = 'rlaehdghk61@';
+            
+            console.log('=== 로그인 검증 ===');
+            console.log('기대값 - ID:', `"${expectedId}"`, 'PW:', `"${expectedPassword}"`);
+            console.log('실제값 - ID:', `"${trimmedId}"`, 'PW:', `"${trimmedPassword}"`);
+            console.log('ID 일치:', trimmedId === expectedId);
+            console.log('PW 일치:', trimmedPassword === expectedPassword);
+            
+            if (trimmedId === expectedId && trimmedPassword === expectedPassword) {
+                console.log('=== 로그인 성공 ===');
                 
                 currentUser = {
                     id: trimmedId,
@@ -557,6 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 로그인 정보 저장
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                console.log('localStorage에 사용자 정보 저장됨');
                 
                 // 모달 닫기
                 closeLoginModal();
@@ -573,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 syncDataAcrossDevices();
                 
                 // 모바일에서 추가 처리
-                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                if (isMobile) {
                     console.log('모바일 로그인 후 추가 처리');
                     setTimeout(() => {
                         loadInquiries();
@@ -589,12 +627,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('로그인 성공!');
                 
             } else {
+                console.log('=== 로그인 실패 ===');
                 console.log('로그인 실패 - 입력값 불일치');
-                console.log('기대값 - ID: kongri61, PW: rlaehdghk61@');
-                console.log('실제값 - ID:', trimmedId, 'PW:', trimmedPassword);
-                alert('아이디 또는 비밀번호가 올바르지 않습니다.\n\n아이디: kongri61\n비밀번호: rlaehdghk61@');
+                
+                let errorMessage = '아이디 또는 비밀번호가 올바르지 않습니다.\n\n';
+                errorMessage += '입력하신 값:\n';
+                errorMessage += `아이디: "${trimmedId}"\n`;
+                errorMessage += `비밀번호: "${trimmedPassword}"\n\n`;
+                errorMessage += '올바른 값:\n';
+                errorMessage += '아이디: kongri61\n';
+                errorMessage += '비밀번호: rlaehdghk61@';
+                
+                alert(errorMessage);
             }
-        });
+        };
+        
+        loginForm.addEventListener('submit', loginForm._submitHandler);
+        console.log('로그인 폼 이벤트 리스너 등록 완료');
+        
+    } else {
+        console.error('로그인 폼을 찾을 수 없음');
     }
     
     // 문의작성 폼 이벤트 리스너
@@ -645,7 +697,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newInquiry = {
                 id: generateNewId(),
                 type: inquiryData.type,
-                category: inquiryData.propertyType,
+                category: inquiryData.propertyType.replace(' 전부 보기', ''),
                 title: inquiryData.title,
                 author: inquiryData.name.charAt(0) + '**',
                 date: inquiryData.date,
@@ -653,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     transactionType: inquiryData.transactionType,
                     location: `${inquiryData.location.city} ${inquiryData.location.district} ${inquiryData.location.neighborhood} ${inquiryData.location.address}`,
                     price: inquiryData.price || '협의',
-                    propertyType: inquiryData.propertyType,
+                    propertyType: inquiryData.propertyType.replace(' 전부 보기', ''),
                     contact: inquiryData.contact,
                     content: inquiryData.content
                 }

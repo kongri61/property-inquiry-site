@@ -833,7 +833,11 @@ body {
     
     .inquiry-table th:nth-child(3),
     .inquiry-table td:nth-child(3) {
-        width: 60px;
+        width: 80px;
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .inquiry-table th:nth-child(4),
