@@ -1531,11 +1531,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 모바일에서 거래종류 텍스트를 두 줄로 나누는 함수
 function formatPropertyTypeForMobile(text) {
+    console.log('formatPropertyTypeForMobile 호출됨:', text);
+    
     if (!text) return '';
     
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log('모바일 감지:', isMobile);
     
-    if (!isMobile) return text;
+    if (!isMobile) {
+        console.log('PC 환경 - 원본 텍스트 반환:', text);
+        return text;
+    }
     
     // 모바일에서만 두 줄로 나누기
     const mappings = {
@@ -1557,5 +1563,7 @@ function formatPropertyTypeForMobile(text) {
         '기타': '기타'
     };
     
-    return mappings[text] || text;
+    const result = mappings[text] || text;
+    console.log('변환 결과:', text, '→', result);
+    return result;
 }
