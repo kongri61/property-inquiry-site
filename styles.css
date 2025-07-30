@@ -186,11 +186,18 @@ body {
 /* 거래종류 컬럼 너비 조정 */
 .inquiry-table th:nth-child(3),
 .inquiry-table td:nth-child(3) {
-    width: 120px;
-    max-width: 120px;
+    width: 80px;
+    max-width: 80px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* 제목 컬럼 너비 확장 */
+.inquiry-table th:nth-child(4),
+.inquiry-table td:nth-child(4) {
+    width: auto;
+    min-width: 200px;
 }
 
 /* 태그 스타일 */
@@ -843,8 +850,8 @@ body {
     
     .inquiry-table th:nth-child(3),
     .inquiry-table td:nth-child(3) {
-        width: 120px;
-        max-width: 120px;
+        width: 80px;
+        max-width: 80px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -853,6 +860,7 @@ body {
     .inquiry-table th:nth-child(4),
     .inquiry-table td:nth-child(4) {
         width: auto;
+        min-width: 200px;
     }
     
     .inquiry-table th:nth-child(5),
