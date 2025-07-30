@@ -569,7 +569,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('새 문의 객체:', newInquiry);
             
             inquiries.unshift(newInquiry);
+            console.log('매물 등록 후 inquiries 배열:', inquiries);
+            console.log('매물 등록 후 inquiries ID 목록:', inquiries.map(inq => inq.id));
+            
+            // localStorage에 저장 강제 실행
+            console.log('localStorage 저장 시작...');
             saveAdditionalInquiriesToStorage(); // localStorage에 저장
+            console.log('localStorage 저장 완료');
+            
             console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
             
             // 성공 메시지
