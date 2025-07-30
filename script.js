@@ -195,15 +195,26 @@ function loadAdditionalInquiriesFromStorage() {
 // localStorage에 추가된 데이터만 저장하기
 function saveAdditionalInquiriesToStorage() {
     try {
-        // 기본 데이터를 제외한 추가된 데이터만 추출
+        // 기본 데이터를 제외한 추가된 데이터만 추출 (ID가 58보다 큰 것들)
         const additionalInquiries = inquiries.filter(inquiry => inquiry.id > 58);
         const dataToSave = JSON.stringify(additionalInquiries);
         localStorage.setItem('additionalInquiries', dataToSave);
         console.log('추가된 문의 데이터 저장됨:', additionalInquiries.length, '개');
         console.log('저장된 추가 데이터:', dataToSave);
+        
+        // 저장 확인
+        const savedData = localStorage.getItem('additionalInquiries');
+        console.log('저장 확인:', savedData);
     } catch (error) {
         console.error('추가 데이터 저장 오류:', error);
     }
+}
+
+// 새로운 ID 생성 함수
+function generateNewId() {
+    // 현재 inquiries 배열에서 가장 큰 ID 찾기
+    const maxId = Math.max(...inquiries.map(inquiry => inquiry.id));
+    return maxId + 1;
 }
 
 let currentPage = 1;
@@ -526,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 새 문의 추가
             const newInquiry = {
-                id: inquiries.length + 1,
+                id: generateNewId(),
                 type: inquiryData.type,
                 category: inquiryData.propertyType,
                 title: inquiryData.title,
