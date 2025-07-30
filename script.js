@@ -1027,22 +1027,41 @@ function validateForm(data) {
         return false;
     }
     
+    // 문의작성 모달 내부 요소들이 존재하는지 확인
+    const tabBtn = document.querySelector('.tab-btn.active');
+    const radioBtn = document.querySelector('.radio-btn.active');
+    const propertyBtn = document.querySelector('.property-btn.active');
+    
+    if (!tabBtn || !radioBtn || !propertyBtn) {
+        console.log('문의작성 모달 내부 요소를 찾을 수 없음 - 검사 중단');
+        return false;
+    }
+    
     // 거래유형 선택 확인
-    const selectedTransactionType = document.querySelector('.radio-btn.active');
-    if (!selectedTransactionType) {
+    if (!radioBtn) {
         console.log('거래유형 미선택');
         alert('거래유형을 선택해주세요.');
         return false;
     }
-    console.log('거래유형 선택됨:', selectedTransactionType.textContent);
+    console.log('거래유형 선택됨:', radioBtn.textContent);
     
     // 위치 입력 확인
-    const city = document.querySelector('.location-select').value;
-    const district = document.querySelectorAll('.location-select')[1].value;
+    const city = document.querySelector('.location-select');
+    const district = document.querySelectorAll('.location-select')[1];
     const neighborhoodElement = document.querySelectorAll('.location-select')[2];
-    const address = document.querySelector('.address-input').value;
+    const address = document.querySelector('.address-input');
     
-    console.log('위치 정보:', { city, district, address });
+    if (!city || !district || !neighborhoodElement || !address) {
+        console.log('위치 입력 요소를 찾을 수 없음');
+        alert('위치 정보를 입력해주세요.');
+        return false;
+    }
+    
+    console.log('위치 정보:', { 
+        city: city.value, 
+        district: district.value, 
+        address: address.value 
+    });
     
     // 동/읍/면 검증 (select 또는 input 모두 처리)
     let neighborhood = '';
@@ -1054,11 +1073,11 @@ function validateForm(data) {
     
     console.log('동/읍/면:', neighborhood);
     
-    if (city === '시/도' || district === '구/군' || 
+    if (city.value === '시/도' || district.value === '구/군' || 
         (neighborhoodElement.tagName === 'SELECT' && neighborhood === '동/읍/면') || 
         (neighborhoodElement.tagName === 'INPUT' && !neighborhood.trim())) {
         // 구함/내놈에 따른 다른 안내 메시지
-        const isSell = document.querySelector('.tab-btn.active').textContent === '내놈';
+        const isSell = tabBtn.textContent === '내놈';
         console.log('위치 정보 미입력, isSell:', isSell);
         if (isSell) {
             alert('위치 정보를 모두 입력해주세요.');
@@ -1069,21 +1088,20 @@ function validateForm(data) {
     }
     
     // 구함/내놈에 따른 상세주소 검증
-    const isSell = document.querySelector('.tab-btn.active').textContent === '내놈';
-    if (isSell && !address.trim()) {
+    const isSell = tabBtn.textContent === '내놈';
+    if (isSell && !address.value.trim()) {
         console.log('상세주소 미입력');
         alert('상세주소까지 입력해주세요.');
         return false;
     }
     
     // 매물종류 선택 확인
-    const selectedProperty = document.querySelector('.property-btn.active');
-    if (!selectedProperty) {
+    if (!propertyBtn) {
         console.log('매물종류 미선택');
         alert('매물종류를 선택해주세요.');
         return false;
     }
-    console.log('매물종류 선택됨:', selectedProperty.textContent);
+    console.log('매물종류 선택됨:', propertyBtn.textContent);
     
     if (!data.name.trim()) {
         console.log('이름 미입력');
