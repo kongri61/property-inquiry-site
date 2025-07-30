@@ -158,12 +158,15 @@ body {
 
 .table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .inquiry-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
+    font-size: 12px;
+    min-width: 600px;
 }
 
 .inquiry-table th,
@@ -831,6 +834,7 @@ body {
     
     .inquiry-table {
         font-size: 12px;
+        min-width: 600px;
     }
     
     .inquiry-table th,
@@ -867,14 +871,24 @@ body {
     .inquiry-table td:nth-child(5) {
         width: 60px;
         min-width: 60px;
+        max-width: 60px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: keep-all;
+        word-wrap: normal;
     }
     
     .inquiry-table th:nth-child(6),
     .inquiry-table td:nth-child(6) {
         width: 70px;
         min-width: 70px;
+        max-width: 70px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: keep-all;
+        word-wrap: normal;
     }
     
     .tag {
