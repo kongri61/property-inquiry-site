@@ -494,8 +494,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 모달 닫기
             closeWriteModal();
+            
+            // 목록 강제 업데이트 (모바일 대응)
+            console.log('목록 업데이트 시작');
+            
+            // 새 매물이 추가되었으므로 첫 번째 페이지로 이동
+            currentPage = 1;
+            
             loadInquiries();
             updateTotalCount();
+            
+            // 모바일에서 DOM 업데이트 강제 적용
+            setTimeout(() => {
+                console.log('지연된 목록 업데이트 실행');
+                loadInquiries();
+                updateTotalCount();
+            }, 100);
             
             // 폼 초기화
             resetForm();
@@ -662,20 +676,33 @@ function toggleAuth() {
 
 // 문의 목록 로드
 function loadInquiries() {
+    console.log('loadInquiries 함수 호출됨');
+    console.log('전체 문의 개수:', inquiries.length);
+    console.log('현재 페이지:', currentPage);
+    
     const tbody = document.getElementById('inquiryList');
     const deleteHeader = document.getElementById('deleteHeader');
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const pageInquiries = inquiries.slice(startIndex, endIndex);
     
+    console.log('페이지 범위:', startIndex, '~', endIndex);
+    console.log('현재 페이지 문의 개수:', pageInquiries.length);
+    
     // 삭제 헤더 표시/숨김
     if (deleteHeader) {
         deleteHeader.style.display = currentUser ? 'table-cell' : 'none';
     }
     
+    if (!tbody) {
+        console.error('inquiryList tbody를 찾을 수 없음');
+        return;
+    }
+    
     tbody.innerHTML = '';
     
-    pageInquiries.forEach(inquiry => {
+    pageInquiries.forEach((inquiry, index) => {
+        console.log(`문의 ${index + 1}:`, inquiry);
         const row = document.createElement('tr');
         const deleteButton = currentUser ? `<button class="delete-btn" onclick="deleteInquiry(${inquiry.id})">삭제</button>` : '';
         
@@ -691,6 +718,7 @@ function loadInquiries() {
         tbody.appendChild(row);
     });
     
+    console.log('목록 렌더링 완료');
     updatePagination();
 }
 
@@ -722,7 +750,16 @@ function deleteInquiry(inquiryId) {
 
 // 전체 개수 업데이트
 function updateTotalCount() {
-    document.getElementById('totalCount').textContent = inquiries.length;
+    console.log('updateTotalCount 함수 호출됨');
+    console.log('업데이트할 총 개수:', inquiries.length);
+    
+    const totalCountElement = document.getElementById('totalCount');
+    if (totalCountElement) {
+        totalCountElement.textContent = inquiries.length;
+        console.log('총 개수 업데이트 완료:', inquiries.length);
+    } else {
+        console.error('totalCount 요소를 찾을 수 없음');
+    }
 }
 
 // 페이지네이션 업데이트
