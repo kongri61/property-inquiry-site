@@ -1055,7 +1055,7 @@ function loadInquiries() {
         row.innerHTML = `
             <td>${inquiry.id}</td>
             <td><span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '내놈' : '구함'}</span></td>
-            <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.category}</span></td>
+            <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${formatPropertyTypeForMobile(inquiry.category)}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.title}</span></td>
             <td>${authorDisplay}</td>
             <td>${inquiry.date}</td>
@@ -1528,3 +1528,23 @@ function removeAllPropertyTypeSuffixes() {
 document.addEventListener('DOMContentLoaded', function() {
     removeAllPropertyTypeSuffixes();
 });
+
+// 모바일에서 거래종류 텍스트를 두 줄로 나누는 함수
+function formatPropertyTypeForMobile(text) {
+    if (!text) return '';
+    
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) return text;
+    
+    // 모바일에서만 두 줄로 나누기
+    const mappings = {
+        '상가 매매': '상가<br>매매',
+        '상가 임대': '상가<br>임대',
+        '건물 매매': '건물<br>매매',
+        '사무실 임대': '사무실<br>임대',
+        '기타': '기타'
+    };
+    
+    return mappings[text] || text;
+}

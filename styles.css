@@ -189,11 +189,14 @@ body {
 /* 거래종류 컬럼 너비 조정 */
 .inquiry-table th:nth-child(3),
 .inquiry-table td:nth-child(3) {
-    width: 80px;
-    max-width: 80px;
+    width: 60px;
+    max-width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.2;
 }
 
 /* 제목 컬럼 너비 확장 */
@@ -854,11 +857,15 @@ body {
     
     .inquiry-table th:nth-child(3),
     .inquiry-table td:nth-child(3) {
-        width: 80px;
-        max-width: 80px;
+        width: 50px;
+        max-width: 50px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 1.1;
+        font-size: 11px;
     }
     
     .inquiry-table th:nth-child(4),
