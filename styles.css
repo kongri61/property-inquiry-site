@@ -887,8 +887,10 @@ body {
     }
     
     .tab-btn {
-        padding: 12px;
-        font-size: 14px;
+        padding: 12px 8px;
+        font-size: 13px;
+        min-width: 60px;
+        white-space: nowrap;
     }
     
     .form-group {
