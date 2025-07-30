@@ -1012,9 +1012,16 @@ function deleteFile() {
     }
 }
 
-// 폼 유효성 검사
+// 폼 유효성 검사 (문의작성 폼 전용)
 function validateForm(data) {
-    console.log('폼 유효성 검사 시작');
+    console.log('문의작성 폼 유효성 검사 시작');
+    
+    // 문의작성 모달이 열려있는지 확인
+    const writeModal = document.getElementById('writeModal');
+    if (!writeModal || writeModal.style.display !== 'flex') {
+        console.log('문의작성 모달이 열려있지 않음 - 검사 중단');
+        return false;
+    }
     
     // 거래유형 선택 확인
     const selectedTransactionType = document.querySelector('.radio-btn.active');
@@ -1099,14 +1106,14 @@ function validateForm(data) {
     }
     
     // 개인정보 동의 확인
-    const termsAgree = document.getElementById('termsAgree').checked;
-    if (!termsAgree) {
+    const termsAgree = document.getElementById('termsAgree');
+    if (!termsAgree || !termsAgree.checked) {
         console.log('이용약관 미동의');
         alert('이용약관에 동의해주세요.');
         return false;
     }
     
-    console.log('폼 유효성 검사 통과');
+    console.log('문의작성 폼 유효성 검사 통과');
     return true;
 }
 
