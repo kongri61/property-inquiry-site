@@ -293,6 +293,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 저장된 데이터의 작성자 이름 수정
     fixAuthorNamesInStorage();
     
+    // "~전부보기" 텍스트 제거
+    removeAllPropertyTypeSuffixes();
+    
     // 강화된 데이터 동기화 실행
     syncDataAcrossDevices();
     
@@ -1508,3 +1511,20 @@ function forceSaveAndSync() {
     
     console.log('=== 강제 저장 및 동기화 완료 ===');
 }
+
+// 기존 데이터에서 "~전부보기" 텍스트 제거
+function removeAllPropertyTypeSuffixes() {
+    inquiries.forEach(inquiry => {
+        if (inquiry.category && inquiry.category.includes(' 전부 보기')) {
+            inquiry.category = inquiry.category.replace(' 전부 보기', '');
+        }
+        if (inquiry.details && inquiry.details.propertyType && inquiry.details.propertyType.includes(' 전부 보기')) {
+            inquiry.details.propertyType = inquiry.details.propertyType.replace(' 전부 보기', '');
+        }
+    });
+}
+
+// DOM이 로드되면 실행
+document.addEventListener('DOMContentLoaded', function() {
+    removeAllPropertyTypeSuffixes();
+});
