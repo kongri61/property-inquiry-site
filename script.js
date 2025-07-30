@@ -171,6 +171,8 @@ const itemsPerPage = 10;
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     console.log('페이지 로드됨');
+    console.log('사용자 에이전트:', navigator.userAgent);
+    
     // 로그인 상태 확인
     checkLoginStatus();
     loadInquiries();
@@ -178,6 +180,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 복사 방지 기능 추가
     preventCopy();
+    
+    // 모바일에서 추가 초기화
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        console.log('모바일 기기 감지됨 - 추가 초기화 실행');
+        // 모바일에서 지연된 초기화
+        setTimeout(() => {
+            loadInquiries();
+            updateTotalCount();
+        }, 200);
+    }
     
     // 매물종류 버튼 클릭 이벤트
     const propertyBtns = document.querySelectorAll('.property-btn');
@@ -492,6 +504,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // 성공 메시지
             alert('문의가 성공적으로 등록되었습니다.');
             
+            // 모바일에서 페이지 새로고침 안내
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                setTimeout(() => {
+                    if (confirm('모바일에서 새 매물이 보이지 않는다면 페이지를 새로고침하시겠습니까?')) {
+                        location.reload();
+                    }
+                }, 1000);
+            }
+            
             // 모달 닫기
             closeWriteModal();
             
@@ -510,6 +531,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadInquiries();
                 updateTotalCount();
             }, 100);
+            
+            // 모바일 브라우저 캐시 무효화를 위한 강제 새로고침 (선택적)
+            setTimeout(() => {
+                console.log('모바일 캐시 무효화를 위한 추가 업데이트');
+                // 모바일에서만 실행되는 추가 업데이트
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    console.log('모바일 기기 감지됨 - 강제 업데이트 실행');
+                    loadInquiries();
+                    updateTotalCount();
+                    
+                    // 테이블 강제 리렌더링
+                    const tbody = document.getElementById('inquiryList');
+                    if (tbody) {
+                        tbody.style.display = 'none';
+                        setTimeout(() => {
+                            tbody.style.display = '';
+                            loadInquiries();
+                        }, 50);
+                    }
+                }
+            }, 500);
             
             // 폼 초기화
             resetForm();
