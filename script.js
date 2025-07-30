@@ -427,6 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (buyForm) {
         buyForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('문의작성 폼 제출됨');
             
             // 폼 데이터 수집
             const inquiryData = {
@@ -455,10 +456,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: new Date().toISOString().split('T')[0]
             };
             
+            console.log('수집된 폼 데이터:', inquiryData);
+            
             // 유효성 검사
             if (!validateForm(inquiryData)) {
+                console.log('폼 유효성 검사 실패');
                 return;
             }
+            
+            console.log('폼 유효성 검사 통과');
             
             // 새 문의 추가
             const newInquiry = {
@@ -478,7 +484,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
             
+            console.log('새 문의 객체:', newInquiry);
+            
             inquiries.unshift(newInquiry);
+            console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
             
             // 성공 메시지
             alert('문의가 성공적으로 등록되었습니다.');
@@ -490,6 +499,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 폼 초기화
             resetForm();
+            
+            console.log('문의 등록 완료');
         });
     }
     
@@ -515,6 +526,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
             input.click();
+        });
+    }
+    
+    // 모바일에서 폼 제출 버튼 클릭 이벤트 추가
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            console.log('제출 버튼 클릭됨');
+            // 폼 제출 이벤트를 수동으로 트리거
+            const form = document.getElementById('buyForm');
+            if (form) {
+                form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }
         });
     }
 }); 
@@ -850,18 +874,24 @@ function deleteFile() {
 
 // 폼 유효성 검사
 function validateForm(data) {
+    console.log('폼 유효성 검사 시작');
+    
     // 거래유형 선택 확인
     const selectedTransactionType = document.querySelector('.radio-btn.active');
     if (!selectedTransactionType) {
+        console.log('거래유형 미선택');
         alert('거래유형을 선택해주세요.');
         return false;
     }
+    console.log('거래유형 선택됨:', selectedTransactionType.textContent);
     
     // 위치 입력 확인
     const city = document.querySelector('.location-select').value;
     const district = document.querySelectorAll('.location-select')[1].value;
     const neighborhoodElement = document.querySelectorAll('.location-select')[2];
     const address = document.querySelector('.address-input').value;
+    
+    console.log('위치 정보:', { city, district, address });
     
     // 동/읍/면 검증 (select 또는 input 모두 처리)
     let neighborhood = '';
@@ -871,11 +901,14 @@ function validateForm(data) {
         neighborhood = neighborhoodElement.value;
     }
     
+    console.log('동/읍/면:', neighborhood);
+    
     if (city === '시/도' || district === '구/군' || 
         (neighborhoodElement.tagName === 'SELECT' && neighborhood === '동/읍/면') || 
         (neighborhoodElement.tagName === 'INPUT' && !neighborhood.trim())) {
         // 구함/내놈에 따른 다른 안내 메시지
         const isSell = document.querySelector('.tab-btn.active').textContent === '내놈';
+        console.log('위치 정보 미입력, isSell:', isSell);
         if (isSell) {
             alert('위치 정보를 모두 입력해주세요.');
         } else {
@@ -887,6 +920,7 @@ function validateForm(data) {
     // 구함/내놈에 따른 상세주소 검증
     const isSell = document.querySelector('.tab-btn.active').textContent === '내놈';
     if (isSell && !address.trim()) {
+        console.log('상세주소 미입력');
         alert('상세주소까지 입력해주세요.');
         return false;
     }
@@ -894,26 +928,32 @@ function validateForm(data) {
     // 매물종류 선택 확인
     const selectedProperty = document.querySelector('.property-btn.active');
     if (!selectedProperty) {
+        console.log('매물종류 미선택');
         alert('매물종류를 선택해주세요.');
         return false;
     }
+    console.log('매물종류 선택됨:', selectedProperty.textContent);
     
     if (!data.name.trim()) {
+        console.log('이름 미입력');
         alert('이름을 입력해주세요.');
         return false;
     }
     
     if (!data.contact.trim()) {
+        console.log('연락처 미입력');
         alert('연락처를 입력해주세요.');
         return false;
     }
     
     if (!data.title.trim()) {
+        console.log('제목 미입력');
         alert('제목을 입력해주세요.');
         return false;
     }
     
     if (!data.content.trim()) {
+        console.log('상세내용 미입력');
         alert('상세내용을 입력해주세요.');
         return false;
     }
@@ -921,10 +961,12 @@ function validateForm(data) {
     // 개인정보 동의 확인
     const termsAgree = document.getElementById('termsAgree').checked;
     if (!termsAgree) {
+        console.log('이용약관 미동의');
         alert('이용약관에 동의해주세요.');
         return false;
     }
     
+    console.log('폼 유효성 검사 통과');
     return true;
 }
 
