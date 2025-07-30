@@ -564,10 +564,10 @@ function preventCopy() {
         e.preventDefault();
     });
     
-    // 우클릭 방지
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
+    // 우클릭 방지 (개발자 도구를 위해 주석 처리)
+    // document.addEventListener('contextmenu', function(e) {
+    //     e.preventDefault();
+    // });
     
     // 키보드 단축키 방지
     document.addEventListener('keydown', function(e) {
@@ -595,10 +595,10 @@ function preventCopy() {
         if (e.ctrlKey && e.key === 'p') {
             e.preventDefault();
         }
-        // F12 (개발자 도구)
-        if (e.key === 'F12') {
-            e.preventDefault();
-        }
+        // F12 (개발자 도구) - 개발자 도구를 위해 주석 처리
+        // if (e.key === 'F12') {
+        //     e.preventDefault();
+        // }
     });
     
     // 드래그 방지
