@@ -168,50 +168,103 @@ const defaultInquiries = [
 // 현재 문의 목록 (기본 데이터 + 새로 추가된 데이터)
 let inquiries = [...defaultInquiries];
 
-// localStorage에서 전체 데이터 불러오기 (개선된 방식)
-function loadInquiriesFromStorage() {
-    console.log('=== localStorage에서 전체 데이터 불러오기 시작 ===');
-    const savedInquiries = localStorage.getItem('allInquiries');
-    console.log('localStorage에 저장된 전체 데이터:', savedInquiries);
-    
-    if (savedInquiries) {
-        try {
-            const loadedInquiries = JSON.parse(savedInquiries);
-            console.log('localStorage에서 전체 데이터 불러옴:', loadedInquiries.length, '개');
-            console.log('불러온 데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
-            
-            // 불러온 데이터 사용
-            inquiries = loadedInquiries;
-        } catch (error) {
-            console.error('localStorage 데이터 파싱 오류:', error);
-            inquiries = [...defaultInquiries];
-        }
-    } else {
-        console.log('localStorage에 저장된 데이터 없음 - 기본 데이터 사용');
-        inquiries = [...defaultInquiries];
-    }
-    console.log('=== localStorage 데이터 불러오기 완료 ===');
-}
+// Firebase Firestore 데이터 동기화 함수들
 
-// localStorage에 전체 데이터 저장하기 (개선된 방식)
-function saveInquiriesToStorage() {
-    console.log('=== localStorage에 전체 데이터 저장 시작 ===');
-    console.log('저장할 전체 inquiries:', inquiries);
-    console.log('저장할 데이터 ID 목록:', inquiries.map(inq => inq.id));
+// Firestore에서 데이터 불러오기
+async function loadInquiriesFromFirestore() {
+    console.log('=== Firestore에서 데이터 불러오기 시작 ===');
     
     try {
-        const dataToSave = JSON.stringify(inquiries);
-        localStorage.setItem('allInquiries', dataToSave);
-        console.log('전체 데이터 저장됨:', inquiries.length, '개');
-        console.log('저장된 데이터:', dataToSave);
+        const snapshot = await db.collection('inquiries').orderBy('id', 'desc').get();
+        const firestoreInquiries = [];
         
-        // 저장 확인
-        const savedData = localStorage.getItem('allInquiries');
-        console.log('저장 확인:', savedData);
+        snapshot.forEach(doc => {
+            firestoreInquiries.push(doc.data());
+        });
+        
+        console.log('Firestore에서 불러온 데이터:', firestoreInquiries.length, '개');
+        console.log('Firestore 데이터 ID 목록:', firestoreInquiries.map(inq => inq.id));
+        
+        if (firestoreInquiries.length > 0) {
+            // Firestore에 데이터가 있으면 사용
+            inquiries = firestoreInquiries;
+            console.log('Firestore 데이터 사용');
+        } else {
+            // Firestore에 데이터가 없으면 기본 데이터 사용
+            inquiries = [...defaultInquiries];
+            console.log('기본 데이터 사용');
+        }
+        
+        // UI 업데이트
+        loadInquiries();
+        updateTotalCount();
+        
     } catch (error) {
-        console.error('localStorage 저장 오류:', error);
+        console.error('Firestore 데이터 불러오기 오류:', error);
+        // 오류 시 기본 데이터 사용
+        inquiries = [...defaultInquiries];
+        loadInquiries();
+        updateTotalCount();
     }
-    console.log('=== localStorage 데이터 저장 완료 ===');
+    
+    console.log('=== Firestore 데이터 불러오기 완료 ===');
+}
+
+// Firestore에 데이터 저장하기
+async function saveInquiriesToFirestore() {
+    console.log('=== Firestore에 데이터 저장 시작 ===');
+    console.log('저장할 데이터 개수:', inquiries.length);
+    
+    try {
+        // 기존 데이터 삭제
+        const snapshot = await db.collection('inquiries').get();
+        const batch = db.batch();
+        
+        snapshot.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        
+        // 새 데이터 추가
+        inquiries.forEach(inquiry => {
+            const docRef = db.collection('inquiries').doc();
+            batch.set(docRef, inquiry);
+        });
+        
+        await batch.commit();
+        console.log('Firestore 데이터 저장 완료');
+        
+    } catch (error) {
+        console.error('Firestore 데이터 저장 오류:', error);
+    }
+    
+    console.log('=== Firestore 데이터 저장 완료 ===');
+}
+
+// 실시간 데이터 동기화 설정
+function setupRealtimeSync() {
+    console.log('=== 실시간 동기화 설정 시작 ===');
+    
+    db.collection('inquiries')
+        .orderBy('id', 'desc')
+        .onSnapshot(snapshot => {
+            console.log('실시간 데이터 변경 감지');
+            
+            const firestoreInquiries = [];
+            snapshot.forEach(doc => {
+                firestoreInquiries.push(doc.data());
+            });
+            
+            if (firestoreInquiries.length > 0) {
+                inquiries = firestoreInquiries;
+                loadInquiries();
+                updateTotalCount();
+                console.log('실시간 데이터 업데이트 완료');
+            }
+        }, error => {
+            console.error('실시간 동기화 오류:', error);
+        });
+    
+    console.log('=== 실시간 동기화 설정 완료 ===');
 }
 
 // 새로운 ID 생성 함수
@@ -231,8 +284,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('페이지 로드됨');
     console.log('사용자 에이전트:', navigator.userAgent);
     
-    // localStorage에서 데이터 로드
-    loadInquiriesFromStorage();
+    // Firestore에서 데이터 불러오기
+    loadInquiriesFromFirestore();
+    
+    // 실시간 동기화 설정
+    setupRealtimeSync();
     
     // 저장된 데이터의 작성자 이름 수정
     fixAuthorNamesInStorage();
@@ -502,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('로그인 성공:', currentUser);
                 
                 // 목록 다시 로드 (삭제 버튼 표시)
-                loadInquiriesFromStorage(); // localStorage에서 데이터 로드
+                loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
                 loadInquiries(); // 목록 다시 렌더링
                 updateTotalCount(); // 총 개수 업데이트
                 
@@ -521,7 +577,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 문의작성 폼 이벤트 리스너
     const buyForm = document.getElementById('buyForm');
     if (buyForm) {
-        buyForm.addEventListener('submit', function(e) {
+        buyForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('문의작성 폼 제출됨');
             
@@ -586,10 +642,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('매물 등록 후 inquiries 배열:', inquiries);
             console.log('매물 등록 후 inquiries ID 목록:', inquiries.map(inq => inq.id));
             
-            // localStorage에 저장 강제 실행
-            console.log('localStorage 저장 시작...');
-            saveInquiriesToStorage(); // localStorage에 저장
-            console.log('localStorage 저장 완료');
+            // Firestore에 저장 강제 실행
+            console.log('Firestore 저장 시작...');
+            await saveInquiriesToFirestore(); // Firestore에 저장
+            console.log('Firestore 저장 완료');
             
             // 강화된 데이터 저장 및 동기화
             forceSaveAndSync();
@@ -632,7 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 console.log('추가 강제 업데이트 실행');
                 currentPage = 1;
-                loadInquiriesFromStorage();
+                loadInquiriesFromFirestore();
                 loadInquiries();
                 updateTotalCount();
             }, 300);
@@ -640,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 모바일에서 DOM 업데이트 강제 적용
             setTimeout(() => {
                 console.log('지연된 목록 업데이트 실행');
-                loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                loadInquiriesFromFirestore(); // 모바일에서도 Firestore에서 데이터 로드
                 updateTotalCount();
                 
                 // 테이블 강제 리렌더링
@@ -649,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     tbody.style.display = 'none';
                     setTimeout(() => {
                         tbody.style.display = '';
-                        loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                        loadInquiriesFromFirestore(); // 모바일에서도 Firestore에서 데이터 로드
                     }, 50);
                 }
             }, 100);
@@ -832,7 +888,7 @@ function toggleAuth() {
     }
     
     // 목록 다시 로드 (삭제 버튼 표시/숨김)
-    loadInquiriesFromStorage(); // localStorage에서 데이터 로드
+    loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
     loadInquiries(); // 목록 다시 렌더링
     updateTotalCount(); // 총 개수 업데이트
     
@@ -915,7 +971,7 @@ function deleteInquiry(inquiryId) {
     const index = inquiries.findIndex(inquiry => inquiry.id === inquiryId);
     if (index !== -1) {
         inquiries.splice(index, 1);
-        saveInquiriesToStorage(); // localStorage에 저장
+        saveInquiriesToFirestore(); // Firestore에 저장
         
         // 현재 페이지가 비어있고 이전 페이지가 있다면 이전 페이지로 이동
         const totalPages = Math.ceil(inquiries.length / itemsPerPage);
@@ -1292,9 +1348,9 @@ function syncDataAcrossDevices() {
     console.log('현재 기기 타입:', isMobile ? '모바일' : 'PC');
     console.log('사용자 에이전트:', navigator.userAgent);
     
-    // localStorage에서 데이터 강제 로드
+    // Firestore에서 데이터 강제 로드
     const savedInquiries = localStorage.getItem('allInquiries');
-    console.log('localStorage에서 읽은 데이터:', savedInquiries);
+    console.log('Firestore에서 읽은 데이터:', savedInquiries);
     
     if (savedInquiries) {
         try {
@@ -1315,7 +1371,7 @@ function syncDataAcrossDevices() {
             console.error('데이터 동기화 중 오류:', error);
         }
     } else {
-        console.log('localStorage에 데이터 없음 - 기본 데이터 사용');
+        console.log('Firestore에 데이터 없음 - 기본 데이터 사용');
         inquiries = [...defaultInquiries];
         loadInquiries();
         updateTotalCount();
@@ -1329,7 +1385,7 @@ function forceSaveAndSync() {
     console.log('=== 강제 저장 및 동기화 시작 ===');
     
     try {
-        // 현재 데이터를 localStorage에 강제 저장
+        // 현재 데이터를 Firestore에 강제 저장
         const dataToSave = JSON.stringify(inquiries);
         localStorage.setItem('allInquiries', dataToSave);
         console.log('강제 저장 완료:', inquiries.length, '개');
