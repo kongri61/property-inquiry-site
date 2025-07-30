@@ -468,6 +468,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 목록 다시 로드 (삭제 버튼 표시)
                 loadAdditionalInquiriesFromStorage(); // localStorage에서 데이터 로드
+                loadInquiries(); // 목록 다시 렌더링
+                updateTotalCount(); // 총 개수 업데이트
                 
                 // 폼 초기화
                 this.reset();
@@ -774,6 +776,8 @@ function toggleAuth() {
     
     // 목록 다시 로드 (삭제 버튼 표시/숨김)
     loadAdditionalInquiriesFromStorage(); // localStorage에서 데이터 로드
+    loadInquiries(); // 목록 다시 렌더링
+    updateTotalCount(); // 총 개수 업데이트
 }
 
 // 문의 목록 로드
