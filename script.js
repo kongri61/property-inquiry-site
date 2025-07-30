@@ -1,169 +1,190 @@
 // 사용자 정보
 let currentUser = null;
 
-// 샘플 데이터 (상세 정보 포함)
-let inquiries = [
-    {
-        id: 58,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰',
-        author: '박**',
-        date: '2025-06-11',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 남동구 구월동',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-1234-5678',
-            content: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰합니다. 위치가 좋고 교통이 편리합니다. 관심 있으신 분 연락 부탁드립니다.'
-        }
-    },
-    {
-        id: 57,
-        type: 'sell',
-        category: '건물 매매 전부 보기',
-        title: '토지와 2종 근생 사무실용도 통건물 매도 의뢰',
-        author: '김**',
-        date: '2025-06-02',
-        details: {
-            transactionType: '매매',
-            location: '경기도 성남시 분당구',
-            price: '협의',
-            propertyType: '건물 매매 전부 보기',
-            contact: '010-2345-6789',
-            content: '토지와 2종 근생 사무실용도 통건물 매도 의뢰합니다. 사무실로 사용하기 좋은 위치입니다.'
-        }
-    },
-    {
-        id: 56,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '뷰티샵',
-        author: '이**',
-        date: '2025-05-29',
-        details: {
-            transactionType: '매매',
-            location: '서울특별시 강남구',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-3456-7890',
-            content: '뷰티샵 매도 의뢰합니다. 고객층이 안정적이고 수익성이 좋습니다.'
-        }
-    },
-    {
-        id: 55,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '상가 1개호 팝니다',
-        author: '유**',
-        date: '2025-05-25',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 연수구',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-4567-8901',
-            content: '상가 1개호 팝니다. 위치가 좋고 임대 수익이 안정적입니다.'
-        }
-    },
-    {
-        id: 54,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '상가 매매 희망합니다.',
-        author: '장**',
-        date: '2025-05-20',
-        details: {
-            transactionType: '매매',
-            location: '경기도 부천시',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-5678-9012',
-            content: '상가 매매 희망합니다. 좋은 조건으로 거래하겠습니다.'
-        }
-    },
-    {
-        id: 53,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '인하대학교 근접 상가 건물 매매',
-        author: '진**',
-        date: '2025-05-15',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 미추홀구',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-6789-0123',
-            content: '인하대학교 근접 상가 건물 매매합니다. 학생들이 많이 지나다니는 위치입니다.'
-        }
-    },
-    {
-        id: 52,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '문의 남깁니다.',
-        author: '홍**',
-        date: '2025-05-10',
-        details: {
-            transactionType: '매매',
-            location: '서울특별시 마포구',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-7890-1234',
-            content: '문의 남깁니다. 상가 매매에 관심 있으신 분 연락 부탁드립니다.'
-        }
-    },
-    {
-        id: 51,
-        type: 'buy',
-        category: '상가 임대 전부 보기',
-        title: '인천시청역 근방으로 구합니다',
-        author: '박**',
-        date: '2025-05-05',
-        details: {
-            transactionType: '월세',
-            location: '인천광역시 남동구',
-            price: '협의',
-            propertyType: '상가 임대 전부 보기',
-            contact: '010-8901-2345',
-            content: '인천시청역 근방으로 상가를 구합니다. 월세로 임대 가능한 곳 연락 부탁드립니다.'
-        }
-    },
-    {
-        id: 50,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '매매 원합니다',
-        author: '김**',
-        date: '2025-05-01',
-        details: {
-            transactionType: '매매',
-            location: '경기도 안산시',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-9012-3456',
-            content: '매매 원합니다. 좋은 조건으로 거래하겠습니다.'
-        }
-    },
-    {
-        id: 49,
-        type: 'sell',
-        category: '상가 매매 전부 보기',
-        title: '상가 매매',
-        author: '이**',
-        date: '2025-04-28',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 부평구',
-            price: '협의',
-            propertyType: '상가 매매 전부 보기',
-            contact: '010-0123-4567',
-            content: '상가 매매합니다. 관심 있으신 분 연락 부탁드립니다.'
-        }
+// 샘플 데이터 (상세 정보 포함) - localStorage에서 불러오거나 기본값 사용
+let inquiries = [];
+
+// localStorage에서 데이터 불러오기
+function loadInquiriesFromStorage() {
+    const savedInquiries = localStorage.getItem('inquiries');
+    if (savedInquiries) {
+        inquiries = JSON.parse(savedInquiries);
+        console.log('localStorage에서 문의 데이터 불러옴:', inquiries.length, '개');
+    } else {
+        // 기본 샘플 데이터 설정
+        inquiries = [
+            {
+                id: 58,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰',
+                author: '박**',
+                date: '2025-06-11',
+                details: {
+                    transactionType: '매매',
+                    location: '인천광역시 남동구 구월동',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-1234-5678',
+                    content: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰합니다. 위치가 좋고 교통이 편리합니다. 관심 있으신 분 연락 부탁드립니다.'
+                }
+            },
+            {
+                id: 57,
+                type: 'sell',
+                category: '건물 매매 전부 보기',
+                title: '토지와 2종 근생 사무실용도 통건물 매도 의뢰',
+                author: '김**',
+                date: '2025-06-02',
+                details: {
+                    transactionType: '매매',
+                    location: '경기도 성남시 분당구',
+                    price: '협의',
+                    propertyType: '건물 매매 전부 보기',
+                    contact: '010-2345-6789',
+                    content: '토지와 2종 근생 사무실용도 통건물 매도 의뢰합니다. 사무실로 사용하기 좋은 위치입니다.'
+                }
+            },
+            {
+                id: 56,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '뷰티샵',
+                author: '이**',
+                date: '2025-05-29',
+                details: {
+                    transactionType: '매매',
+                    location: '서울특별시 강남구',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-3456-7890',
+                    content: '뷰티샵 매도 의뢰합니다. 고객층이 안정적이고 수익성이 좋습니다.'
+                }
+            },
+            {
+                id: 55,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '상가 1개호 팝니다',
+                author: '유**',
+                date: '2025-05-25',
+                details: {
+                    transactionType: '매매',
+                    location: '인천광역시 연수구',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-4567-8901',
+                    content: '상가 1개호 팝니다. 위치가 좋고 임대 수익이 안정적입니다.'
+                }
+            },
+            {
+                id: 54,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '상가 매매 희망합니다.',
+                author: '장**',
+                date: '2025-05-20',
+                details: {
+                    transactionType: '매매',
+                    location: '경기도 부천시',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-5678-9012',
+                    content: '상가 매매 희망합니다. 좋은 조건으로 거래하겠습니다.'
+                }
+            },
+            {
+                id: 53,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '인하대학교 근접 상가 건물 매매',
+                author: '진**',
+                date: '2025-05-15',
+                details: {
+                    transactionType: '매매',
+                    location: '인천광역시 미추홀구',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-6789-0123',
+                    content: '인하대학교 근접 상가 건물 매매합니다. 학생들이 많이 지나다니는 위치입니다.'
+                }
+            },
+            {
+                id: 52,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '문의 남깁니다.',
+                author: '홍**',
+                date: '2025-05-10',
+                details: {
+                    transactionType: '매매',
+                    location: '서울특별시 마포구',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-7890-1234',
+                    content: '문의 남깁니다. 상가 매매에 관심 있으신 분 연락 부탁드립니다.'
+                }
+            },
+            {
+                id: 51,
+                type: 'buy',
+                category: '상가 임대 전부 보기',
+                title: '인천시청역 근방으로 구합니다',
+                author: '박**',
+                date: '2025-05-05',
+                details: {
+                    transactionType: '월세',
+                    location: '인천광역시 남동구',
+                    price: '협의',
+                    propertyType: '상가 임대 전부 보기',
+                    contact: '010-8901-2345',
+                    content: '인천시청역 근방으로 상가를 구합니다. 월세로 임대 가능한 곳 연락 부탁드립니다.'
+                }
+            },
+            {
+                id: 50,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '매매 원합니다',
+                author: '김**',
+                date: '2025-05-01',
+                details: {
+                    transactionType: '매매',
+                    location: '경기도 안산시',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-9012-3456',
+                    content: '매매 원합니다. 좋은 조건으로 거래하겠습니다.'
+                }
+            },
+            {
+                id: 49,
+                type: 'sell',
+                category: '상가 매매 전부 보기',
+                title: '상가 매매',
+                author: '이**',
+                date: '2025-04-28',
+                details: {
+                    transactionType: '매매',
+                    location: '인천광역시 부평구',
+                    price: '협의',
+                    propertyType: '상가 매매 전부 보기',
+                    contact: '010-0123-4567',
+                    content: '상가 매매합니다. 관심 있으신 분 연락 부탁드립니다.'
+                }
+            }
+        ];
+        // 기본 데이터를 localStorage에 저장
+        saveInquiriesToStorage();
+        console.log('기본 샘플 데이터 설정됨:', inquiries.length, '개');
     }
-];
+}
+
+// localStorage에 데이터 저장하기
+function saveInquiriesToStorage() {
+    localStorage.setItem('inquiries', JSON.stringify(inquiries));
+    console.log('localStorage에 문의 데이터 저장됨:', inquiries.length, '개');
+}
 
 let currentPage = 1;
 const itemsPerPage = 10; 
@@ -172,6 +193,9 @@ const itemsPerPage = 10;
 document.addEventListener('DOMContentLoaded', function() {
     console.log('페이지 로드됨');
     console.log('사용자 에이전트:', navigator.userAgent);
+    
+    // localStorage에서 데이터 로드
+    loadInquiriesFromStorage();
     
     // 로그인 상태 확인
     checkLoginStatus();
@@ -423,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('로그인 성공:', currentUser);
                 
                 // 목록 다시 로드 (삭제 버튼 표시)
-                loadInquiries();
+                loadInquiriesFromStorage(); // localStorage에서 데이터 로드
                 
                 // 폼 초기화
                 this.reset();
@@ -499,6 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('새 문의 객체:', newInquiry);
             
             inquiries.unshift(newInquiry);
+            saveInquiriesToStorage(); // localStorage에 저장
             console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
             
             // 성공 메시지
@@ -528,8 +553,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // 모바일에서 DOM 업데이트 강제 적용
             setTimeout(() => {
                 console.log('지연된 목록 업데이트 실행');
-                loadInquiries();
+                loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                 updateTotalCount();
+                
+                // 테이블 강제 리렌더링
+                const tbody = document.getElementById('inquiryList');
+                if (tbody) {
+                    tbody.style.display = 'none';
+                    setTimeout(() => {
+                        tbody.style.display = '';
+                        loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                    }, 50);
+                }
             }, 100);
             
             // 모바일 브라우저 캐시 무효화를 위한 강제 새로고침 (선택적)
@@ -538,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 모바일에서만 실행되는 추가 업데이트
                 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                     console.log('모바일 기기 감지됨 - 강제 업데이트 실행');
-                    loadInquiries();
+                    loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                     updateTotalCount();
                     
                     // 테이블 강제 리렌더링
@@ -547,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         tbody.style.display = 'none';
                         setTimeout(() => {
                             tbody.style.display = '';
-                            loadInquiries();
+                            loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                         }, 50);
                     }
                 }
@@ -718,7 +753,7 @@ function toggleAuth() {
     }
     
     // 목록 다시 로드 (삭제 버튼 표시/숨김)
-    loadInquiries();
+    loadInquiriesFromStorage(); // localStorage에서 데이터 로드
 }
 
 // 문의 목록 로드
@@ -780,6 +815,7 @@ function deleteInquiry(inquiryId) {
     const index = inquiries.findIndex(inquiry => inquiry.id === inquiryId);
     if (index !== -1) {
         inquiries.splice(index, 1);
+        saveInquiriesToStorage(); // localStorage에 저장
         
         // 현재 페이지가 비어있고 이전 페이지가 있다면 이전 페이지로 이동
         const totalPages = Math.ceil(inquiries.length / itemsPerPage);
