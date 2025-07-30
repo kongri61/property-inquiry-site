@@ -1,14 +1,12 @@
 // Firebase 설정
-// ⚠️ 실제 Firebase 프로젝트 설정으로 교체해야 합니다!
-// Firebase Console → 프로젝트 설정 → 웹 앱 → SDK 설정 및 구성에서 복사
-
 const firebaseConfig = {
-    apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // 실제 API 키로 교체
-    authDomain: "property-inquiry-site.firebaseapp.com", // 실제 도메인으로 교체
-    projectId: "property-inquiry-site", // 실제 프로젝트 ID로 교체
-    storageBucket: "property-inquiry-site.appspot.com", // 실제 스토리지 버킷으로 교체
-    messagingSenderId: "123456789012", // 실제 메시징 ID로 교체
-    appId: "1:123456789012:web:abcdefghijklmnop" // 실제 앱 ID로 교체
+    apiKey: "AIzaSyAKWH86caO8oltDaQomsUMT0kX0PqTb_uQ",
+    authDomain: "property-inquiry-site.firebaseapp.com",
+    projectId: "property-inquiry-site",
+    storageBucket: "property-inquiry-site.firebasestorage.app",
+    messagingSenderId: "379557316701",
+    appId: "1:379557316701:web:6e67d6d0adc84d10bfe5b4",
+    measurementId: "G-WPHLXTG1NF"
 };
 
 // Firebase 초기화
