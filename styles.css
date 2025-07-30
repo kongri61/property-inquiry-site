@@ -3,10 +3,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    -webkit-user-select: none;
+    /* 개발자 도구를 위해 user-select 제거 */
+    /* -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none;
+    user-select: none; */
 }
 
 body {
@@ -14,10 +15,11 @@ body {
     background-color: #f5f5f5;
     color: #333;
     line-height: 1.6;
-    -webkit-user-select: none;
+    /* 개발자 도구를 위해 user-select 제거 */
+    /* -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none;
+    user-select: none; */
 }
 
 .container {

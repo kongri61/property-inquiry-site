@@ -557,17 +557,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }); 
 
-// 복사 방지 기능
+// 복사 방지 기능 (개발자 도구를 위해 일시적으로 비활성화)
 function preventCopy() {
+    console.log('복사 방지 기능 비활성화됨 - 개발자 도구 사용 가능');
+    
+    // 모든 복사 방지 기능을 주석 처리
+    /*
     // 텍스트 선택 방지
     document.addEventListener('selectstart', function(e) {
         e.preventDefault();
     });
     
-    // 우클릭 방지 (개발자 도구를 위해 주석 처리)
-    // document.addEventListener('contextmenu', function(e) {
-    //     e.preventDefault();
-    // });
+    // 우클릭 방지
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
     
     // 키보드 단축키 방지
     document.addEventListener('keydown', function(e) {
@@ -595,16 +599,17 @@ function preventCopy() {
         if (e.ctrlKey && e.key === 'p') {
             e.preventDefault();
         }
-        // F12 (개발자 도구) - 개발자 도구를 위해 주석 처리
-        // if (e.key === 'F12') {
-        //     e.preventDefault();
-        // }
+        // F12 (개발자 도구)
+        if (e.key === 'F12') {
+            e.preventDefault();
+        }
     });
     
     // 드래그 방지
     document.addEventListener('dragstart', function(e) {
         e.preventDefault();
     });
+    */
 }
 
 // 로그인 상태 확인
