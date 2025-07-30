@@ -170,7 +170,7 @@ let inquiries = [...defaultInquiries];
 
 // localStorage에서 추가된 데이터만 불러오기
 function loadAdditionalInquiriesFromStorage() {
-    console.log('추가된 문의 데이터 불러오기 시작');
+    console.log('=== localStorage에서 추가된 데이터 불러오기 시작 ===');
     const savedAdditionalInquiries = localStorage.getItem('additionalInquiries');
     console.log('localStorage에 저장된 추가 데이터:', savedAdditionalInquiries);
     
@@ -178,10 +178,12 @@ function loadAdditionalInquiriesFromStorage() {
         try {
             const additionalInquiries = JSON.parse(savedAdditionalInquiries);
             console.log('추가된 문의 데이터 불러옴:', additionalInquiries.length, '개');
+            console.log('추가된 데이터 상세:', additionalInquiries);
             
             // 기본 데이터 + 추가 데이터 합치기
             inquiries = [...defaultInquiries, ...additionalInquiries];
             console.log('전체 문의 데이터:', inquiries.length, '개');
+            console.log('전체 데이터 ID 목록:', inquiries.map(inq => inq.id));
         } catch (error) {
             console.error('추가 데이터 파싱 오류:', error);
             inquiries = [...defaultInquiries];
@@ -190,13 +192,21 @@ function loadAdditionalInquiriesFromStorage() {
         console.log('추가된 데이터 없음 - 기본 데이터만 사용');
         inquiries = [...defaultInquiries];
     }
+    console.log('=== localStorage 데이터 불러오기 완료 ===');
 }
 
 // localStorage에 추가된 데이터만 저장하기
 function saveAdditionalInquiriesToStorage() {
+    console.log('=== localStorage에 추가된 데이터 저장 시작 ===');
+    console.log('현재 전체 inquiries:', inquiries);
+    console.log('현재 inquiries ID 목록:', inquiries.map(inq => inq.id));
+    
     try {
         // 기본 데이터를 제외한 추가된 데이터만 추출 (ID가 58보다 큰 것들)
         const additionalInquiries = inquiries.filter(inquiry => inquiry.id > 58);
+        console.log('추출된 추가 데이터:', additionalInquiries);
+        console.log('추출된 추가 데이터 ID 목록:', additionalInquiries.map(inq => inq.id));
+        
         const dataToSave = JSON.stringify(additionalInquiries);
         localStorage.setItem('additionalInquiries', dataToSave);
         console.log('추가된 문의 데이터 저장됨:', additionalInquiries.length, '개');
@@ -208,13 +218,16 @@ function saveAdditionalInquiriesToStorage() {
     } catch (error) {
         console.error('추가 데이터 저장 오류:', error);
     }
+    console.log('=== localStorage 데이터 저장 완료 ===');
 }
 
 // 새로운 ID 생성 함수
 function generateNewId() {
     // 현재 inquiries 배열에서 가장 큰 ID 찾기
     const maxId = Math.max(...inquiries.map(inquiry => inquiry.id));
-    return maxId + 1;
+    const newId = maxId + 1;
+    console.log('새 ID 생성 - 현재 최대 ID:', maxId, '새 ID:', newId);
+    return newId;
 }
 
 let currentPage = 1;
