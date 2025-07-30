@@ -234,6 +234,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // localStorage에서 데이터 로드
     loadInquiriesFromStorage();
     
+    // 저장된 데이터의 작성자 이름 수정
+    fixAuthorNamesInStorage();
+    
     // 로그인 상태 확인
     checkLoginStatus();
     loadInquiries();
@@ -604,6 +607,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTotalCount();
             }, 100);
             
+            // 추가 강제 업데이트 (더 확실하게)
+            setTimeout(() => {
+                console.log('추가 강제 업데이트 실행');
+                currentPage = 1;
+                loadInquiriesFromStorage();
+                loadInquiries();
+                updateTotalCount();
+            }, 300);
+            
             // 모바일에서 DOM 업데이트 강제 적용
             setTimeout(() => {
                 console.log('지연된 목록 업데이트 실행');
@@ -848,14 +860,16 @@ function loadInquiries() {
         const row = document.createElement('tr');
         const deleteButton = currentUser ? `<button class="delete-btn" onclick="deleteInquiry(${inquiry.id})">삭제</button>` : '';
         
-        // 작성자 이름 처리 - 첫 글자만 표시
+        // 작성자 이름 처리 - 첫 글자만 표시 (강화된 버전)
         let authorDisplay = inquiry.author;
-        if (inquiry.author && inquiry.author.includes('**')) {
-            // 이미 **가 포함된 경우 (기존 데이터)
-            authorDisplay = inquiry.author;
-        } else if (inquiry.author) {
-            // 새로 등록된 데이터의 경우 첫 글자만 표시
-            authorDisplay = inquiry.author.charAt(0) + '**';
+        if (inquiry.author) {
+            // 모든 경우에 첫 글자만 표시
+            const firstName = inquiry.author.split('**')[0]; // ** 이전 부분만 추출
+            if (firstName.length > 0) {
+                authorDisplay = firstName.charAt(0) + '**';
+            } else {
+                authorDisplay = inquiry.author.charAt(0) + '**';
+            }
         }
         
         row.innerHTML = `
@@ -1220,3 +1234,35 @@ window.addEventListener('click', function(e) {
         closeDetailModal();
     }
 }); 
+
+// localStorage에 저장된 데이터의 작성자 이름을 강제로 수정하는 함수
+function fixAuthorNamesInStorage() {
+    console.log('저장된 데이터의 작성자 이름 수정 시작');
+    const savedInquiries = localStorage.getItem('allInquiries');
+    
+    if (savedInquiries) {
+        try {
+            const loadedInquiries = JSON.parse(savedInquiries);
+            let modified = false;
+            
+            loadedInquiries.forEach(inquiry => {
+                if (inquiry.author && inquiry.author.includes('**')) {
+                    // ** 이전 부분만 추출하여 첫 글자만 표시
+                    const firstName = inquiry.author.split('**')[0];
+                    if (firstName.length > 1) {
+                        inquiry.author = firstName.charAt(0) + '**';
+                        modified = true;
+                        console.log('작성자 이름 수정:', firstName, '→', inquiry.author);
+                    }
+                }
+            });
+            
+            if (modified) {
+                localStorage.setItem('allInquiries', JSON.stringify(loadedInquiries));
+                console.log('작성자 이름 수정 완료');
+            }
+        } catch (error) {
+            console.error('작성자 이름 수정 중 오류:', error);
+        }
+    }
+}
