@@ -168,55 +168,48 @@ const defaultInquiries = [
 // 현재 문의 목록 (기본 데이터 + 새로 추가된 데이터)
 let inquiries = [...defaultInquiries];
 
-// localStorage에서 추가된 데이터만 불러오기
-function loadAdditionalInquiriesFromStorage() {
-    console.log('=== localStorage에서 추가된 데이터 불러오기 시작 ===');
-    const savedAdditionalInquiries = localStorage.getItem('additionalInquiries');
-    console.log('localStorage에 저장된 추가 데이터:', savedAdditionalInquiries);
+// localStorage에서 전체 데이터 불러오기 (개선된 방식)
+function loadInquiriesFromStorage() {
+    console.log('=== localStorage에서 전체 데이터 불러오기 시작 ===');
+    const savedInquiries = localStorage.getItem('allInquiries');
+    console.log('localStorage에 저장된 전체 데이터:', savedInquiries);
     
-    if (savedAdditionalInquiries) {
+    if (savedInquiries) {
         try {
-            const additionalInquiries = JSON.parse(savedAdditionalInquiries);
-            console.log('추가된 문의 데이터 불러옴:', additionalInquiries.length, '개');
-            console.log('추가된 데이터 상세:', additionalInquiries);
+            const loadedInquiries = JSON.parse(savedInquiries);
+            console.log('localStorage에서 전체 데이터 불러옴:', loadedInquiries.length, '개');
+            console.log('불러온 데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
             
-            // 기본 데이터 + 추가 데이터 합치기
-            inquiries = [...defaultInquiries, ...additionalInquiries];
-            console.log('전체 문의 데이터:', inquiries.length, '개');
-            console.log('전체 데이터 ID 목록:', inquiries.map(inq => inq.id));
+            // 불러온 데이터 사용
+            inquiries = loadedInquiries;
         } catch (error) {
-            console.error('추가 데이터 파싱 오류:', error);
+            console.error('localStorage 데이터 파싱 오류:', error);
             inquiries = [...defaultInquiries];
         }
     } else {
-        console.log('추가된 데이터 없음 - 기본 데이터만 사용');
+        console.log('localStorage에 저장된 데이터 없음 - 기본 데이터 사용');
         inquiries = [...defaultInquiries];
     }
     console.log('=== localStorage 데이터 불러오기 완료 ===');
 }
 
-// localStorage에 추가된 데이터만 저장하기
-function saveAdditionalInquiriesToStorage() {
-    console.log('=== localStorage에 추가된 데이터 저장 시작 ===');
-    console.log('현재 전체 inquiries:', inquiries);
-    console.log('현재 inquiries ID 목록:', inquiries.map(inq => inq.id));
+// localStorage에 전체 데이터 저장하기 (개선된 방식)
+function saveInquiriesToStorage() {
+    console.log('=== localStorage에 전체 데이터 저장 시작 ===');
+    console.log('저장할 전체 inquiries:', inquiries);
+    console.log('저장할 데이터 ID 목록:', inquiries.map(inq => inq.id));
     
     try {
-        // 기본 데이터를 제외한 추가된 데이터만 추출 (ID가 58보다 큰 것들)
-        const additionalInquiries = inquiries.filter(inquiry => inquiry.id > 58);
-        console.log('추출된 추가 데이터:', additionalInquiries);
-        console.log('추출된 추가 데이터 ID 목록:', additionalInquiries.map(inq => inq.id));
-        
-        const dataToSave = JSON.stringify(additionalInquiries);
-        localStorage.setItem('additionalInquiries', dataToSave);
-        console.log('추가된 문의 데이터 저장됨:', additionalInquiries.length, '개');
-        console.log('저장된 추가 데이터:', dataToSave);
+        const dataToSave = JSON.stringify(inquiries);
+        localStorage.setItem('allInquiries', dataToSave);
+        console.log('전체 데이터 저장됨:', inquiries.length, '개');
+        console.log('저장된 데이터:', dataToSave);
         
         // 저장 확인
-        const savedData = localStorage.getItem('additionalInquiries');
+        const savedData = localStorage.getItem('allInquiries');
         console.log('저장 확인:', savedData);
     } catch (error) {
-        console.error('추가 데이터 저장 오류:', error);
+        console.error('localStorage 저장 오류:', error);
     }
     console.log('=== localStorage 데이터 저장 완료 ===');
 }
@@ -239,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('사용자 에이전트:', navigator.userAgent);
     
     // localStorage에서 데이터 로드
-    loadAdditionalInquiriesFromStorage();
+    loadInquiriesFromStorage();
     
     // 로그인 상태 확인
     checkLoginStatus();
@@ -491,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('로그인 성공:', currentUser);
                 
                 // 목록 다시 로드 (삭제 버튼 표시)
-                loadAdditionalInquiriesFromStorage(); // localStorage에서 데이터 로드
+                loadInquiriesFromStorage(); // localStorage에서 데이터 로드
                 loadInquiries(); // 목록 다시 렌더링
                 updateTotalCount(); // 총 개수 업데이트
                 
@@ -574,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // localStorage에 저장 강제 실행
             console.log('localStorage 저장 시작...');
-            saveAdditionalInquiriesToStorage(); // localStorage에 저장
+            saveInquiriesToStorage(); // localStorage에 저장
             console.log('localStorage 저장 완료');
             
             console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
@@ -606,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 모바일에서 DOM 업데이트 강제 적용
             setTimeout(() => {
                 console.log('지연된 목록 업데이트 실행');
-                loadAdditionalInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                 updateTotalCount();
                 
                 // 테이블 강제 리렌더링
@@ -615,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     tbody.style.display = 'none';
                     setTimeout(() => {
                         tbody.style.display = '';
-                        loadAdditionalInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                        loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                     }, 50);
                 }
             }, 100);
@@ -626,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 모바일에서만 실행되는 추가 업데이트
                 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                     console.log('모바일 기기 감지됨 - 강제 업데이트 실행');
-                    loadAdditionalInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                    loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                     updateTotalCount();
                     
                     // 테이블 강제 리렌더링
@@ -635,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         tbody.style.display = 'none';
                         setTimeout(() => {
                             tbody.style.display = '';
-                            loadAdditionalInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
+                            loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
                         }, 50);
                     }
                 }
@@ -806,7 +799,7 @@ function toggleAuth() {
     }
     
     // 목록 다시 로드 (삭제 버튼 표시/숨김)
-    loadAdditionalInquiriesFromStorage(); // localStorage에서 데이터 로드
+    loadInquiriesFromStorage(); // localStorage에서 데이터 로드
     loadInquiries(); // 목록 다시 렌더링
     updateTotalCount(); // 총 개수 업데이트
 }
@@ -817,11 +810,15 @@ function loadInquiries() {
     console.log('전체 문의 개수:', inquiries.length);
     console.log('현재 페이지:', currentPage);
     
+    // 새로 등록한 매물이 맨 위에 오도록 정렬 (ID 내림차순)
+    const sortedInquiries = [...inquiries].sort((a, b) => b.id - a.id);
+    console.log('정렬된 문의 데이터 ID 목록:', sortedInquiries.map(inq => inq.id));
+    
     const tbody = document.getElementById('inquiryList');
     const deleteHeader = document.getElementById('deleteHeader');
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const pageInquiries = inquiries.slice(startIndex, endIndex);
+    const pageInquiries = sortedInquiries.slice(startIndex, endIndex);
     
     console.log('페이지 범위:', startIndex, '~', endIndex);
     console.log('현재 페이지 문의 개수:', pageInquiries.length);
@@ -870,7 +867,7 @@ function deleteInquiry(inquiryId) {
     const index = inquiries.findIndex(inquiry => inquiry.id === inquiryId);
     if (index !== -1) {
         inquiries.splice(index, 1);
-        saveAdditionalInquiriesToStorage(); // localStorage에 저장
+        saveInquiriesToStorage(); // localStorage에 저장
         
         // 현재 페이지가 비어있고 이전 페이지가 있다면 이전 페이지로 이동
         const totalPages = Math.ceil(inquiries.length / itemsPerPage);
