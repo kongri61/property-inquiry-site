@@ -747,76 +747,261 @@ body {
     }
     
     .header {
-        padding: 20px;
+        padding: 15px;
+        margin-bottom: 15px;
     }
     
     .header-top {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
         text-align: center;
     }
     
     .company-info {
-        flex-direction: column;
-        gap: 0;
+        flex-direction: row;
+        gap: 5px;
         align-items: center;
+        justify-content: center;
     }
     
     .company-name {
-        margin-left: 0;
-        margin-top: -11px;
+        margin-left: -8px;
+        margin-top: 0;
     }
     
     .logo-image {
-        width: 80px;
-        height: 45px;
+        width: 60px;
+        height: 34px;
     }
     
     .company-title {
-        font-size: 16px;
+        font-size: 14px;
     }
     
     .company-subtitle {
-        font-size: 11px;
+        font-size: 10px;
     }
     
     .main-title {
-        font-size: 24px;
+        font-size: 20px;
         order: -1;
+        margin: 10px 0;
     }
     
     .header-info {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
     }
     
-    .location-inputs {
-        grid-template-columns: 1fr;
+    .total-count {
+        font-size: 14px;
     }
     
-    .property-buttons {
-        grid-template-columns: 1fr;
+    .auth-btn,
+    .write-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+        min-width: 60px;
     }
     
-    .form-buttons {
-        flex-direction: column;
+    .list-page {
+        padding: 15px;
     }
     
     .inquiry-table {
-        font-size: 14px;
+        font-size: 12px;
     }
     
     .inquiry-table th,
     .inquiry-table td {
-        padding: 10px 5px;
+        padding: 8px 4px;
+    }
+    
+    .inquiry-table th:nth-child(1),
+    .inquiry-table td:nth-child(1) {
+        width: 40px;
+    }
+    
+    .inquiry-table th:nth-child(2),
+    .inquiry-table td:nth-child(2) {
+        width: 50px;
+    }
+    
+    .inquiry-table th:nth-child(3),
+    .inquiry-table td:nth-child(3) {
+        width: 60px;
+    }
+    
+    .inquiry-table th:nth-child(4),
+    .inquiry-table td:nth-child(4) {
+        width: auto;
+    }
+    
+    .inquiry-table th:nth-child(5),
+    .inquiry-table td:nth-child(5) {
+        width: 50px;
+    }
+    
+    .inquiry-table th:nth-child(6),
+    .inquiry-table td:nth-child(6) {
+        width: 60px;
+    }
+    
+    .tag {
+        padding: 2px 6px;
+        font-size: 10px;
+    }
+    
+    .pagination {
+        gap: 3px;
+        margin-top: 20px;
+    }
+    
+    .page-btn {
+        padding: 6px 8px;
+        font-size: 12px;
     }
     
     .modal-content {
         width: 95%;
-        margin: 20px;
+        margin: 10px;
+        max-height: 95vh;
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .modal-header h2 {
+        font-size: 18px;
     }
     
     .modal-body {
         padding: 20px;
+    }
+    
+    .tab-buttons {
+        margin-bottom: 20px;
+    }
+    
+    .tab-btn {
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        font-size: 14px;
+    }
+    
+    .radio-group {
+        gap: 8px;
+    }
+    
+    .radio-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .location-inputs {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .location-select,
+    .address-input {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .property-buttons {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .property-btn {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .name-input,
+    .contact-input,
+    .title-input,
+    .price-input {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .content-textarea {
+        min-height: 100px;
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .file-input-container {
+        gap: 8px;
+    }
+    
+    .file-input {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .file-btn,
+    .file-delete-btn {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+    
+    .privacy-section {
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .privacy-section h3 {
+        font-size: 16px;
+    }
+    
+    .privacy-section h4 {
+        font-size: 14px;
+    }
+    
+    .privacy-section p {
+        font-size: 13px;
+    }
+    
+    .privacy-section li {
+        font-size: 13px;
+    }
+    
+    .privacy-content {
+        max-height: 200px;
+        padding: 12px;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .cancel-btn,
+    .submit-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+    
+    .login-form {
+        max-width: 100%;
+    }
+    
+    .login-form input {
+        padding: 10px;
+        font-size: 13px;
     }
 } 
