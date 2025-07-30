@@ -237,6 +237,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 저장된 데이터의 작성자 이름 수정
     fixAuthorNamesInStorage();
     
+    // 강화된 데이터 동기화 실행
+    syncDataAcrossDevices();
+    
     // 로그인 상태 확인
     checkLoginStatus();
     loadInquiries();
@@ -253,6 +256,18 @@ document.addEventListener('DOMContentLoaded', function() {
             loadInquiries();
             updateTotalCount();
         }, 200);
+        
+        // 모바일에서 추가 강화된 동기화
+        setTimeout(() => {
+            console.log('모바일 강화된 동기화 실행');
+            syncDataAcrossDevices();
+        }, 500);
+        
+        // 모바일에서 최종 동기화
+        setTimeout(() => {
+            console.log('모바일 최종 동기화 실행');
+            forceSaveAndSync();
+        }, 1000);
     }
     
     // 매물종류 버튼 클릭 이벤트
@@ -491,6 +506,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadInquiries(); // 목록 다시 렌더링
                 updateTotalCount(); // 총 개수 업데이트
                 
+                // 강화된 데이터 동기화
+                syncDataAcrossDevices();
+                
                 // 폼 초기화
                 this.reset();
             } else {
@@ -573,6 +591,9 @@ document.addEventListener('DOMContentLoaded', function() {
             saveInquiriesToStorage(); // localStorage에 저장
             console.log('localStorage 저장 완료');
             
+            // 강화된 데이터 저장 및 동기화
+            forceSaveAndSync();
+            
             console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
             
             // 성공 메시지
@@ -633,26 +654,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }, 100);
             
-            // 모바일 브라우저 캐시 무효화를 위한 강제 새로고침 (선택적)
-            setTimeout(() => {
-                console.log('모바일 캐시 무효화를 위한 추가 업데이트');
-                // 모바일에서만 실행되는 추가 업데이트
-                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                    console.log('모바일 기기 감지됨 - 강제 업데이트 실행');
-                    loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
-                    updateTotalCount();
-                    
-                    // 테이블 강제 리렌더링
-                    const tbody = document.getElementById('inquiryList');
-                    if (tbody) {
-                        tbody.style.display = 'none';
-                        setTimeout(() => {
-                            tbody.style.display = '';
-                            loadInquiriesFromStorage(); // 모바일에서도 localStorage에서 데이터 로드
-                        }, 50);
-                    }
-                }
-            }, 500);
+            // 모바일에서 강화된 동기화
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                setTimeout(() => {
+                    console.log('모바일 매물 등록 후 강화된 동기화');
+                    syncDataAcrossDevices();
+                }, 200);
+                
+                setTimeout(() => {
+                    console.log('모바일 매물 등록 후 최종 동기화');
+                    forceSaveAndSync();
+                }, 500);
+            }
             
             // 폼 초기화
             resetForm();
@@ -822,6 +835,9 @@ function toggleAuth() {
     loadInquiriesFromStorage(); // localStorage에서 데이터 로드
     loadInquiries(); // 목록 다시 렌더링
     updateTotalCount(); // 총 개수 업데이트
+    
+    // 강화된 데이터 동기화
+    syncDataAcrossDevices();
 }
 
 // 문의 목록 로드
@@ -1265,4 +1281,69 @@ function fixAuthorNamesInStorage() {
             console.error('작성자 이름 수정 중 오류:', error);
         }
     }
+}
+
+// 모바일과 PC 간의 데이터 동기화 강화 함수
+function syncDataAcrossDevices() {
+    console.log('=== 기기 간 데이터 동기화 시작 ===');
+    
+    // 현재 기기 정보 로깅
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log('현재 기기 타입:', isMobile ? '모바일' : 'PC');
+    console.log('사용자 에이전트:', navigator.userAgent);
+    
+    // localStorage에서 데이터 강제 로드
+    const savedInquiries = localStorage.getItem('allInquiries');
+    console.log('localStorage에서 읽은 데이터:', savedInquiries);
+    
+    if (savedInquiries) {
+        try {
+            const loadedInquiries = JSON.parse(savedInquiries);
+            console.log('파싱된 데이터 개수:', loadedInquiries.length);
+            console.log('데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
+            
+            // 데이터 업데이트
+            inquiries = loadedInquiries;
+            
+            // UI 강제 업데이트
+            currentPage = 1;
+            loadInquiries();
+            updateTotalCount();
+            
+            console.log('데이터 동기화 완료');
+        } catch (error) {
+            console.error('데이터 동기화 중 오류:', error);
+        }
+    } else {
+        console.log('localStorage에 데이터 없음 - 기본 데이터 사용');
+        inquiries = [...defaultInquiries];
+        loadInquiries();
+        updateTotalCount();
+    }
+    
+    console.log('=== 기기 간 데이터 동기화 완료 ===');
+}
+
+// 강제 데이터 저장 및 동기화
+function forceSaveAndSync() {
+    console.log('=== 강제 저장 및 동기화 시작 ===');
+    
+    try {
+        // 현재 데이터를 localStorage에 강제 저장
+        const dataToSave = JSON.stringify(inquiries);
+        localStorage.setItem('allInquiries', dataToSave);
+        console.log('강제 저장 완료:', inquiries.length, '개');
+        
+        // 저장 확인
+        const savedData = localStorage.getItem('allInquiries');
+        console.log('저장 확인:', savedData ? '성공' : '실패');
+        
+        // 즉시 동기화
+        syncDataAcrossDevices();
+        
+    } catch (error) {
+        console.error('강제 저장 중 오류:', error);
+    }
+    
+    console.log('=== 강제 저장 및 동기화 완료 ===');
 }
