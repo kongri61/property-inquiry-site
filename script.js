@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 type: inquiryData.type,
                 category: inquiryData.propertyType,
                 title: inquiryData.title,
-                author: inquiryData.name + '**',
+                author: inquiryData.name.charAt(0) + '**',
                 date: inquiryData.date,
                 details: {
                     transactionType: inquiryData.transactionType,
