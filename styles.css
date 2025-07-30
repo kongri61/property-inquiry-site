@@ -197,7 +197,7 @@ body {
 .inquiry-table th:nth-child(4),
 .inquiry-table td:nth-child(4) {
     width: auto;
-    min-width: 200px;
+    min-width: 120px;
 }
 
 /* 태그 스타일 */
@@ -860,17 +860,21 @@ body {
     .inquiry-table th:nth-child(4),
     .inquiry-table td:nth-child(4) {
         width: auto;
-        min-width: 200px;
+        min-width: 120px;
     }
     
     .inquiry-table th:nth-child(5),
     .inquiry-table td:nth-child(5) {
-        width: 50px;
+        width: 60px;
+        min-width: 60px;
+        white-space: nowrap;
     }
     
     .inquiry-table th:nth-child(6),
     .inquiry-table td:nth-child(6) {
-        width: 60px;
+        width: 70px;
+        min-width: 70px;
+        white-space: nowrap;
     }
     
     .tag {
