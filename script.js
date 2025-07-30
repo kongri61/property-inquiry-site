@@ -538,12 +538,19 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('입력된 아이디:', loginId);
             console.log('입력된 비밀번호:', loginPassword);
+            console.log('기기 타입:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? '모바일' : 'PC');
             
-            // 로그인 검증
-            if (loginId === 'kongri61' && loginPassword === 'rlaehdghk61@') {
+            // 로그인 검증 (공백 제거 후 비교)
+            const trimmedId = loginId.trim();
+            const trimmedPassword = loginPassword.trim();
+            
+            console.log('공백 제거된 아이디:', trimmedId);
+            console.log('공백 제거된 비밀번호:', trimmedPassword);
+            
+            if (trimmedId === 'kongri61' && trimmedPassword === 'rlaehdghk61@') {
                 
                 currentUser = {
-                    id: loginId,
+                    id: trimmedId,
                     name: '사용자',
                     role: 'user'
                 };
@@ -565,11 +572,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 강화된 데이터 동기화
                 syncDataAcrossDevices();
                 
+                // 모바일에서 추가 처리
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    console.log('모바일 로그인 후 추가 처리');
+                    setTimeout(() => {
+                        loadInquiries();
+                        updateTotalCount();
+                        console.log('모바일 로그인 후 지연 업데이트 완료');
+                    }, 500);
+                }
+                
                 // 폼 초기화
                 this.reset();
+                
+                // 성공 메시지
+                alert('로그인 성공!');
+                
             } else {
-                alert('아이디 또는 비밀번호가 올바르지 않습니다.');
-                console.log('로그인 실패');
+                console.log('로그인 실패 - 입력값 불일치');
+                console.log('기대값 - ID: kongri61, PW: rlaehdghk61@');
+                console.log('실제값 - ID:', trimmedId, 'PW:', trimmedPassword);
+                alert('아이디 또는 비밀번호가 올바르지 않습니다.\n\n아이디: kongri61\n비밀번호: rlaehdghk61@');
             }
         });
     }
@@ -855,10 +878,24 @@ function updateAuthButton() {
 
 // 로그인 모달 표시
 function showLoginModal() {
-    console.log('로그인 모달 표시');
+    console.log('로그인 모달 표시 함수 호출');
     const loginModal = document.getElementById('loginModal');
     if (loginModal) {
         loginModal.style.display = 'flex';
+        console.log('로그인 모달 표시됨');
+        
+        // 모바일에서 추가 처리
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            console.log('모바일 로그인 모달 추가 처리');
+            // 모바일에서 입력 필드 포커스
+            setTimeout(() => {
+                const loginIdInput = document.getElementById('loginId');
+                if (loginIdInput) {
+                    loginIdInput.focus();
+                    console.log('모바일 로그인 ID 필드 포커스');
+                }
+            }, 200);
+        }
     } else {
         console.log('로그인 모달을 찾을 수 없음');
     }
@@ -876,24 +913,40 @@ function closeLoginModal() {
 // 인증 토글 (로그인/로그아웃)
 function toggleAuth() {
     console.log('toggleAuth 호출됨, currentUser:', currentUser);
+    console.log('기기 타입:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? '모바일' : 'PC');
+    
     if (currentUser) {
         // 로그아웃
         currentUser = null;
         localStorage.removeItem('currentUser');
         updateAuthButton();
         console.log('로그아웃 완료');
+        
+        // 로그아웃 후 목록 업데이트
+        loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
+        loadInquiries(); // 목록 다시 렌더링
+        updateTotalCount(); // 총 개수 업데이트
+        
+        // 강화된 데이터 동기화
+        syncDataAcrossDevices();
+        
     } else {
         // 로그인 모달 표시
+        console.log('로그인 모달 표시 시도');
         showLoginModal();
+        
+        // 모바일에서 추가 처리
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            console.log('모바일 로그인 모달 표시 후 추가 처리');
+            setTimeout(() => {
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal && loginModal.style.display !== 'flex') {
+                    console.log('모바일에서 로그인 모달 강제 표시');
+                    loginModal.style.display = 'flex';
+                }
+            }, 100);
+        }
     }
-    
-    // 목록 다시 로드 (삭제 버튼 표시/숨김)
-    loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
-    loadInquiries(); // 목록 다시 렌더링
-    updateTotalCount(); // 총 개수 업데이트
-    
-    // 강화된 데이터 동기화
-    syncDataAcrossDevices();
 }
 
 // 문의 목록 로드
