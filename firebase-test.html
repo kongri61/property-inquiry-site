@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase 연결 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Firebase 연결 테스트</h1>
+    
+    <div id="status" class="status info">
+        Firebase 연결 상태를 확인 중...
+    </div>
+    
+    <div>
+        <button class="btn-primary" onclick="testConnection()">연결 테스트</button>
+        <button class="btn-success" onclick="addTestData()">테스트 데이터 추가</button>
+        <button class="btn-danger" onclick="clearData()">데이터 삭제</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        // Firebase 연결 테스트
+        async function testConnection() {
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Firebase 연결 테스트 중...';
+                
+                // Firestore 연결 테스트
+                const snapshot = await db.collection('test').limit(1).get();
+                
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Firebase 연결 성공!';
+                
+                resultDiv.innerHTML = `
+                    <h3>연결 정보:</h3>
+                    <p>Firestore 연결: ✅ 성공</p>
+                    <p>프로젝트 ID: ${firebase.app().options.projectId}</p>
+                    <p>현재 시간: ${new Date().toLocaleString()}</p>
+                `;
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Firebase 연결 실패!';
+                
+                resultDiv.innerHTML = `
+                    <h3>오류 정보:</h3>
+                    <p>오류 메시지: ${error.message}</p>
+                    <p>오류 코드: ${error.code}</p>
+                    <h4>해결 방법:</h4>
+                    <ol>
+                        <li>Firebase 프로젝트가 생성되었는지 확인</li>
+                        <li>Firestore 데이터베이스가 설정되었는지 확인</li>
+                        <li>firebase-config.js의 설정이 올바른지 확인</li>
+                        <li>보안 규칙이 테스트 모드로 설정되었는지 확인</li>
+                    </ol>
+                `;
+            }
+        }
+        
+        // 테스트 데이터 추가
+        async function addTestData() {
+            try {
+                const testData = {
+                    id: Date.now(),
+                    message: 'Firebase 연결 테스트 성공!',
+                    timestamp: new Date().toISOString()
+                };
+                
+                await db.collection('test').add(testData);
+                
+                document.getElementById('result').innerHTML = `
+                    <h3>✅ 테스트 데이터 추가 성공!</h3>
+                    <p>데이터: ${JSON.stringify(testData, null, 2)}</p>
+                `;
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>❌ 테스트 데이터 추가 실패!</h3>
+                    <p>오류: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // 데이터 삭제
+        async function clearData() {
+            try {
+                const snapshot = await db.collection('test').get();
+                const batch = db.batch();
+                
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+                
+                document.getElementById('result').innerHTML = `
+                    <h3>✅ 테스트 데이터 삭제 완료!</h3>
+                `;
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>❌ 데이터 삭제 실패!</h3>
+                    <p>오류: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('load', testConnection);
+    </script>
+</body>
+</html> 
