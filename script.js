@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // 초기 상세주소 필수 표시 설정 (기본값은 구해요)
+    // 초기 상세주소 필수 표시 설정 (기본값은 구함)
     const addressLabel = document.querySelector('.address-label');
     if (addressLabel) {
         addressLabel.innerHTML = '상세주소';
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 폼 데이터 수집
             const inquiryData = {
-                type: document.querySelector('.tab-btn.active').textContent === '구해요' ? 'buy' : 'sell',
+                type: document.querySelector('.tab-btn.active').textContent === '구함' ? 'buy' : 'sell',
                 transactionType: document.querySelector('.radio-btn.active').textContent,
                 location: {
                     city: document.querySelector('.location-select').value,
@@ -657,7 +657,7 @@ function loadInquiries() {
         
         row.innerHTML = `
             <td>${inquiry.id}</td>
-            <td><span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '팔아요' : '구해요'}</span></td>
+            <td><span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '내놈' : '구함'}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.category}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.title}</span></td>
             <td>${inquiry.author}</td>
@@ -766,7 +766,7 @@ function showDetailModal(inquiryId) {
         <div class="detail-item">
             <h4>기본 정보</h4>
             <p><strong>번호:</strong> ${inquiry.id}</p>
-            <p><strong>구분:</strong> <span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '팔아요' : '구해요'}</span></p>
+            <p><strong>구분:</strong> <span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '내놈' : '구함'}</span></p>
             <p><strong>거래종류:</strong> ${inquiry.category}</p>
             <p><strong>제목:</strong> ${inquiry.title}</p>
             <p><strong>작성자:</strong> ${inquiry.author}</p>
@@ -801,17 +801,17 @@ function switchTab(tab) {
     
     if (tab === 'buy') {
         tabButtons[0].classList.add('active');
-        // 구해요일 때는 상세주소 필수 표시 제거
+        // 구함일 때는 상세주소 필수 표시 제거
         const addressLabel = document.querySelector('.address-label');
         if (addressLabel) {
-            addressLabel.innerHTML = '상세주소';
+            addressLabel.style.display = 'none';
         }
     } else {
         tabButtons[1].classList.add('active');
-        // 팔아요일 때는 상세주소 필수 표시 추가
+        // 내놈일 때는 상세주소 필수 표시 추가
         const addressLabel = document.querySelector('.address-label');
         if (addressLabel) {
-            addressLabel.innerHTML = '상세주소 <span class="required">* 필수</span>';
+            addressLabel.style.display = 'block';
         }
     }
 }
@@ -874,8 +874,8 @@ function validateForm(data) {
     if (city === '시/도' || district === '구/군' || 
         (neighborhoodElement.tagName === 'SELECT' && neighborhood === '동/읍/면') || 
         (neighborhoodElement.tagName === 'INPUT' && !neighborhood.trim())) {
-        // 구해요/팔아요에 따른 다른 안내 메시지
-        const isSell = document.querySelector('.tab-btn.active').textContent === '팔아요';
+        // 구함/내놈에 따른 다른 안내 메시지
+        const isSell = document.querySelector('.tab-btn.active').textContent === '내놈';
         if (isSell) {
             alert('위치 정보를 모두 입력해주세요.');
         } else {
@@ -884,8 +884,8 @@ function validateForm(data) {
         return false;
     }
     
-    // 구해요/팔아요에 따른 상세주소 검증
-    const isSell = document.querySelector('.tab-btn.active').textContent === '팔아요';
+    // 구함/내놈에 따른 상세주소 검증
+    const isSell = document.querySelector('.tab-btn.active').textContent === '내놈';
     if (isSell && !address.trim()) {
         alert('상세주소까지 입력해주세요.');
         return false;
