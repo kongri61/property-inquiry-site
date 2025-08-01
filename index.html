@@ -4,20 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매물 의뢰하기</title>
-    <link rel="stylesheet" href="styles.css?v=6.4&t=20241201" id="css-link">
+    <link rel="stylesheet" href="styles.css?v=6.5" id="css-link">
     <script>
-        // 캐시 무효화를 위한 타임스탬프 추가
+        // 즉시 실행되는 캐시 무효화
+        (function() {
+            const cssLink = document.getElementById('css-link');
+            if (cssLink) {
+                const timestamp = new Date().getTime();
+                cssLink.href = 'styles.css?v=6.5&t=' + timestamp;
+                console.log('CSS 캐시 무효화 즉시 적용:', cssLink.href);
+            }
+        })();
+        
+        // DOMContentLoaded 이벤트에서도 실행
         document.addEventListener('DOMContentLoaded', function() {
             const cssLink = document.getElementById('css-link');
             if (cssLink) {
                 const timestamp = new Date().getTime();
-                cssLink.href = 'styles.css?v=6.4&t=' + timestamp;
-                console.log('CSS 캐시 무효화 적용:', cssLink.href);
-                
-                // 강제로 CSS 다시 로드
-                cssLink.rel = 'stylesheet';
-                document.head.appendChild(cssLink.cloneNode(true));
-                document.head.removeChild(cssLink);
+                cssLink.href = 'styles.css?v=6.5&t=' + timestamp;
+                console.log('CSS 캐시 무효화 DOMContentLoaded 적용:', cssLink.href);
             }
         });
     </script>
