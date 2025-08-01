@@ -188,6 +188,11 @@ body {
     text-align: center;
 }
 
+/* 제목 헤더는 왼쪽 정렬 */
+.inquiry-table th:nth-child(4) {
+    text-align: left;
+}
+
 .inquiry-table td {
     color: #666;
     text-align: center;
@@ -1128,6 +1133,11 @@ body {
     }
     
     .inquiry-table th {
+        text-align: center !important;
+    }
+    
+    /* 제목 헤더는 중앙 정렬 */
+    .inquiry-table th:nth-child(4) {
         text-align: center !important;
     }
     
