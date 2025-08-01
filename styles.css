@@ -190,7 +190,7 @@ body {
 
 /* 제목 헤더는 왼쪽 정렬 */
 .inquiry-table th:nth-child(4) {
-    text-align: left;
+    text-align: left !important;
 }
 
 .inquiry-table td {
