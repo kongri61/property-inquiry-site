@@ -52,7 +52,7 @@ body {
 /* 회사 정보 스타일 */
 .company-info {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0;
 }
 
@@ -72,6 +72,7 @@ body {
     flex-direction: column;
     gap: 2px;
     margin-left: -16px;
+    align-items: flex-start;
 }
 
 .company-title {
@@ -79,12 +80,15 @@ body {
     font-weight: bold;
     color: #333;
     line-height: 1.2;
+    text-align: left;
 }
 
 .company-subtitle {
     font-size: 12px;
     color: #666;
     line-height: 1.2;
+    text-align: left;
+    margin-left: 0;
 }
 
 .main-title {
@@ -785,13 +789,14 @@ body {
     .company-info {
         flex-direction: row;
         gap: 5px;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
     }
     
     .company-name {
         margin-left: -8px;
         margin-top: 0;
+        align-items: flex-start;
     }
     
     .logo-image {
@@ -1069,13 +1074,20 @@ body {
     }
     
     /* 회사명 강화 */
+    .header .company-info .company-name {
+        align-items: flex-start !important;
+    }
+    
     .header .company-info .company-name .company-title {
         font-size: 18px !important;
         font-weight: bold !important;
+        text-align: left !important;
     }
     
     .header .company-info .company-name .company-subtitle {
         font-size: 12px !important;
+        text-align: left !important;
+        margin-left: 0 !important;
     }
     
     /* 등록일 컬럼 강화 */
