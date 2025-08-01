@@ -795,16 +795,16 @@ body {
     }
     
     .logo-image {
-        width: 60px;
-        height: 34px;
+        width: 80px !important;
+        height: 45px !important;
     }
     
     .company-title {
-        font-size: 14px;
+        font-size: 18px !important;
     }
     
     .company-subtitle {
-        font-size: 10px;
+        font-size: 12px !important;
     }
     
     .main-title {
@@ -888,14 +888,15 @@ body {
     
     .inquiry-table th:nth-child(6),
     .inquiry-table td:nth-child(6) {
-        width: 70px;
-        min-width: 70px;
-        max-width: 70px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: keep-all;
-        word-wrap: normal;
+        width: 80px !important;
+        min-width: 80px !important;
+        max-width: 80px !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        word-break: keep-all !important;
+        word-wrap: normal !important;
+        font-size: 11px !important;
     }
     
     .tag {
