@@ -62,8 +62,8 @@ body {
 }
 
 .logo-image {
-    width: 100px;
-    height: 56px;
+    width: 80px;
+    height: 45px;
     object-fit: contain;
 }
 
@@ -73,6 +73,7 @@ body {
     gap: 2px;
     margin-left: -16px;
     align-items: flex-start;
+    justify-content: center;
 }
 
 .company-title {
@@ -189,12 +190,12 @@ body {
 
 .inquiry-table td {
     color: #666;
-    text-align: left;
+    text-align: center;
 }
 
-/* 제목 컬럼 데이터는 왼쪽 정렬 */
+/* 제목 컬럼 데이터는 중앙 정렬 */
 .inquiry-table td:nth-child(4) {
-    text-align: left;
+    text-align: center;
 }
 
 /* 거래종류 컬럼 너비 조정 */
