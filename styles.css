@@ -1057,3 +1057,72 @@ body {
         font-size: 13px;
     }
 } 
+
+/* 모바일 전용 강화 스타일 */
+@media (max-width: 768px) {
+    /* 회사 로고 강화 */
+    .header .company-info .logo-image {
+        width: 80px !important;
+        height: 45px !important;
+        max-width: 80px !important;
+        max-height: 45px !important;
+    }
+    
+    /* 회사명 강화 */
+    .header .company-info .company-name .company-title {
+        font-size: 18px !important;
+        font-weight: bold !important;
+    }
+    
+    .header .company-info .company-name .company-subtitle {
+        font-size: 12px !important;
+    }
+    
+    /* 등록일 컬럼 강화 */
+    .inquiry-table th:nth-child(6),
+    .inquiry-table td:nth-child(6) {
+        width: 80px !important;
+        min-width: 80px !important;
+        max-width: 80px !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        word-break: keep-all !important;
+        word-wrap: normal !important;
+        font-size: 11px !important;
+        padding: 8px 2px !important;
+    }
+    
+    /* 테이블 전체 강화 */
+    .inquiry-table {
+        min-width: 600px !important;
+        font-size: 12px !important;
+    }
+    
+    /* 거래종류 컬럼 강화 */
+    .inquiry-table th:nth-child(3),
+    .inquiry-table td:nth-child(3) {
+        width: 50px !important;
+        max-width: 50px !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        line-height: 1.1 !important;
+        font-size: 11px !important;
+    }
+}
+
+/* 매우 작은 화면 (480px 이하) */
+@media (max-width: 480px) {
+    .header .company-info .logo-image {
+        width: 70px !important;
+        height: 40px !important;
+    }
+    
+    .header .company-info .company-name .company-title {
+        font-size: 16px !important;
+    }
+    
+    .header .company-info .company-name .company-subtitle {
+        font-size: 11px !important;
+    }
+} 
