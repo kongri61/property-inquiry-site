@@ -191,6 +191,9 @@ body {
 /* 제목 헤더는 왼쪽 정렬 */
 .inquiry-table th:nth-child(4) {
     text-align: left !important;
+    background: #f8f9fa !important;
+    font-weight: bold !important;
+    color: #333 !important;
 }
 
 .inquiry-table td {
