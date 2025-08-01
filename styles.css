@@ -62,8 +62,8 @@ body {
 }
 
 .logo-image {
-    width: 120px;
-    height: 67px;
+    width: 100px;
+    height: 56px;
     object-fit: contain;
 }
 
@@ -215,6 +215,7 @@ body {
 .inquiry-table td:nth-child(4) {
     width: auto;
     min-width: 120px;
+    text-align: left;
 }
 
 /* 태그 스타일 */
@@ -885,6 +886,7 @@ body {
     .inquiry-table td:nth-child(4) {
         width: auto;
         min-width: 120px;
+        text-align: left;
     }
     
     /* 제목 컬럼 데이터는 왼쪽 정렬 */
