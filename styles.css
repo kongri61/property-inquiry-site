@@ -217,7 +217,11 @@ body {
 }
 
 /* 제목 컬럼 너비 확장 */
-.inquiry-table th:nth-child(4),
+.inquiry-table th:nth-child(4) {
+    width: auto;
+    min-width: 120px;
+}
+
 .inquiry-table td:nth-child(4) {
     width: auto;
     min-width: 120px;
