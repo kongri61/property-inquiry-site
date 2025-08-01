@@ -188,9 +188,17 @@ body {
     text-align: center;
 }
 
-/* 제목 헤더는 왼쪽 정렬 */
+/* 제목 헤더는 중앙 정렬 */
 .inquiry-table th:nth-child(4) {
-    text-align: left !important;
+    text-align: center !important;
+    background: #f8f9fa !important;
+    font-weight: bold !important;
+    color: #333 !important;
+}
+
+/* 제목 헤더는 중앙 정렬 */
+.inquiry-table th:nth-child(4) {
+    text-align: center !important;
     background: #f8f9fa !important;
     font-weight: bold !important;
     color: #333 !important;
@@ -1143,9 +1151,9 @@ body {
         text-align: center !important;
     }
     
-    /* 제목 헤더는 중앙 정렬 */
+    /* 제목 헤더는 왼쪽 정렬 */
     .inquiry-table th:nth-child(4) {
-        text-align: center !important;
+        text-align: left !important;
     }
     
     /* 제목 컬럼 데이터는 왼쪽 정렬 */
