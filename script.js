@@ -1315,7 +1315,7 @@ function validateForm(data) {
     const isSell = tabBtn.textContent === '내놈';
     if (isSell && (!address.value || !address.value.trim())) {
         console.log('내놈에서 상세주소 미입력');
-        alert('내놈의 경우 상세주소까지 입력해주세요.');
+        alert('상세주소까지 입력해주세요.');
         return false;
     }
     

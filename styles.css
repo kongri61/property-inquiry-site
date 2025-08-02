@@ -488,6 +488,14 @@ body {
     gap: 10px;
 }
 
+/* 모바일에서 거래유형 줄바꿈 */
+@media (max-width: 768px) {
+    .radio-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
 .radio-btn {
     padding: 10px 20px;
     border: 1px solid #ddd;
