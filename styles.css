@@ -552,9 +552,10 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
+    white-space: nowrap;
 }
 
-/* PC에서만 5열로 표시 */
+/* PC에서 5열로 표시 */
 @media (min-width: 769px) {
     .property-buttons {
         grid-template-columns: repeat(5, 1fr);
@@ -566,6 +567,14 @@ body {
         font-size: 13px;
         white-space: nowrap;
         min-width: 0;
+    }
+}
+
+/* 모바일에서만 줄바꿈 허용 */
+@media (max-width: 768px) {
+    .property-btn {
+        white-space: normal;
+        line-height: 1.2;
     }
 }
 
