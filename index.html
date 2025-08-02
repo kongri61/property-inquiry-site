@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매물 의뢰하기</title>
-    <link rel="stylesheet" href="styles.css?v=6.8" id="css-link">
+    <link rel="stylesheet" href="styles.css?v=6.9" id="css-link">
     <script>
         // 즉시 실행되는 캐시 무효화
         (function() {
             const cssLink = document.getElementById('css-link');
             if (cssLink) {
                 const timestamp = new Date().getTime();
-                cssLink.href = 'styles.css?v=6.8&t=' + timestamp;
+                cssLink.href = 'styles.css?v=6.9&t=' + timestamp;
                 console.log('CSS 캐시 무효화 즉시 적용:', cssLink.href);
             }
         })();
@@ -21,7 +21,7 @@
             const cssLink = document.getElementById('css-link');
             if (cssLink) {
                 const timestamp = new Date().getTime();
-                cssLink.href = 'styles.css?v=6.8&t=' + timestamp;
+                cssLink.href = 'styles.css?v=6.9&t=' + timestamp;
                 console.log('CSS 캐시 무효화 DOMContentLoaded 적용:', cssLink.href);
             }
         });
@@ -62,7 +62,7 @@
                                 <tr>
                                     <th>번 호</th>
                                     <th>구 분</th>
-                                    <th>거래<br>종류</th>
+                                    <th>사진<br>체크사항</th>
                                     <th>제 목</th>
                                     <th>작성자</th>
                                     <th>등록일</th>
@@ -172,7 +172,6 @@
                             </select>
                             <input type="text" placeholder="상세주소" class="address-input">
                         </div>
-                        <label class="address-label">상세주소</label>
                     </div>
 
                     <div class="form-group">
@@ -182,12 +181,12 @@
 
                     <div class="form-group">
                         <label>매물종류 <span class="required">* 필수</span></label>
-                        <div class="property-buttons">
-                            <button type="button" class="property-btn">상가 임대</button>
-                            <button type="button" class="property-btn">사무실 임대</button>
-                            <button type="button" class="property-btn">상가 매매</button>
-                            <button type="button" class="property-btn">건물매매</button>
-                            <button type="button" class="property-btn">기타</button>
+                        <div class="property-buttons" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+                            <button type="button" class="property-btn" style="padding: 10px 8px; font-size: 13px; white-space: nowrap; min-width: 0;">상가 임대</button>
+                            <button type="button" class="property-btn" style="padding: 10px 8px; font-size: 13px; white-space: nowrap; min-width: 0;">사무실 임대</button>
+                            <button type="button" class="property-btn" style="padding: 10px 8px; font-size: 13px; white-space: nowrap; min-width: 0;">상가 매매</button>
+                            <button type="button" class="property-btn" style="padding: 10px 8px; font-size: 13px; white-space: nowrap; min-width: 0;">건물매매</button>
+                            <button type="button" class="property-btn" style="padding: 10px 8px; font-size: 13px; white-space: nowrap; min-width: 0;">기타</button>
                         </div>
                     </div>
 
@@ -207,7 +206,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>상세내용 <span class="required">* 필수</span></label>
+                        <label><span class="required">* 상세페이지를 정확하게 입력해주세요</span></label>
                         <textarea placeholder="상세내용을 입력해주세요" class="content-textarea"></textarea>
                     </div>
 

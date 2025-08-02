@@ -521,7 +521,7 @@ body {
 /* 매물종류 버튼 */
 .property-buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 }
 
@@ -534,6 +534,21 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
+}
+
+/* PC에서만 5열로 표시 */
+@media (min-width: 769px) {
+    .property-buttons {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+    }
+    
+    .property-btn {
+        padding: 10px 8px;
+        font-size: 13px;
+        white-space: nowrap;
+        min-width: 0;
+    }
 }
 
 .property-btn:hover {

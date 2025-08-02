@@ -336,13 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.property-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
         });
-    });
-    
-    // 초기 상세주소 필수 표시 설정 (기본값은 구함)
-    const addressLabel = document.querySelector('.address-label');
-    if (addressLabel) {
-        addressLabel.innerHTML = '상세주소';
-    }
+    });        
     
     // 지역 선택 연동
     const locationSelect = document.querySelector('.location-select');
@@ -1209,18 +1203,8 @@ function switchTab(tab) {
     
     if (tab === 'buy') {
         tabButtons[0].classList.add('active');
-        // 구함일 때는 상세주소 필수 표시 제거
-        const addressLabel = document.querySelector('.address-label');
-        if (addressLabel) {
-            addressLabel.style.display = 'none';
-        }
     } else {
         tabButtons[1].classList.add('active');
-        // 내놈일 때는 상세주소 필수 표시 추가
-        const addressLabel = document.querySelector('.address-label');
-        if (addressLabel) {
-            addressLabel.style.display = 'block';
-        }
     }
 }
 
@@ -1325,16 +1309,8 @@ function validateForm(data) {
             alert('위치정보를 동/읍/면까지 입력해주세요.');
         }
         return false;
-    }
-    
-    // 구함/내놈에 따른 상세주소 검증
-    const isSell = tabBtn.textContent === '내놈';
-    if (isSell && !address.value.trim()) {
-        console.log('상세주소 미입력');
-        alert('상세주소까지 입력해주세요.');
-        return false;
-    }
-    
+    } 
+       
     // 매물종류 선택 확인
     if (!propertyBtn) {
         console.log('매물종류 미선택');
