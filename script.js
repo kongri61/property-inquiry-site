@@ -1309,8 +1309,16 @@ function validateForm(data) {
             alert('위치정보를 동/읍/면까지 입력해주세요.');
         }
         return false;
-    } 
-       
+    }
+    
+    // 내놈일 때 상세주소 검증 추가
+    const isSell = tabBtn.textContent === '내놈';
+    if (isSell && (!address.value || !address.value.trim())) {
+        console.log('내놈에서 상세주소 미입력');
+        alert('내놈의 경우 상세주소까지 입력해주세요.');
+        return false;
+    }
+    
     // 매물종류 선택 확인
     if (!propertyBtn) {
         console.log('매물종류 미선택');
