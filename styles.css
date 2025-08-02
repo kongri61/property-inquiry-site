@@ -574,7 +574,7 @@ body {
     .property-btn {
         padding: 10px 8px;
         font-size: 13px;
-        white-space: nowrap;
+        white-space: nowrap !important;
         min-width: 0;
     }
 }
@@ -584,6 +584,7 @@ body {
     .property-btn {
         white-space: normal;
         line-height: 1.2;
+        word-break: keep-all;
     }
 }
 
