@@ -582,7 +582,7 @@ body {
 /* 모바일에서만 줄바꿈 허용 */
 @media (max-width: 768px) {
     .property-btn {
-        white-space: normal;
+        white-space: nowrap;
         line-height: 1.2;
         word-break: keep-all;
     }
