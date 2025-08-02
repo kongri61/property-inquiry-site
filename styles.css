@@ -473,6 +473,15 @@ body {
     margin-bottom: 8px;
     font-weight: bold;
     color: #333;
+    white-space: nowrap;
+}
+
+/* 모바일에서만 라벨 줄바꿈 허용 */
+@media (max-width: 768px) {
+    .form-group label {
+        white-space: normal;
+        line-height: 1.2;
+    }
 }
 
 /* 필수 입력 표시 */

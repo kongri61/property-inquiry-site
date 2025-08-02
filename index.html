@@ -134,10 +134,11 @@
                 <!-- 구해요 폼 -->
                 <form id="buyForm" class="inquiry-form">
                     <div class="form-group">
-                        <label>거래유형 <span class="required">* 필수</span></label>
+                        <label>거래<br>유형 <span class="required">* 필수</span></label>
                         <div class="radio-group">
-                            <button type="button" class="radio-btn active" onclick="selectRadio(this, 'monthly')">월세</button>
-                            <button type="button" class="radio-btn" onclick="selectRadio(this, 'sale')">매매</button>
+                            <button type="button" class="radio-btn active" onclick="selectRadio(this, '매매')">매매</button>
+                            <button type="button" class="radio-btn" onclick="selectRadio(this, '월세')">월세</button>
+                            <button type="button" class="radio-btn" onclick="selectRadio(this, '전세')">전세</button>
                         </div>
                     </div>
 
