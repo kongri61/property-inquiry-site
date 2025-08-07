@@ -1232,3 +1232,12 @@ body {
         font-size: 11px !important;
     }
 } 
+
+/* 모바일에서 테이블 헤더 줄바꿈 허용 */
+@media (max-width: 768px) {
+    .inquiry-table th {
+        white-space: normal;
+        line-height: 1.2;
+        word-break: keep-all;
+    }
+} 
