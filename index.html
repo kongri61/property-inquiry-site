@@ -113,13 +113,17 @@
             </div>
             <div class="modal-body">
                 <form id="loginForm" class="login-form" autocomplete="off">
+                    <!-- 브라우저 자동완성 방지를 위한 더미 필드들 -->
+                    <input type="text" style="display:none" autocomplete="username">
+                    <input type="password" style="display:none" autocomplete="current-password">
+                    
                     <div class="form-group">
                         <label>아이디</label>
-                        <input type="text" id="loginId" placeholder="아이디를 입력하세요" autocomplete="off">
+                        <input type="text" id="loginId" placeholder="아이디를 입력하세요" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
                     </div>
                     <div class="form-group">
                         <label>비밀번호</label>
-                        <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요" autocomplete="new-password">
+                        <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
                     </div>
                     <div class="form-buttons">
                         <button type="submit" class="submit-btn">로그인</button>

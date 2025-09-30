@@ -946,6 +946,7 @@ function showLoginModal() {
                 loginIdInput.setAttribute('autocapitalize', 'off');
                 loginIdInput.setAttribute('autocorrect', 'off');
                 loginIdInput.setAttribute('spellcheck', 'false');
+                loginIdInput.setAttribute('data-form-type', 'other');
             }
             
             if (loginPasswordInput) {
@@ -954,11 +955,54 @@ function showLoginModal() {
                 loginPasswordInput.setAttribute('autocapitalize', 'off');
                 loginPasswordInput.setAttribute('autocorrect', 'off');
                 loginPasswordInput.setAttribute('spellcheck', 'false');
+                loginPasswordInput.setAttribute('data-form-type', 'other');
+            }
+            
+            // 더미 필드들에 값 설정 (브라우저가 이 필드들을 자동완성하도록 유도)
+            const dummyUsername = loginForm.querySelector('input[autocomplete="username"]');
+            const dummyPassword = loginForm.querySelector('input[autocomplete="current-password"]');
+            
+            if (dummyUsername) {
+                dummyUsername.value = 'dummy_username';
+            }
+            if (dummyPassword) {
+                dummyPassword.value = 'dummy_password';
             }
         }
         
         loginModal.style.display = 'flex';
         console.log('로그인 모달 표시됨');
+        
+        // 추가 자동완성 방지 - 포커스 이벤트에서 값 초기화
+        setTimeout(() => {
+            const loginIdInput = document.getElementById('loginId');
+            const loginPasswordInput = document.getElementById('loginPassword');
+            
+            if (loginIdInput) {
+                loginIdInput.addEventListener('focus', function() {
+                    if (this.value && this.value !== '') {
+                        this.value = '';
+                    }
+                });
+            }
+            
+            if (loginPasswordInput) {
+                loginPasswordInput.addEventListener('focus', function() {
+                    if (this.value && this.value !== '') {
+                        this.value = '';
+                    }
+                });
+                
+                // 비밀번호 필드 클릭 시 즉시 값 초기화
+                loginPasswordInput.addEventListener('click', function() {
+                    setTimeout(() => {
+                        if (this.value && this.value !== '') {
+                            this.value = '';
+                        }
+                    }, 10);
+                });
+            }
+        }, 100);
         
         // 모바일에서 추가 처리
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
