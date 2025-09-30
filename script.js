@@ -930,6 +930,13 @@ function showLoginModal() {
     console.log('로그인 모달 표시 함수 호출');
     const loginModal = document.getElementById('loginModal');
     if (loginModal) {
+        // 로그인 폼 초기화
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.reset();
+            console.log('로그인 폼 초기화 완료');
+        }
+        
         loginModal.style.display = 'flex';
         console.log('로그인 모달 표시됨');
         
@@ -970,6 +977,13 @@ function toggleAuth() {
         localStorage.removeItem('currentUser');
         updateAuthButton();
         console.log('로그아웃 완료');
+        
+        // 로그인 폼 초기화
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.reset();
+            console.log('로그인 폼 초기화 완료');
+        }
         
         // 로그아웃 후 목록 업데이트
         loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
