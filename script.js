@@ -935,6 +935,26 @@ function showLoginModal() {
         if (loginForm) {
             loginForm.reset();
             console.log('로그인 폼 초기화 완료');
+            
+            // 자동완성 방지를 위한 추가 설정
+            const loginIdInput = document.getElementById('loginId');
+            const loginPasswordInput = document.getElementById('loginPassword');
+            
+            if (loginIdInput) {
+                loginIdInput.value = '';
+                loginIdInput.setAttribute('autocomplete', 'off');
+                loginIdInput.setAttribute('autocapitalize', 'off');
+                loginIdInput.setAttribute('autocorrect', 'off');
+                loginIdInput.setAttribute('spellcheck', 'false');
+            }
+            
+            if (loginPasswordInput) {
+                loginPasswordInput.value = '';
+                loginPasswordInput.setAttribute('autocomplete', 'new-password');
+                loginPasswordInput.setAttribute('autocapitalize', 'off');
+                loginPasswordInput.setAttribute('autocorrect', 'off');
+                loginPasswordInput.setAttribute('spellcheck', 'false');
+            }
         }
         
         loginModal.style.display = 'flex';
