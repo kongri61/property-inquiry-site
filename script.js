@@ -627,15 +627,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('=== 로그인 실패 ===');
                 console.log('로그인 실패 - 입력값 불일치');
                 
-                let errorMessage = '아이디 또는 비밀번호가 올바르지 않습니다.\n\n';
-                errorMessage += '입력하신 값:\n';
-                errorMessage += `아이디: "${trimmedId}"\n`;
-                errorMessage += `비밀번호: "${trimmedPassword}"\n\n`;
-                errorMessage += '올바른 값:\n';
-                errorMessage += '아이디: kongri61\n';
-                errorMessage += '비밀번호: rlaehdghk61@';
-                
-                alert(errorMessage);
+                // 비밀유지를 위해 상세한 오류 메시지 제거
+                alert('아이디 또는 비밀번호가 올바르지 않습니다.');
             }
         };
         
@@ -956,6 +949,12 @@ function showLoginModal() {
                 loginPasswordInput.setAttribute('autocorrect', 'off');
                 loginPasswordInput.setAttribute('spellcheck', 'false');
                 loginPasswordInput.setAttribute('data-form-type', 'other');
+                loginPasswordInput.setAttribute('data-lpignore', 'true');
+                loginPasswordInput.setAttribute('data-1p-ignore', 'true');
+                loginPasswordInput.setAttribute('data-bwignore', 'true');
+                // 안내창 방지를 위한 추가 속성
+                loginPasswordInput.removeAttribute('title');
+                loginPasswordInput.setAttribute('aria-label', '비밀번호 입력');
             }
             
             // 더미 필드들에 값 설정 (브라우저가 이 필드들을 자동완성하도록 유도)
@@ -987,19 +986,43 @@ function showLoginModal() {
             }
             
             if (loginPasswordInput) {
+                // 비밀번호 필드 포커스 시 안내창 완전 제거
                 loginPasswordInput.addEventListener('focus', function() {
                     if (this.value && this.value !== '') {
                         this.value = '';
                     }
+                    // 안내창 완전 제거
+                    this.removeAttribute('title');
+                    this.setAttribute('title', '');
+                    this.removeAttribute('title');
+                    // 추가 안내창 방지 속성
+                    this.setAttribute('data-lpignore', 'true');
+                    this.setAttribute('data-1p-ignore', 'true');
+                    this.setAttribute('data-bwignore', 'true');
                 });
                 
-                // 비밀번호 필드 클릭 시 즉시 값 초기화
+                // 비밀번호 필드 클릭 시 즉시 값 초기화 및 안내창 완전 제거
                 loginPasswordInput.addEventListener('click', function() {
                     setTimeout(() => {
                         if (this.value && this.value !== '') {
                             this.value = '';
                         }
+                        // 안내창 완전 제거
+                        this.removeAttribute('title');
+                        this.setAttribute('title', '');
+                        this.removeAttribute('title');
+                        // 추가 안내창 방지 속성
+                        this.setAttribute('data-lpignore', 'true');
+                        this.setAttribute('data-1p-ignore', 'true');
+                        this.setAttribute('data-bwignore', 'true');
                     }, 10);
+                });
+                
+                // 마우스 오버 시에도 안내창 제거
+                loginPasswordInput.addEventListener('mouseenter', function() {
+                    this.removeAttribute('title');
+                    this.setAttribute('title', '');
+                    this.removeAttribute('title');
                 });
             }
         }, 100);
