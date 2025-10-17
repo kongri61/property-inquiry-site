@@ -190,9 +190,9 @@ async function loadInquiriesFromFirestore() {
             inquiries = firestoreInquiries;
             console.log('Firestore 데이터 사용');
         } else {
-            // Firestore에 데이터가 없으면 기본 데이터 사용
-            inquiries = [...defaultInquiries];
-            console.log('기본 데이터 사용');
+            // Firestore에 데이터가 없으면 현재 메모리의 데이터 유지 (기본 데이터로 되돌아가지 않음)
+            console.log('Firestore에 데이터 없음 - 현재 메모리 데이터 유지');
+            // inquiries 배열을 그대로 유지하여 삭제된 항목이 다시 나타나지 않도록 함
         }
         
         // UI 업데이트
@@ -201,8 +201,8 @@ async function loadInquiriesFromFirestore() {
         
     } catch (error) {
         console.error('Firestore 데이터 불러오기 오류:', error);
-        // 오류 시 기본 데이터 사용
-        inquiries = [...defaultInquiries];
+        // 오류 시 현재 메모리의 데이터 유지 (기본 데이터로 되돌아가지 않음)
+        console.log('Firestore 오류 - 현재 메모리 데이터 유지');
         loadInquiries();
         updateTotalCount();
     }
@@ -284,8 +284,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('페이지 로드됨');
     console.log('사용자 에이전트:', navigator.userAgent);
     
-    // Firestore에서 데이터 불러오기
-    loadInquiriesFromFirestore();
+    // Firestore에서 데이터 불러오기 (삭제된 항목이 다시 나타나지 않도록 수정)
+    // localStorage에 저장된 데이터가 있으면 그것을 사용하고, 없으면 Firestore에서 불러옴
+    const savedInquiries = localStorage.getItem('allInquiries');
+    if (savedInquiries) {
+        try {
+            const loadedInquiries = JSON.parse(savedInquiries);
+            inquiries = loadedInquiries;
+            console.log('localStorage에서 데이터 로드:', loadedInquiries.length, '개');
+        } catch (error) {
+            console.error('localStorage 데이터 파싱 오류:', error);
+            loadInquiriesFromFirestore();
+        }
+    } else {
+        loadInquiriesFromFirestore();
+    }
     
     // 실시간 동기화 설정
     setupRealtimeSync();
@@ -1564,10 +1577,9 @@ function syncDataAcrossDevices() {
             console.error('데이터 동기화 중 오류:', error);
         }
     } else {
-        console.log('Firestore에 데이터 없음 - 기본 데이터 사용');
-        inquiries = [...defaultInquiries];
-        loadInquiries();
-        updateTotalCount();
+        console.log('localStorage에 데이터 없음 - Firestore에서 로드 시도');
+        // localStorage에 데이터가 없으면 Firestore에서 로드하되, 기본 데이터로 되돌아가지 않도록 함
+        loadInquiriesFromFirestore();
     }
     
     console.log('=== 기기 간 데이터 동기화 완료 ===');
