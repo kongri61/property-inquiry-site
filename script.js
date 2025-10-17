@@ -1072,8 +1072,8 @@ function toggleAuth() {
             console.log('로그인 폼 초기화 완료');
         }
         
-        // 로그아웃 후 목록 업데이트
-        loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
+        // 로그아웃 후 목록 업데이트 (Firestore에서 다시 불러오지 않음)
+        // 현재 메모리의 inquiries 배열을 그대로 유지하여 삭제된 항목이 다시 나타나지 않도록 함
         loadInquiries(); // 목록 다시 렌더링
         updateTotalCount(); // 총 개수 업데이트
         
