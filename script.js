@@ -588,8 +588,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Firestore 저장 오류 (무시됨):', error);
             }
             
-            // 강화된 데이터 저장 및 동기화
-            forceSaveAndSync();
+            // UI 즉시 업데이트 (동기화 없이)
+            loadInquiries();
+            updateTotalCount();
             
             console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
             
@@ -1477,8 +1478,18 @@ function syncDataAcrossDevices() {
             
             // 현재 메모리 데이터와 localStorage 데이터 비교
             if (inquiries.length !== loadedInquiries.length) {
-                console.log('데이터 불일치 감지 - localStorage 데이터로 업데이트');
-                inquiries = loadedInquiries;
+                console.log('데이터 불일치 감지');
+                console.log('메모리 데이터 개수:', inquiries.length);
+                console.log('localStorage 데이터 개수:', loadedInquiries.length);
+                
+                // 메모리 데이터가 더 많으면 (새로 추가된 데이터가 있으면) localStorage를 업데이트
+                if (inquiries.length > loadedInquiries.length) {
+                    console.log('메모리 데이터가 더 많음 - localStorage 업데이트');
+                    localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                } else {
+                    console.log('localStorage 데이터로 메모리 업데이트');
+                    inquiries = loadedInquiries;
+                }
                 
                 // UI 강제 업데이트
                 currentPage = 1;
