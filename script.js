@@ -218,28 +218,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // 구/군 옵션 초기화
             districtSelect.innerHTML = '<option>구/군</option>';
             
-            // 동/읍/면 필드 초기화 - select로 초기화 (서울, 인천이 아닌 경우 나중에 input으로 변경됨)
-            const neighborhoodContainer = document.querySelector('.location-inputs');
-            if (neighborhoodContainer) {
-                // 기존 동/읍/면 필드 제거
-                const oldElement = neighborhoodContainer.querySelector('#neighborhoodSelect');
-                if (oldElement) {
-                    oldElement.remove();
+            // 동/읍/면 필드 초기화 - 기존 요소만 초기화 (위치 변경 없음)
+            const neighborhoodElement = document.getElementById('neighborhoodSelect');
+            if (neighborhoodElement) {
+                // 기존 요소가 select인 경우에만 초기화
+                if (neighborhoodElement.tagName === 'SELECT') {
+                    neighborhoodElement.innerHTML = '<option>동/읍/면</option>';
                 }
-                
-                // 새로운 select 필드 생성
-                const newSelect = document.createElement('select');
-                newSelect.className = 'location-select';
-                newSelect.id = 'neighborhoodSelect';
-                newSelect.innerHTML = '<option>동/읍/면</option>';
-                
-                // 상세주소 입력창 앞에 추가
-                const addressInput = neighborhoodContainer.querySelector('.address-input');
-                if (addressInput) {
-                    neighborhoodContainer.insertBefore(newSelect, addressInput);
-                } else {
-                    neighborhoodContainer.appendChild(newSelect);
-                }
+                // input인 경우에는 그대로 유지
             }
             
             // 전국 시/도 데이터
