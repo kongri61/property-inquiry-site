@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '수원시 팔달구': ['팔달동', '영동', '중동', '구천동', '남수동', '우만동', '인계동', '지동', '화서동', '매교동', '매산동', '고등동', '우만동', '인계동', '지동', '화서동', '매교동', '매산동']
             };
             
-            // 상세 동 데이터가 있는 경우
+            // 상세 동 데이터가 있는 경우 (서울, 인천만)
             if (hasDetailData.includes(district) && districtData[searchKey]) {
                 // 상세 동 목록 추가
                 districtData[searchKey].forEach(neighborhood => {
@@ -365,8 +365,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     neighborhoodSelect.appendChild(option);
                 });
                 console.log(`${searchKey} 동/읍/면 옵션 추가됨`);
-            } else if (district && district !== '구/군') {
-                // 상세 동 데이터가 없는 경우 - 직접입력 필드로 변경
+            } else {
+                // 모든 다른 지역은 직접입력 필드로 변경
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'location-select';
