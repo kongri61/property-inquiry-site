@@ -1,172 +1,8 @@
 // 사용자 정보
 let currentUser = null;
 
-// 기본 샘플 데이터 (항상 고정)
-const defaultInquiries = [
-    {
-        id: 58,
-        type: 'sell',
-        category: '상가 매매',
-        title: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰',
-        author: '박**',
-        date: '2025-06-11',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 남동구 구월동',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-1234-5678',
-            content: '구월동 아시아드 사거리 주차장건물 1층상가 매도 의뢰합니다. 위치가 좋고 교통이 편리합니다. 관심 있으신 분 연락 부탁드립니다.'
-        }
-    },
-    {
-        id: 57,
-        type: 'sell',
-        category: '건물 매매',
-        title: '토지와 2종 근생 사무실용도 통건물 매도 의뢰',
-        author: '김**',
-        date: '2025-06-02',
-        details: {
-            transactionType: '매매',
-            location: '경기도 성남시 분당구',
-            price: '협의',
-            propertyType: '건물 매매',
-            contact: '010-2345-6789',
-            content: '토지와 2종 근생 사무실용도 통건물 매도 의뢰합니다. 사무실로 사용하기 좋은 위치입니다.'
-        }
-    },
-    {
-        id: 56,
-        type: 'sell',
-        category: '상가 매매',
-        title: '뷰티샵',
-        author: '이**',
-        date: '2025-05-29',
-        details: {
-            transactionType: '매매',
-            location: '서울특별시 강남구',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-3456-7890',
-            content: '뷰티샵 매도 의뢰합니다. 고객층이 안정적이고 수익성이 좋습니다.'
-        }
-    },
-    {
-        id: 55,
-        type: 'sell',
-        category: '상가 매매',
-        title: '상가 1개호 팝니다',
-        author: '유**',
-        date: '2025-05-25',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 연수구',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-4567-8901',
-            content: '상가 1개호 팝니다. 위치가 좋고 임대 수익이 안정적입니다.'
-        }
-    },
-    {
-        id: 54,
-        type: 'sell',
-        category: '상가 매매',
-        title: '상가 매매 희망합니다.',
-        author: '장**',
-        date: '2025-05-20',
-        details: {
-            transactionType: '매매',
-            location: '경기도 부천시',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-5678-9012',
-            content: '상가 매매 희망합니다. 좋은 조건으로 거래하겠습니다.'
-        }
-    },
-    {
-        id: 53,
-        type: 'sell',
-        category: '상가 매매',
-        title: '인하대학교 근접 상가 건물 매매',
-        author: '진**',
-        date: '2025-05-15',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 미추홀구',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-6789-0123',
-            content: '인하대학교 근접 상가 건물 매매합니다. 학생들이 많이 지나다니는 위치입니다.'
-        }
-    },
-    {
-        id: 52,
-        type: 'sell',
-        category: '상가 매매',
-        title: '문의 남깁니다.',
-        author: '홍**',
-        date: '2025-05-10',
-        details: {
-            transactionType: '매매',
-            location: '서울특별시 마포구',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-7890-1234',
-            content: '문의 남깁니다. 상가 매매에 관심 있으신 분 연락 부탁드립니다.'
-        }
-    },
-    {
-        id: 51,
-        type: 'buy',
-        category: '상가 임대',
-        title: '인천시청역 근방으로 구합니다',
-        author: '박**',
-        date: '2025-05-05',
-        details: {
-            transactionType: '월세',
-            location: '인천광역시 남동구',
-            price: '협의',
-            propertyType: '상가 임대',
-            contact: '010-8901-2345',
-            content: '인천시청역 근방으로 상가를 구합니다. 월세로 임대 가능한 곳 연락 부탁드립니다.'
-        }
-    },
-    {
-        id: 50,
-        type: 'sell',
-        category: '상가 매매',
-        title: '매매 원합니다',
-        author: '김**',
-        date: '2025-05-01',
-        details: {
-            transactionType: '매매',
-            location: '경기도 안산시',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-9012-3456',
-            content: '매매 원합니다. 좋은 조건으로 거래하겠습니다.'
-        }
-    },
-    {
-        id: 49,
-        type: 'sell',
-        category: '상가 매매',
-        title: '상가 매매',
-        author: '이**',
-        date: '2025-04-28',
-        details: {
-            transactionType: '매매',
-            location: '인천광역시 부평구',
-            price: '협의',
-            propertyType: '상가 매매',
-            contact: '010-0123-4567',
-            content: '상가 매매합니다. 관심 있으신 분 연락 부탁드립니다.'
-        }
-    }
-];
-
-// 현재 문의 목록 (기본 데이터 + 새로 추가된 데이터)
-let inquiries = [...defaultInquiries];
+// 현재 문의 목록 (실제 문의작성으로만 관리)
+let inquiries = [];
 
 // Firebase Firestore 데이터 동기화 함수들
 
@@ -190,9 +26,9 @@ async function loadInquiriesFromFirestore() {
             inquiries = firestoreInquiries;
             console.log('Firestore 데이터 사용');
         } else {
-            // Firestore에 데이터가 없으면 현재 메모리의 데이터 유지 (기본 데이터로 되돌아가지 않음)
-            console.log('Firestore에 데이터 없음 - 현재 메모리 데이터 유지');
-            // inquiries 배열을 그대로 유지하여 삭제된 항목이 다시 나타나지 않도록 함
+            // Firestore에 데이터가 없으면 빈 배열로 초기화 (샘플 데이터 사용 안함)
+            console.log('Firestore에 데이터 없음 - 빈 배열로 초기화');
+            inquiries = [];
         }
         
         // UI 업데이트
@@ -201,8 +37,9 @@ async function loadInquiriesFromFirestore() {
         
     } catch (error) {
         console.error('Firestore 데이터 불러오기 오류:', error);
-        // 오류 시 현재 메모리의 데이터 유지 (기본 데이터로 되돌아가지 않음)
-        console.log('Firestore 오류 - 현재 메모리 데이터 유지');
+        // 오류 시 빈 배열로 초기화 (샘플 데이터 사용 안함)
+        console.log('Firestore 오류 - 빈 배열로 초기화');
+        inquiries = [];
         loadInquiries();
         updateTotalCount();
     }
@@ -233,8 +70,21 @@ async function saveInquiriesToFirestore() {
         await batch.commit();
         console.log('Firestore 데이터 저장 완료');
         
+        // Firestore 저장 성공 시 localStorage에도 저장
+        localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+        console.log('localStorage에도 저장 완료');
+        
     } catch (error) {
         console.error('Firestore 데이터 저장 오류:', error);
+        console.log('Firestore 저장 실패 - localStorage에만 저장');
+        
+        // Firestore 저장 실패 시 localStorage에만 저장
+        try {
+            localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+            console.log('localStorage 저장 완료:', inquiries.length, '개');
+        } catch (localError) {
+            console.error('localStorage 저장 오류:', localError);
+        }
     }
     
     console.log('=== Firestore 데이터 저장 완료 ===');
@@ -284,19 +134,20 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('페이지 로드됨');
     console.log('사용자 에이전트:', navigator.userAgent);
     
-    // Firestore에서 데이터 불러오기 (삭제된 항목이 다시 나타나지 않도록 수정)
-    // localStorage에 저장된 데이터가 있으면 그것을 사용하고, 없으면 Firestore에서 불러옴
+    // localStorage 우선 데이터 로드 (삭제된 항목이 다시 나타나지 않도록 수정)
     const savedInquiries = localStorage.getItem('allInquiries');
     if (savedInquiries) {
         try {
             const loadedInquiries = JSON.parse(savedInquiries);
             inquiries = loadedInquiries;
             console.log('localStorage에서 데이터 로드:', loadedInquiries.length, '개');
+            console.log('localStorage 데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
         } catch (error) {
             console.error('localStorage 데이터 파싱 오류:', error);
             loadInquiriesFromFirestore();
         }
     } else {
+        console.log('localStorage에 데이터 없음 - Firestore에서 로드');
         loadInquiriesFromFirestore();
     }
     
@@ -1085,13 +936,12 @@ function toggleAuth() {
             console.log('로그인 폼 초기화 완료');
         }
         
-        // 로그아웃 후 목록 업데이트 (Firestore에서 다시 불러오지 않음)
+        // 로그아웃 후 목록 업데이트 (데이터 동기화 없이 현재 상태 유지)
         // 현재 메모리의 inquiries 배열을 그대로 유지하여 삭제된 항목이 다시 나타나지 않도록 함
         loadInquiries(); // 목록 다시 렌더링
         updateTotalCount(); // 총 개수 업데이트
         
-        // 강화된 데이터 동기화
-        syncDataAcrossDevices();
+        // 로그아웃 시에는 데이터 동기화를 하지 않음 (삭제된 항목이 다시 나타나지 않도록)
         
     } else {
         // 로그인 모달 표시
@@ -1114,9 +964,10 @@ function toggleAuth() {
 
 // 문의 목록 로드
 function loadInquiries() {
-    console.log('loadInquiries 함수 호출됨');
+    console.log('=== loadInquiries 함수 호출됨 ===');
     console.log('전체 문의 개수:', inquiries.length);
     console.log('현재 페이지:', currentPage);
+    console.log('inquiries 배열:', inquiries);
     
     // 새로 등록한 매물이 맨 위에 오도록 정렬 (ID 내림차순)
     const sortedInquiries = [...inquiries].sort((a, b) => b.id - a.id);
@@ -1177,29 +1028,69 @@ function loadInquiries() {
 }
 
 // 문의 삭제 함수
-function deleteInquiry(inquiryId) {
+async function deleteInquiry(inquiryId) {
+    console.log('=== 삭제 함수 호출됨 ===');
+    console.log('삭제할 ID:', inquiryId);
+    console.log('삭제 전 inquiries 개수:', inquiries.length);
+    console.log('삭제 전 inquiries ID 목록:', inquiries.map(inq => inq.id));
+    
     // 삭제 확인
     if (!confirm('정말로 이 문의를 삭제하시겠습니까?')) {
+        console.log('삭제 취소됨');
         return;
     }
     
     // 문의 목록에서 해당 항목 찾기 및 삭제
     const index = inquiries.findIndex(inquiry => inquiry.id === inquiryId);
+    console.log('찾은 인덱스:', index);
+    
     if (index !== -1) {
+        // 삭제할 항목 로그
+        console.log('삭제할 항목:', inquiries[index]);
+        
+        // 배열에서 제거
         inquiries.splice(index, 1);
-        saveInquiriesToFirestore(); // Firestore에 저장
+        console.log('삭제 후 inquiries 개수:', inquiries.length);
+        console.log('삭제 후 inquiries ID 목록:', inquiries.map(inq => inq.id));
+        
+        // 즉시 localStorage에 저장 (Firebase 권한 문제와 관계없이)
+        try {
+            localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+            console.log('localStorage 저장 완료:', inquiries.length, '개');
+            
+            // 저장 확인
+            const savedData = localStorage.getItem('allInquiries');
+            const parsedData = JSON.parse(savedData);
+            console.log('저장 확인 - localStorage 데이터 개수:', parsedData.length);
+            console.log('저장 확인 - localStorage 데이터 ID 목록:', parsedData.map(inq => inq.id));
+        } catch (error) {
+            console.error('localStorage 저장 오류:', error);
+        }
+        
+        // Firestore에도 저장 시도 (권한이 있으면)
+        try {
+            await saveInquiriesToFirestore();
+        } catch (error) {
+            console.error('Firestore 저장 오류 (무시됨):', error);
+        }
         
         // 현재 페이지가 비어있고 이전 페이지가 있다면 이전 페이지로 이동
         const totalPages = Math.ceil(inquiries.length / itemsPerPage);
         if (currentPage > totalPages && currentPage > 1) {
             currentPage = totalPages;
+            console.log('페이지 이동:', currentPage);
         }
         
         // 목록 다시 로드
+        console.log('목록 다시 로드 시작');
         loadInquiries();
         updateTotalCount();
         
+        console.log('=== 삭제 완료 ===');
         alert('문의가 삭제되었습니다.');
+    } else {
+        console.error('삭제할 항목을 찾을 수 없음:', inquiryId);
+        alert('삭제할 항목을 찾을 수 없습니다.');
     }
 }
 
@@ -1554,9 +1445,9 @@ function syncDataAcrossDevices() {
     console.log('현재 기기 타입:', isMobile ? '모바일' : 'PC');
     console.log('사용자 에이전트:', navigator.userAgent);
     
-    // Firestore에서 데이터 강제 로드
+    // localStorage에서 데이터 로드 (삭제된 항목이 다시 나타나지 않도록)
     const savedInquiries = localStorage.getItem('allInquiries');
-    console.log('Firestore에서 읽은 데이터:', savedInquiries);
+    console.log('localStorage에서 읽은 데이터:', savedInquiries);
     
     if (savedInquiries) {
         try {
@@ -1564,22 +1455,29 @@ function syncDataAcrossDevices() {
             console.log('파싱된 데이터 개수:', loadedInquiries.length);
             console.log('데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
             
-            // 데이터 업데이트
-            inquiries = loadedInquiries;
-            
-            // UI 강제 업데이트
-            currentPage = 1;
-            loadInquiries();
-            updateTotalCount();
+            // 현재 메모리 데이터와 localStorage 데이터 비교
+            if (inquiries.length !== loadedInquiries.length) {
+                console.log('데이터 불일치 감지 - localStorage 데이터로 업데이트');
+                inquiries = loadedInquiries;
+                
+                // UI 강제 업데이트
+                currentPage = 1;
+                loadInquiries();
+                updateTotalCount();
+            } else {
+                console.log('데이터 일치 - 업데이트 불필요');
+            }
             
             console.log('데이터 동기화 완료');
         } catch (error) {
             console.error('데이터 동기화 중 오류:', error);
         }
     } else {
-        console.log('localStorage에 데이터 없음 - Firestore에서 로드 시도');
-        // localStorage에 데이터가 없으면 Firestore에서 로드하되, 기본 데이터로 되돌아가지 않도록 함
-        loadInquiriesFromFirestore();
+        console.log('localStorage에 데이터 없음 - 빈 배열로 초기화');
+        // localStorage에 데이터가 없으면 빈 배열로 초기화
+        inquiries = [];
+        loadInquiries();
+        updateTotalCount();
     }
     
     console.log('=== 기기 간 데이터 동기화 완료 ===');
