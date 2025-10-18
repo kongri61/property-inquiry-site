@@ -122,6 +122,12 @@ function setupRealtimeSync() {
 
 // 새로운 ID 생성 함수
 function generateNewId() {
+    // inquiries 배열이 비어있으면 1부터 시작
+    if (inquiries.length === 0) {
+        console.log('새 ID 생성 - 첫 번째 문의, ID: 1');
+        return 1;
+    }
+    
     // 현재 inquiries 배열에서 가장 큰 ID 찾기
     const maxId = Math.max(...inquiries.map(inquiry => inquiry.id));
     const newId = maxId + 1;
