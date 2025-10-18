@@ -399,6 +399,27 @@ body {
     margin: 0 auto;
 }
 
+/* 비밀번호 컨테이너 - 안내창 방지 */
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    /* 안내창 방지를 위한 CSS 속성들 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* 브라우저 기본 스타일 제거 */
+    background-image: none !important;
+    background-color: transparent !important;
+    /* 안내창 방지 */
+    pointer-events: auto;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
 .login-form .form-group {
     margin-bottom: 20px;
 }

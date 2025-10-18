@@ -1,6 +1,9 @@
 // 사용자 정보
 let currentUser = null;
 
+// 캐시 무효화를 위한 타임스탬프
+console.log('Script.js 로드됨 - 버전 1.2 (2024-12-20 13:00) - replaceChild 제거됨');
+
 // 현재 문의 목록 (실제 문의작성으로만 관리)
 let inquiries = [];
 
@@ -215,15 +218,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // 구/군 옵션 초기화
             districtSelect.innerHTML = '<option>구/군</option>';
             
-            // 동/읍/면 필드 초기화 - 기존 input이 있다면 select로 교체
-            const existingInput = neighborhoodSelect.parentNode.querySelector('input.location-select');
-            if (existingInput) {
+            // 동/읍/면 필드 초기화 - select로 초기화 (서울, 인천이 아닌 경우 나중에 input으로 변경됨)
+            const neighborhoodContainer = document.querySelector('.location-inputs');
+            if (neighborhoodContainer) {
+                // 기존 동/읍/면 필드 제거
+                const oldElement = neighborhoodContainer.querySelector('#neighborhoodSelect');
+                if (oldElement) {
+                    oldElement.remove();
+                }
+                
+                // 새로운 select 필드 생성
                 const newSelect = document.createElement('select');
                 newSelect.className = 'location-select';
+                newSelect.id = 'neighborhoodSelect';
                 newSelect.innerHTML = '<option>동/읍/면</option>';
-                existingInput.parentNode.replaceChild(newSelect, existingInput);
-            } else {
-                neighborhoodSelect.innerHTML = '<option>동/읍/면</option>';
+                
+                // 컨테이너에 추가
+                neighborhoodContainer.appendChild(newSelect);
             }
             
             // 전국 시/도 데이터
@@ -264,21 +275,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const districtSelect = document.querySelectorAll('.location-select')[1];
     if (districtSelect) {
         districtSelect.addEventListener('change', function() {
+            // 매번 새로 요소를 찾아서 참조
             const neighborhoodSelect = document.querySelectorAll('.location-select')[2];
             const district = this.value;
             
             console.log('구/군 선택됨:', district);
             
-            // 동/읍/면 필드 초기화 - 기존 input이 있다면 select로 교체
-            const existingInput = neighborhoodSelect.parentNode.querySelector('input.location-select');
-            if (existingInput) {
-                const newSelect = document.createElement('select');
-                newSelect.className = 'location-select';
-                newSelect.innerHTML = '<option>동/읍/면</option>';
-                existingInput.parentNode.replaceChild(newSelect, existingInput);
-            } else {
-                neighborhoodSelect.innerHTML = '<option>동/읍/면</option>';
-            }
+            // 동/읍/면 필드 초기화는 하지 않음 (구/군 선택 시에 처리)
             
             // 상세 동 데이터가 있는 구/군들 (인천, 서울, 경기 일부 지역만)
             const hasDetailData = [
@@ -345,6 +348,10 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // 서울, 인천만 상세 동 데이터 제공, 나머지는 모두 직접입력
+            console.log('구/군 처리 시작:', district);
+            console.log('hasDetailData에 포함됨:', hasDetailData.includes(district));
+            console.log('districtData에 키 존재:', districtData[searchKey] ? '예' : '아니오');
+            
             if (hasDetailData.includes(district) && districtData[searchKey]) {
                 // 상세 동 목록 추가 (서울, 인천만)
                 districtData[searchKey].forEach(neighborhood => {
@@ -356,22 +363,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log(`${searchKey} 동/읍/면 옵션 추가됨`);
             } else {
                 // 서울, 인천이 아닌 모든 지역은 직접입력 필드로 변경
+                console.log('직접입력 처리 시작:', district);
                 if (district && district !== '구/군') {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.className = 'location-select';
-                    input.placeholder = '동/읍/면을 직접 입력하세요';
-                    input.style.width = '100%';
-                    input.style.padding = '8px';
-                    input.style.border = '1px solid #ddd';
-                    input.style.borderRadius = '4px';
-                    input.style.fontSize = '14px';
-                    input.style.boxSizing = 'border-box';
-                    
-                    // 기존 select를 input으로 교체
-                    neighborhoodSelect.parentNode.replaceChild(input, neighborhoodSelect);
-                    
-                    console.log('직접입력 필드로 변경됨');
+                    try {
+                        // 동/읍/면 필드를 직접입력으로 변경
+                        const neighborhoodContainer = document.querySelector('.location-inputs');
+                        if (neighborhoodContainer) {
+                            // 기존 동/읍/면 필드 제거
+                            const oldElement = neighborhoodContainer.querySelector('#neighborhoodSelect');
+                            if (oldElement) {
+                                oldElement.remove();
+                            }
+                            
+                            // 새로운 input 필드 생성
+                            const input = document.createElement('input');
+                            input.type = 'text';
+                            input.className = 'location-select';
+                            input.id = 'neighborhoodSelect';
+                            input.placeholder = '직접입력';
+                            input.style.width = '100%';
+                            input.style.padding = '8px';
+                            input.style.border = '1px solid #ddd';
+                            input.style.borderRadius = '4px';
+                            input.style.fontSize = '14px';
+                            input.style.boxSizing = 'border-box';
+                            
+                            // 컨테이너에 추가
+                            neighborhoodContainer.appendChild(input);
+                            
+                            console.log('직접입력 필드로 변경됨');
+                        } else {
+                            console.error('neighborhoodContainer를 찾을 수 없음');
+                        }
+                    } catch (error) {
+                        console.error('직접입력 필드 변경 중 오류:', error);
+                        console.error('오류 스택:', error.stack);
+                    }
                 }
             }
         });

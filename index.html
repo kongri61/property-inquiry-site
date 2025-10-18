@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매물 의뢰하기</title>
     
+    <!-- 캐시 무효화 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <!-- Open Graph 메타 태그 - 블로그 링크 미리보기용 -->
     <meta property="og:title" content="매물 의뢰하기 - 피에이 공인중개사사무소">
     <meta property="og:description" content="피에이 공인중개사사무소에서 제공하는 매물 의뢰 서비스입니다. 상가, 사무실, 건물 등 다양한 매물을 의뢰하실 수 있습니다.">
@@ -123,7 +128,9 @@
                     </div>
                     <div class="form-group">
                         <label>비밀번호</label>
-                        <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" data-lpignore="true">
+                        <div class="password-container">
+                            <input type="text" id="loginPassword" placeholder="비밀번호를 입력하세요" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-form-type="other" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-whale-ignore="true" readonly onfocus="this.removeAttribute('readonly'); this.type='password';" style="font-family: monospace; letter-spacing: 2px;">
+                        </div>
                     </div>
                     <div class="form-buttons">
                         <button type="submit" class="submit-btn">로그인</button>
@@ -331,6 +338,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=1.2&t=202412201300&r=12345"></script>
 </body>
 </html> 
