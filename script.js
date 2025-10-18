@@ -344,9 +344,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 경기도는 직접입력 처리로 변경
             };
             
-            // 상세 동 데이터가 있는 경우 (서울, 인천만)
+            // 서울, 인천만 상세 동 데이터 제공, 나머지는 모두 직접입력
             if (hasDetailData.includes(district) && districtData[searchKey]) {
-                // 상세 동 목록 추가
+                // 상세 동 목록 추가 (서울, 인천만)
                 districtData[searchKey].forEach(neighborhood => {
                     const option = document.createElement('option');
                     option.value = neighborhood;
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     neighborhoodSelect.appendChild(option);
                 });
                 console.log(`${searchKey} 동/읍/면 옵션 추가됨`);
-            } else {
+            } else if (district && district !== '구/군') {
                 // 모든 다른 지역은 직접입력 필드로 변경
                 const input = document.createElement('input');
                 input.type = 'text';
