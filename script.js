@@ -496,9 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 폼 초기화
                 this.reset();
                 
-                // 성공 메시지
-                alert('로그인 성공!');
-                
             } else {
                 console.log('=== 로그인 실패 ===');
                 console.log('로그인 실패 - 입력값 불일치');
