@@ -280,14 +280,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 neighborhoodSelect.innerHTML = '<option>동/읍/면</option>';
             }
             
-            // 상세 동 데이터가 있는 구/군들
+            // 상세 동 데이터가 있는 구/군들 (인천, 서울, 경기 일부 지역만)
             const hasDetailData = [
-                // 서울특별시
+                // 서울특별시 (전체)
                 '강남구', '서초구', '마포구', '송파구', '영등포구', '강서구', '성동구', '광진구', '용산구', '중구', '종로구', '은평구', '서대문구', '동대문구', '성북구', '강북구', '도봉구', '노원구', '중랑구', '동작구', '관악구', '금천구', '구로구', '양천구', '강동구',
-                // 인천광역시
+                // 인천광역시 (전체)
                 '연수구', '남동구', '부평구', '계양구', '중구', '남구', '동구', '서구',
-                // 경기도
-                '안양시 만안구', '안양시 동안구', '부천시', '시흥시', '성남시 분당구', '성남시 수정구', '성남시 중원구', '수원시 권선구', '수원시 영통구', '수원시 장안구', '수원시 팔달구'
+                // 경기도 (일부 주요 지역만)
+                '안양시 만안구', '안양시 동안구', '부천시', '시흥시', '성남시 분당구', '성남시 수정구', '성남시 중원구', '수원시 권선구', '수원시 영통구', '수원시 장안구', '수원시 팔달구', '고양시 덕양구', '고양시 일산동구', '고양시 일산서구', '용인시 기흥구', '용인시 수지구', '용인시 처인구', '화성시', '평택시', '안산시 단원구', '안산시 상록구'
             ];
             
             // 특별한 키 매핑
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'location-select';
-                input.placeholder = '동/읍/면 직접입력';
+                input.placeholder = '동/읍/면을 직접 입력하세요';
                 input.style.width = '100%';
                 input.style.padding = '8px';
                 input.style.border = '1px solid #ddd';
