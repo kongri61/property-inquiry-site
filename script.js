@@ -984,8 +984,12 @@ function loadInquiries() {
             }
         }
         
+        // 연속적인 일렬번호 계산 (전체 문의 수에서 현재 페이지의 순서를 빼고 역순으로)
+        const totalInquiries = inquiries.length;
+        const sequentialNumber = totalInquiries - startIndex - index;
+        
         row.innerHTML = `
-            <td>${inquiry.id}</td>
+            <td>${sequentialNumber}</td>
             <td><span class="tag ${inquiry.type === 'sell' ? 'sell' : 'buy'}">${inquiry.type === 'sell' ? '내놈' : '구함'}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${formatPropertyTypeForMobile(inquiry.category)}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.title}</span></td>
