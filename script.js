@@ -597,82 +597,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Firestore 저장 오류 (무시됨):', error);
             }
             
-            // UI 즉시 업데이트 (동기화 없이)
+            // 새 매물이 추가되었으므로 첫 번째 페이지로 이동
+            currentPage = 1;
+            
+            // UI 즉시 업데이트
             loadInquiries();
             updateTotalCount();
             
             console.log('문의 목록에 추가됨, 총 개수:', inquiries.length);
             
-            // 성공 메시지
-            alert('문의가 성공적으로 등록되었습니다.');
-            
-            // 모바일에서 페이지 새로고침 안내
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                setTimeout(() => {
-                    if (confirm('모바일에서 새 매물이 보이지 않는다면 페이지를 새로고침하시겠습니까?')) {
-                        location.reload();
-                    }
-                }, 1000);
-            }
-            
             // 모달 닫기
             closeWriteModal();
             
-            // 목록 강제 업데이트 (모바일 대응)
-            console.log('목록 업데이트 시작');
+            // 성공 메시지
+            alert('문의가 성공적으로 등록되었습니다.');
             
-            // 새 매물이 추가되었으므로 첫 번째 페이지로 이동
-            currentPage = 1;
-            
-            loadInquiries();
-            updateTotalCount();
-            
-            // 새 매물이 첫 페이지 맨 위에 표시되도록 강제 새로고침
+            // 추가 UI 업데이트 (확실한 표시를 위해)
             setTimeout(() => {
-                console.log('새 매물 첫 페이지 표시를 위한 강제 업데이트');
-                currentPage = 1;
+                console.log('추가 UI 업데이트 실행');
                 loadInquiries();
                 updateTotalCount();
             }, 100);
-            
-            // 추가 강제 업데이트 (더 확실하게)
-            setTimeout(() => {
-                console.log('추가 강제 업데이트 실행');
-                currentPage = 1;
-                loadInquiriesFromFirestore();
-                loadInquiries();
-                updateTotalCount();
-            }, 300);
-            
-            // 모바일에서 DOM 업데이트 강제 적용
-            setTimeout(() => {
-                console.log('지연된 목록 업데이트 실행');
-                loadInquiriesFromFirestore(); // 모바일에서도 Firestore에서 데이터 로드
-                updateTotalCount();
-                
-                // 테이블 강제 리렌더링
-                const tbody = document.getElementById('inquiryList');
-                if (tbody) {
-                    tbody.style.display = 'none';
-                    setTimeout(() => {
-                        tbody.style.display = '';
-                        loadInquiriesFromFirestore(); // 모바일에서도 Firestore에서 데이터 로드
-                    }, 50);
-                }
-            }, 100);
-            
-            // 모바일에서 강화된 동기화
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                setTimeout(() => {
-                    console.log('모바일 매물 등록 후 강화된 동기화');
-                    syncDataAcrossDevices();
-                }, 200);
-                
-                setTimeout(() => {
-                    console.log('모바일 매물 등록 후 최종 동기화');
-                    forceSaveAndSync();
-                }, 500);
-            }
             
             // 폼 초기화
             resetForm();
