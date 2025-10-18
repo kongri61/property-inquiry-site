@@ -114,7 +114,9 @@ function setupRealtimeSync() {
                 console.log('실시간 데이터 업데이트 완료');
             }
         }, error => {
-            console.error('실시간 동기화 오류:', error);
+            console.error('실시간 동기화 오류 (무시됨):', error);
+            // 권한 오류는 무시하고 계속 진행
+            console.log('Firebase 권한 없음 - localStorage만 사용');
         });
     
     console.log('=== 실시간 동기화 설정 완료 ===');
@@ -179,6 +181,48 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 복사 방지 기능 추가
     preventCopy();
+    
+    // 상세주소 필드 디버깅 및 강제 표시 (페이지 로드 시)
+    setTimeout(() => {
+        console.log('=== 상세주소 필드 디버깅 시작 ===');
+        
+        // 모든 input 요소 확인
+        const allInputs = document.querySelectorAll('input');
+        console.log('전체 input 요소 개수:', allInputs.length);
+        allInputs.forEach((input, index) => {
+            console.log(`Input ${index}:`, input.className, input.placeholder, input.type);
+        });
+        
+        // 상세주소 필드 찾기
+        const addressInput = document.querySelector('.address-input');
+        console.log('상세주소 필드 찾기 결과:', addressInput);
+        
+        if (addressInput) {
+            console.log('상세주소 필드 정보:', {
+                tagName: addressInput.tagName,
+                className: addressInput.className,
+                placeholder: addressInput.placeholder,
+                style: addressInput.style.cssText,
+                parentElement: addressInput.parentElement,
+                computedStyle: window.getComputedStyle(addressInput).display
+            });
+            
+            // CSS가 제대로 적용되도록 확인만 함
+            console.log('상세주소 필드 확인됨 - CSS 스타일 적용됨');
+            console.log('페이지 로드 시 상세주소 필드 강제 표시 완료');
+        } else {
+            console.error('상세주소 필드를 찾을 수 없음 - HTML 구조 확인 필요');
+            
+            // location-inputs 컨테이너 확인
+            const locationInputs = document.querySelector('.location-inputs');
+            console.log('location-inputs 컨테이너:', locationInputs);
+            if (locationInputs) {
+                console.log('location-inputs 자식 요소들:', locationInputs.children);
+            }
+        }
+        
+        console.log('=== 상세주소 필드 디버깅 완료 ===');
+    }, 500);
     
     // 모바일에서 추가 초기화
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -280,88 +324,19 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 동/읍/면 필드 초기화는 하지 않음 (구/군 선택 시에 처리)
             
-            // 상세 동 데이터가 있는 구/군들 (인천, 서울, 경기 일부 지역만)
-            const hasDetailData = [
-                // 서울특별시 (전체)
-                '강남구', '서초구', '마포구', '송파구', '영등포구', '강서구', '성동구', '광진구', '용산구', '중구', '종로구', '은평구', '서대문구', '동대문구', '성북구', '강북구', '도봉구', '노원구', '중랑구', '동작구', '관악구', '금천구', '구로구', '양천구', '강동구',
-                // 인천광역시 (전체)
-                '연수구', '남동구', '부평구', '계양구', '중구', '남구', '동구', '서구',
-                // 경기도는 전체 직접입력 처리
-            ];
+            // 모든 지역을 직접입력으로 처리 (복잡한 동 데이터 제거)
+            const hasDetailData = [];
             
-            // 특별한 키 매핑
-            let searchKey = district;
-            const selectedCity = document.querySelector('.location-select').value;
+            // 모든 지역을 직접입력으로 처리 (복잡한 동 데이터 제거)
+            const districtData = {};
             
-            if (selectedCity === '서울특별시' && district === '중구') {
-                searchKey = '서울중구';
-            } else if (selectedCity === '인천광역시') {
-                if (district === '중구') searchKey = '인천중구';
-                else if (district === '남구') searchKey = '인천남구';
-                else if (district === '동구') searchKey = '인천동구';
-                else if (district === '서구') searchKey = '인천서구';
-            }
-            
-            // 상세 동 데이터 (실제 행정구역 기준으로 정확 복원)
-            const districtData = {
-                // 서울특별시 (실제 행정동 기준)
-                '강남구': ['개포동', '논현동', '대치동', '도곡동', '삼성동', '세곡동', '수서동', '신사동', '압구정동', '역삼동', '일원동', '청담동'],
-                '서초구': ['반포동', '방배동', '서초동', '양재동', '우면동', '잠원동'],
-                '마포구': ['공덕동', '구수동', '노고산동', '대흥동', '도화동', '동교동', '망원동', '상암동', '서교동', '성산동', '신수동', '연남동', '염리동', '용강동', '중동', '창전동', '토정동', '하중동', '합정동', '현석동'],
-                '송파구': ['가락동', '문정동', '방이동', '송파동', '신천동', '잠실동', '장지동', '풍납동'],
-                '영등포구': ['당산동', '대림동', '도림동', '문래동', '신길동', '양평동', '여의도동', '영등포동', '정동'],
-                '강서구': ['가양동', '개화동', '공항동', '과해동', '내발산동', '냉천동', '대저동', '마곡동', '명지동', '방화동', '오곡동', '오쇠동', '외발산동', '우장동', '원당동', '월경동', '자곡동', '정곡동', '중곡동', '증산동', '진곡동', '창동', '천왕동', '청룡동', '태화동', '풍년동', '화곡동'],
-                '성동구': ['금호동', '도선동', '마장동', '사근동', '상왕십리동', '성수동', '송정동', '신당동', '안암동', '왕십리동', '용답동', '응봉동', '이태원동', '장안동', '중앙동', '청구동', '하왕십리동', '행당동', '현석동', '홍익동'],
-                '광진구': ['광장동', '구의동', '군자동', '능동', '자양동', '중곡동', '화양동'],
-                '용산구': ['갈월동', '남영동', '도원동', '문배동', '보광동', '산천동', '서계동', '용문동', '원효로동', '이촌동', '이태원동', '장충동', '중림동', '청파동', '한강로동', '효창동', '후암동'],
-                '서울중구': ['광희동', '남대문로동', '남산동', '남학동', '다동', '대림동', '덕수동', '도렴동', '봉래동', '봉학동', '북창동', '산림동', '상림동', '서소문동', '세종로동', '소공동', '수표동', '수하동', '순화동', '신당동', '쌍림동', '예관동', '예장동', '오장동', '을지로동', '의주로동', '인현동', '장교동', '장충동', '저동', '정동', '주교동', '주자동', '중림동', '초동', '충무로동', '충신동', '태평로동', '필동', '황학동', '회현동', '흥인동'],
-                '종로구': ['가회동', '견지동', '경운동', '계동', '공평동', '관수동', '관철동', '관훈동', '교남동', '교북동', '교서동', '교촌동', '궁정동', '권농동', '낙원동', '내수동', '내자동', '누상동', '누하동', '당주동', '도렴동', '돈의동', '돈화동', '동숭동', '명륜동', '묘동', '봉익동', '봉원동', '부암동', '사간동', '사직동', '삼봉동', '삼성동', '상림동', '서린동', '세종로동', '소격동', '송월동', '송현동', '수송동', '숭인동', '신교동', '신문로동', '안국동', '연건동', '연지동', '예지동', '오동동', '옥인동', '와룡동', '운니동', '원남동', '원서동', '이화동', '익선동', '인사동', '인의동', '장사동', '재동', '적선동', '종로동', '중학동', '중앙동', '창성동', '창덕동', '청운동', '청진동', '체부동', '충신동', '통의동', '통인동', '팔판동', '필운동', '행촌동', '혜화동', '화동', '효자동', '훈정동'],
-                '은평구': ['갈현동', '구산동', '녹번동', '대조동', '덕은동', '불광동', '신사동', '역촌동', '응암동', '증산동', '진관동'],
-                '서대문구': ['남가좌동', '냉천동', '대신동', '대현동', '미근동', '봉원동', '북가좌동', '북아현동', '신촌동', '연희동', '영천동', '옥천동', '창천동', '천연동', '충현동', '합동', '현저동', '홍대동', '홍은동', '화북동', '환일동'],
-                '동대문구': ['답십리동', '신설동', '용두동', '이문동', '장안동', '전농동', '제기동', '청량리동', '회기동', '휘경동'],
-                '성북구': ['길음동', '돈암동', '동선동', '동소문동', '보문동', '삼선동', '상월곡동', '석관동', '성북동', '안암동', '월곡동', '장위동', '정릉동', '종암동', '중앙동', '하월곡동'],
-                '강북구': ['미아동', '번동', '삼양동', '송중동', '송천동', '수유동', '우이동', '인수동'],
-                '도봉구': ['도봉동', '방학동', '쌍문동', '창동'],
-                '노원구': ['공릉동', '상계동', '월계동', '중계동', '하계동'],
-                '중랑구': ['망우동', '묵동', '면목동', '상봉동', '신내동', '중화동'],
-                '동작구': ['노량진동', '대방동', '동작동', '본동', '사당동', '상도동', '신대방동', '흑석동'],
-                '관악구': ['봉천동', '신림동'],
-                '금천구': ['가산동', '독산동', '시흥동'],
-                '구로구': ['가리봉동', '개봉동', '고척동', '구로동', '궁동', '신도림동', '오류동', '천왕동', '항동'],
-                '양천구': ['목동', '신월동', '신정동'],
-                '강동구': ['강일동', '고덕동', '길동', '둔촌동', '명일동', '상일동', '성내동', '암사동', '천호동'],
-                
-                // 인천광역시 (실제 행정동 기준)
-                '연수구': ['동춘동', '선학동', '송도동', '연수동', '옥련동', '원인재동', '청학동'],
-                '남동구': ['간석동', '고잔동', '구월동', '남동동', '남촌동', '논현동', '도림동', '도화동', '만수동', '서창동', '수산동', '시천동', '신촌동', '아암동', '어은동', '용현동', '운연동', '인수동', '장수동', '작전동', '청림동', '탑동', '학익동', '호구포동'],
-                '부평구': ['갈산동', '구산동', '부개동', '부평동', '산곡동', '삼산동', '십정동', '일신동', '청천동'],
-                '계양구': ['계양동', '계산동', '계수동', '계정동', '작전동', '서운동', '임학동', '용종동', '병방동', '방축동', '동양동', '귤현동', '상야동', '하야동', '평동', '노오지동', '선주지동', '이화동', '오류동', '마전동', '왕길동', '아라동'],
-                '인천중구': ['신포동', '연안동', '신흥동', '도원동', '율목동', '동인천동', '개항동', '영종동', '운서동', '용유동', '을왕동', '덕적동', '백령동', '대청동', '영흥동', '덕적도동', '자월동', '연평동', '항동', '중산동'],
-                '인천남구': ['숭의동', '용현동', '학익동', '도화동', '주안동', '관교동', '문학동'],
-                '인천동구': ['만석동', '화수동', '송현동', '화평동', '창영동', '금곡동', '송림동'],
-                '인천서구': ['대곡동', '백석동', '시천동', '검단동', '마전동', '왕길동', '오류동', '원당동', '당하동', '아라동'],
-                
-                // 경기도는 직접입력 처리로 변경
-            };
-            
-            // 서울, 인천만 상세 동 데이터 제공, 나머지는 모두 직접입력
+            // 모든 지역을 직접입력으로 처리 (복잡한 동 데이터 제거)
             console.log('구/군 처리 시작:', district);
-            console.log('hasDetailData에 포함됨:', hasDetailData.includes(district));
-            console.log('districtData에 키 존재:', districtData[searchKey] ? '예' : '아니오');
+            console.log('모든 지역을 직접입력으로 처리');
             
-            if (hasDetailData.includes(district) && districtData[searchKey]) {
-                // 상세 동 목록 추가 (서울, 인천만)
-                districtData[searchKey].forEach(neighborhood => {
-                    const option = document.createElement('option');
-                    option.value = neighborhood;
-                    option.textContent = neighborhood;
-                    neighborhoodSelect.appendChild(option);
-                });
-                console.log(`${searchKey} 동/읍/면 옵션 추가됨`);
-            } else {
-                // 서울, 인천이 아닌 모든 지역은 직접입력 필드로 변경
-                console.log('직접입력 처리 시작:', district);
-                if (district && district !== '구/군') {
+            // 모든 지역을 직접입력으로 처리
+            console.log('직접입력 처리 시작:', district);
+            if (district && district !== '구/군') {
                     try {
                         // 동/읍/면 필드를 직접입력으로 변경
                         const neighborhoodContainer = document.querySelector('.location-inputs');
@@ -390,17 +365,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (addressInput) {
                             neighborhoodContainer.insertBefore(input, addressInput);
                         } else {
+                            // 상세주소 입력창이 없으면 맨 뒤에 추가
                             neighborhoodContainer.appendChild(input);
                         }
                             
-                            console.log('직접입력 필드로 변경됨');
-                        } else {
-                            console.error('neighborhoodContainer를 찾을 수 없음');
-                        }
-                    } catch (error) {
-                        console.error('직접입력 필드 변경 중 오류:', error);
-                        console.error('오류 스택:', error.stack);
+                        console.log('직접입력 필드로 변경됨');
+                    } else {
+                        console.error('neighborhoodContainer를 찾을 수 없음');
                     }
+                } catch (error) {
+                    console.error('직접입력 필드 변경 중 오류:', error);
+                    console.error('오류 스택:', error.stack);
                 }
             }
         });
@@ -1134,13 +1109,41 @@ function showWriteModal() {
     document.getElementById('writeModal').style.display = 'flex';
     resetForm();
     
-    // 모달 열 때 초기 상태 설정 (구함이 기본 선택되므로 상세주소 숨김)
-    const addressInput = document.querySelector('.address-input');
-    if (addressInput) {
-        addressInput.style.display = 'none';
-        addressInput.value = ''; // 값 초기화
-    }
-    console.log('문의작성 모달 열림 - 구함 기본 선택, 상세주소 필드 숨김');
+    // 상세주소 필드 강제 표시 (캐시 문제 해결)
+    setTimeout(() => {
+        let addressInput = document.querySelector('.address-input');
+        
+        // 상세주소 필드가 없으면 생성
+        if (!addressInput) {
+            console.log('상세주소 필드가 없음 - 새로 생성');
+            const locationInputs = document.querySelector('.location-inputs');
+            if (locationInputs) {
+                addressInput = document.createElement('input');
+                addressInput.type = 'text';
+                addressInput.placeholder = '상세주소';
+                addressInput.className = 'address-input';
+                addressInput.style.cssText = `
+                    padding: 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    width: 100%;
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: auto;
+                    min-height: 40px;
+                `;
+                locationInputs.appendChild(addressInput);
+                console.log('상세주소 필드 생성 완료');
+            }
+        } else {
+            // CSS가 제대로 적용되도록 확인만 함
+            console.log('상세주소 필드 확인됨 - CSS 스타일 적용됨');
+        }
+    }, 100);
+    
+    console.log('문의작성 모달 열림 - 상세주소 필드 강제 표시');
 }
 
 // 문의작성 모달 닫기
@@ -1201,23 +1204,19 @@ function switchTab(tab) {
     
     if (tab === 'buy') {
         tabButtons[0].classList.add('active');
-        // 구함일 때 상세주소 필드 숨김
-        const addressInput = document.querySelector('.address-input');
-        if (addressInput) {
-            addressInput.style.display = 'none';
-            addressInput.value = ''; // 값 초기화
-        }
-        console.log('구함 선택 - 상세주소 필드 숨김');
+        console.log('구함 선택');
     } else {
         tabButtons[1].classList.add('active');
-        // 내놈일 때 상세주소 필드 표시
+        console.log('내놈 선택');
+    }
+    
+    // 상세주소 필드 확인 (CSS가 자동으로 처리)
+    setTimeout(() => {
         const addressInput = document.querySelector('.address-input');
         if (addressInput) {
-            addressInput.style.display = 'block';
-            addressInput.style.visibility = 'visible';
+            console.log('탭 전환 후 상세주소 필드 확인됨');
         }
-        console.log('내놈 선택 - 상세주소 필드 표시');
-    }
+    }, 50);
 }
 
 // 라디오 버튼 선택
@@ -1237,11 +1236,15 @@ function resetForm() {
     document.querySelector('.property-btn').classList.add('active');
     document.getElementById('termsAgree').checked = false;
     
-    // 상세주소 필드 초기화 및 표시 복원
+    // 상세주소 필드 초기화 및 항상 표시
     const addressInput = document.querySelector('.address-input');
     if (addressInput) {
         addressInput.style.display = 'block';
         addressInput.style.visibility = 'visible';
+        addressInput.style.opacity = '1';
+        addressInput.removeAttribute('hidden');
+        addressInput.style.height = 'auto';
+        addressInput.style.minHeight = '40px';
         addressInput.value = '';
     }
     
@@ -1249,11 +1252,6 @@ function resetForm() {
     const tabButtons = document.querySelectorAll('.tab-btn');
     tabButtons.forEach(btn => btn.classList.remove('active'));
     tabButtons[0].classList.add('active'); // 구함 탭 활성화
-    
-    // 구함이 기본이므로 상세주소 숨김
-    if (addressInput) {
-        addressInput.style.display = 'none';
-    }
 }
 
 // 파일 삭제 함수

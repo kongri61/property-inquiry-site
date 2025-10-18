@@ -22,14 +22,14 @@
     <meta name="twitter:title" content="매물 의뢰하기 - 피에이 공인중개사사무소">
     <meta name="twitter:description" content="피에이 공인중개사사무소에서 제공하는 매물 의뢰 서비스입니다.">
     
-    <link rel="stylesheet" href="styles.css?v=6.9" id="css-link">
+    <link rel="stylesheet" href="styles.css?v=7.0" id="css-link">
     <script>
         // 즉시 실행되는 캐시 무효화
         (function() {
             const cssLink = document.getElementById('css-link');
             if (cssLink) {
                 const timestamp = new Date().getTime();
-                cssLink.href = 'styles.css?v=6.9&t=' + timestamp;
+                cssLink.href = 'styles.css?v=7.0&t=' + timestamp;
                 console.log('CSS 캐시 무효화 즉시 적용:', cssLink.href);
             }
         })();
@@ -39,7 +39,7 @@
             const cssLink = document.getElementById('css-link');
             if (cssLink) {
                 const timestamp = new Date().getTime();
-                cssLink.href = 'styles.css?v=6.9&t=' + timestamp;
+                cssLink.href = 'styles.css?v=7.0&t=' + timestamp;
                 console.log('CSS 캐시 무효화 DOMContentLoaded 적용:', cssLink.href);
             }
         });
@@ -65,7 +65,7 @@
                     <button class="auth-btn" onclick="toggleAuth()">로그인</button>
                 </div>
                 <div class="header-info">
-                    <span class="total-count">전체 문의 수: <span id="totalCount">58</span>개</span>
+                    <span class="total-count">전체 문의 수: <span id="totalCount">0</span>개</span>
                     <button class="write-btn" onclick="showWriteModal()">문의작성</button>
                 </div>
             </header>
@@ -338,6 +338,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
-    <script src="script.js?v=1.2&t=202412201300&r=12345"></script>
+    <script src="script.js?v=2.3&t=202412202400&r=99999&fixed=true"></script>
 </body>
 </html> 

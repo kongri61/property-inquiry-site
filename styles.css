@@ -545,16 +545,27 @@ body {
 /* 위치 입력 */
 .location-inputs {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
 }
 
-.location-select,
+.location-select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 .address-input {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* 가격 입력 */
@@ -1071,10 +1082,19 @@ body {
         gap: 8px;
     }
     
-    .location-select,
+    .location-select {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
     .address-input {
         padding: 10px;
         font-size: 13px;
+        grid-column: 1 / -1;
+        margin-top: 8px;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .property-buttons {
