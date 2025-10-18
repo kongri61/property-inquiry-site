@@ -354,23 +354,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     neighborhoodSelect.appendChild(option);
                 });
                 console.log(`${searchKey} 동/읍/면 옵션 추가됨`);
-            } else if (district && district !== '구/군') {
-                // 모든 다른 지역은 직접입력 필드로 변경
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'location-select';
-                input.placeholder = '동/읍/면을 직접 입력하세요';
-                input.style.width = '100%';
-                input.style.padding = '8px';
-                input.style.border = '1px solid #ddd';
-                input.style.borderRadius = '4px';
-                input.style.fontSize = '14px';
-                input.style.boxSizing = 'border-box';
-                
-                // 기존 select를 input으로 교체
-                neighborhoodSelect.parentNode.replaceChild(input, neighborhoodSelect);
-                
-                console.log('직접입력 필드로 변경됨');
+            } else {
+                // 서울, 인천이 아닌 모든 지역은 직접입력 필드로 변경
+                if (district && district !== '구/군') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'location-select';
+                    input.placeholder = '동/읍/면을 직접 입력하세요';
+                    input.style.width = '100%';
+                    input.style.padding = '8px';
+                    input.style.border = '1px solid #ddd';
+                    input.style.borderRadius = '4px';
+                    input.style.fontSize = '14px';
+                    input.style.boxSizing = 'border-box';
+                    
+                    // 기존 select를 input으로 교체
+                    neighborhoodSelect.parentNode.replaceChild(input, neighborhoodSelect);
+                    
+                    console.log('직접입력 필드로 변경됨');
+                }
             }
         });
     }
