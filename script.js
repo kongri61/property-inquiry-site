@@ -571,10 +571,22 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('매물 등록 후 inquiries 배열:', inquiries);
             console.log('매물 등록 후 inquiries ID 목록:', inquiries.map(inq => inq.id));
             
-            // Firestore에 저장 강제 실행
-            console.log('Firestore 저장 시작...');
-            await saveInquiriesToFirestore(); // Firestore에 저장
-            console.log('Firestore 저장 완료');
+            // localStorage에 즉시 저장 (로그아웃 상태에서도 작동)
+            try {
+                localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                console.log('localStorage 저장 완료:', inquiries.length, '개');
+            } catch (error) {
+                console.error('localStorage 저장 오류:', error);
+            }
+            
+            // Firestore에 저장 시도 (로그인 상태에서만)
+            try {
+                console.log('Firestore 저장 시작...');
+                await saveInquiriesToFirestore();
+                console.log('Firestore 저장 완료');
+            } catch (error) {
+                console.error('Firestore 저장 오류 (무시됨):', error);
+            }
             
             // 강화된 데이터 저장 및 동기화
             forceSaveAndSync();
