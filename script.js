@@ -476,8 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 console.log('로그인 성공:', currentUser);
                 
-                // 목록 다시 로드 (삭제 버튼 표시)
-                loadInquiriesFromFirestore(); // Firestore에서 데이터 로드
+                // 목록 다시 로드 (삭제 버튼 표시) - 현재 데이터 유지
                 loadInquiries(); // 목록 다시 렌더링
                 updateTotalCount(); // 총 개수 업데이트
                 
