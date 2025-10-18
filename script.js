@@ -1133,6 +1133,14 @@ function lastPage() {
 function showWriteModal() {
     document.getElementById('writeModal').style.display = 'flex';
     resetForm();
+    
+    // 모달 열 때 초기 상태 설정 (구함이 기본 선택되므로 상세주소 숨김)
+    const addressInput = document.querySelector('.address-input');
+    if (addressInput) {
+        addressInput.style.display = 'none';
+        addressInput.value = ''; // 값 초기화
+    }
+    console.log('문의작성 모달 열림 - 구함 기본 선택, 상세주소 필드 숨김');
 }
 
 // 문의작성 모달 닫기
@@ -1193,8 +1201,21 @@ function switchTab(tab) {
     
     if (tab === 'buy') {
         tabButtons[0].classList.add('active');
+        // 구함일 때 상세주소 필드 숨김
+        const addressInput = document.querySelector('.address-input');
+        if (addressInput) {
+            addressInput.style.display = 'none';
+            addressInput.value = ''; // 값 초기화
+        }
+        console.log('구함 선택 - 상세주소 필드 숨김');
     } else {
         tabButtons[1].classList.add('active');
+        // 내놈일 때 상세주소 필드 표시
+        const addressInput = document.querySelector('.address-input');
+        if (addressInput) {
+            addressInput.style.display = 'block';
+        }
+        console.log('내놈 선택 - 상세주소 필드 표시');
     }
 }
 
@@ -1301,13 +1322,14 @@ function validateForm(data) {
         return false;
     }
     
-    // 내놈일 때 상세주소 검증 추가
+    // 내놈일 때만 상세주소 검증 (구함일 때는 상세주소 불필요)
     const isSell = tabBtn.textContent === '내놈';
     if (isSell && (!address.value || !address.value.trim())) {
         console.log('내놈에서 상세주소 미입력');
         alert('상세주소까지 입력해주세요.');
         return false;
     }
+    console.log('상세주소 검증 완료 - 구함/내놈:', tabBtn.textContent, '상세주소:', address.value);
     
     // 매물종류 선택 확인
     if (!propertyBtn) {
