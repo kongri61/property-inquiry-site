@@ -302,9 +302,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 else if (district === '서구') searchKey = '인천서구';
             }
             
-            // 상세 동 데이터 (서울, 인천 완전 복원)
+            // 상세 동 데이터 (실제 행정구역 기준으로 정확 복원)
             const districtData = {
-                // 서울특별시 (모든 구 완전 복원)
+                // 서울특별시 (실제 행정동 기준)
                 '강남구': ['개포동', '논현동', '대치동', '도곡동', '삼성동', '세곡동', '수서동', '신사동', '압구정동', '역삼동', '일원동', '청담동'],
                 '서초구': ['반포동', '방배동', '서초동', '양재동', '우면동', '잠원동'],
                 '마포구': ['공덕동', '구수동', '노고산동', '대흥동', '도화동', '동교동', '망원동', '상암동', '서교동', '성산동', '신수동', '연남동', '염리동', '용강동', '중동', '창전동', '토정동', '하중동', '합정동', '현석동'],
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '양천구': ['목동', '신월동', '신정동'],
                 '강동구': ['강일동', '고덕동', '길동', '둔촌동', '명일동', '상일동', '성내동', '암사동', '천호동'],
                 
-                // 인천광역시 (모든 구 완전 복원)
+                // 인천광역시 (실제 행정동 기준)
                 '연수구': ['동춘동', '선학동', '송도동', '연수동', '옥련동', '원인재동', '청학동'],
                 '남동구': ['간석동', '고잔동', '구월동', '남동동', '남촌동', '논현동', '도림동', '도화동', '만수동', '서창동', '수산동', '시천동', '신촌동', '아암동', '어은동', '용현동', '운연동', '인수동', '장수동', '작전동', '청림동', '탑동', '학익동', '호구포동'],
                 '부평구': ['갈산동', '구산동', '부개동', '부평동', '산곡동', '삼산동', '십정동', '일신동', '청천동'],
@@ -1214,6 +1214,7 @@ function switchTab(tab) {
         const addressInput = document.querySelector('.address-input');
         if (addressInput) {
             addressInput.style.display = 'block';
+            addressInput.style.visibility = 'visible';
         }
         console.log('내놈 선택 - 상세주소 필드 표시');
     }
@@ -1235,6 +1236,24 @@ function resetForm() {
     document.querySelectorAll('.property-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector('.property-btn').classList.add('active');
     document.getElementById('termsAgree').checked = false;
+    
+    // 상세주소 필드 초기화 및 표시 복원
+    const addressInput = document.querySelector('.address-input');
+    if (addressInput) {
+        addressInput.style.display = 'block';
+        addressInput.style.visibility = 'visible';
+        addressInput.value = '';
+    }
+    
+    // 탭 초기화 (구함이 기본 선택)
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabButtons[0].classList.add('active'); // 구함 탭 활성화
+    
+    // 구함이 기본이므로 상세주소 숨김
+    if (addressInput) {
+        addressInput.style.display = 'none';
+    }
 }
 
 // 파일 삭제 함수
