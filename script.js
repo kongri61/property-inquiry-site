@@ -1032,7 +1032,15 @@ async function deleteInquiry(inquiryId) {
     console.log('=== 삭제 함수 호출됨 ===');
     console.log('삭제할 ID:', inquiryId);
     console.log('삭제 전 inquiries 개수:', inquiries.length);
+    console.log('삭제 전 inquiries 배열:', inquiries);
     console.log('삭제 전 inquiries ID 목록:', inquiries.map(inq => inq.id));
+    
+    // inquiries 배열이 비어있는지 확인
+    if (inquiries.length === 0) {
+        console.error('inquiries 배열이 비어있음 - 삭제할 항목이 없습니다');
+        alert('삭제할 문의가 없습니다. 먼저 문의를 작성해주세요.');
+        return;
+    }
     
     // 삭제 확인
     if (!confirm('정말로 이 문의를 삭제하시겠습니까?')) {
