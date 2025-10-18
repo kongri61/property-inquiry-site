@@ -233,8 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 newSelect.id = 'neighborhoodSelect';
                 newSelect.innerHTML = '<option>동/읍/면</option>';
                 
-                // 컨테이너에 추가
-                neighborhoodContainer.appendChild(newSelect);
+                // 상세주소 입력창 앞에 추가
+                const addressInput = neighborhoodContainer.querySelector('.address-input');
+                if (addressInput) {
+                    neighborhoodContainer.insertBefore(newSelect, addressInput);
+                } else {
+                    neighborhoodContainer.appendChild(newSelect);
+                }
             }
             
             // 전국 시/도 데이터
@@ -388,8 +393,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             input.style.fontSize = '14px';
                             input.style.boxSizing = 'border-box';
                             
-                            // 컨테이너에 추가
+                        // 상세주소 입력창 앞에 추가
+                        const addressInput = neighborhoodContainer.querySelector('.address-input');
+                        if (addressInput) {
+                            neighborhoodContainer.insertBefore(input, addressInput);
+                        } else {
                             neighborhoodContainer.appendChild(input);
+                        }
                             
                             console.log('직접입력 필드로 변경됨');
                         } else {
