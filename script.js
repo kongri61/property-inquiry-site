@@ -2,7 +2,14 @@
 let currentUser = null;
 
 // 캐시 무효화를 위한 타임스탬프
-console.log('Script.js 로드됨 - 버전 3.0 (2024-12-20 15:00) - 실시간 동기화 시스템');
+console.log('Script.js 로드됨 - 버전 5.0 (2024-12-20 16:00) - 버튼 정리 완료');
+
+// 강제 캐시 무효화
+if (window.location.search.indexOf('force_refresh') === -1) {
+    const url = new URL(window.location);
+    url.searchParams.set('force_refresh', Date.now());
+    window.location.replace(url.toString());
+}
 
 // 간단한 실시간 동기화 시스템
 let syncInterval = null;
