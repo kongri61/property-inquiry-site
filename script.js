@@ -610,6 +610,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 syncBtn.style.opacity = '1';
                 syncBtn.classList.add('show');
                 console.log('✅ 페이지 로드 시 동기화 버튼 강제 표시');
+            } else {
+                // 동기화 버튼이 없으면 생성
+                const headerButtons = document.querySelector('.header-buttons');
+                if (headerButtons) {
+                    const newSyncBtn = document.createElement('button');
+                    newSyncBtn.className = 'sync-btn';
+                    newSyncBtn.id = 'syncButton';
+                    newSyncBtn.textContent = '📤';
+                    newSyncBtn.title = '동기화';
+                    newSyncBtn.onclick = function() { perfectSync(); };
+                    newSyncBtn.style.display = 'flex';
+                    newSyncBtn.style.visibility = 'visible';
+                    newSyncBtn.style.opacity = '1';
+                    newSyncBtn.classList.add('show');
+                    
+                    const authBtn = document.querySelector('.auth-btn');
+                    headerButtons.insertBefore(newSyncBtn, authBtn);
+                    console.log('✅ 동기화 버튼 생성 완료');
+                }
             }
         }
     }, 1000);
@@ -2128,6 +2147,39 @@ window.debugSyncButton = function() {
         console.log('✅ 동기화 버튼 강제 표시 완료');
     } else {
         console.log('❌ 동기화 버튼을 찾을 수 없음');
+    }
+};
+
+// 모바일에서 동기화 버튼 강제 표시 함수
+window.forceShowSyncButton = function() {
+    console.log('=== 모바일 동기화 버튼 강제 표시 ===');
+    
+    // 기존 버튼 찾기
+    let syncBtn = document.querySelector('.sync-btn');
+    
+    if (!syncBtn) {
+        // 버튼이 없으면 생성
+        const headerButtons = document.querySelector('.header-buttons');
+        if (headerButtons) {
+            syncBtn = document.createElement('button');
+            syncBtn.className = 'sync-btn';
+            syncBtn.id = 'syncButton';
+            syncBtn.textContent = '📤';
+            syncBtn.title = '동기화';
+            syncBtn.onclick = function() { perfectSync(); };
+            
+            const authBtn = document.querySelector('.auth-btn');
+            headerButtons.insertBefore(syncBtn, authBtn);
+            console.log('✅ 동기화 버튼 생성 완료');
+        }
+    }
+    
+    if (syncBtn) {
+        syncBtn.style.display = 'flex !important';
+        syncBtn.style.visibility = 'visible !important';
+        syncBtn.style.opacity = '1 !important';
+        syncBtn.classList.add('show');
+        console.log('✅ 동기화 버튼 강제 표시 완료');
     }
 };
 

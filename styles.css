@@ -163,6 +163,24 @@ body {
     opacity: 1 !important;
 }
 
+/* 모바일에서 동기화 버튼 표시 */
+@media (max-width: 768px) {
+    .sync-btn {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-width: 40px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .sync-btn.show {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
 .sync-btn:hover {
     background: #218838;
 }
