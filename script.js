@@ -1142,13 +1142,27 @@ function checkLoginStatus() {
 // 인증 버튼 업데이트
 function updateAuthButton() {
     const authBtn = document.querySelector('.auth-btn');
+    const syncBtn = document.getElementById('syncButton');
+    
     if (authBtn) {
         if (currentUser) {
             authBtn.textContent = '로그아웃';
             console.log('버튼 텍스트: 로그아웃');
+            
+            // 로그인 시 동기화 버튼 표시
+            if (syncBtn) {
+                syncBtn.style.display = 'flex';
+                console.log('동기화 버튼 표시됨');
+            }
         } else {
             authBtn.textContent = '로그인';
             console.log('버튼 텍스트: 로그인');
+            
+            // 로그아웃 시 동기화 버튼 숨김
+            if (syncBtn) {
+                syncBtn.style.display = 'none';
+                console.log('동기화 버튼 숨김');
+            }
         }
     } else {
         console.log('인증 버튼을 찾을 수 없음');
