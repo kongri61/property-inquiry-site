@@ -80,10 +80,11 @@
                         </div>
                     </div>
                     <h1 class="main-title">매물 의뢰하기</h1>
-                    <button class="sync-btn" onclick="syncData()" title="동기화">🔄</button>
-                    <button class="share-btn" onclick="shareData()" title="공유">📤</button>
-                    <button class="perfect-sync-btn" onclick="perfectSync()" title="완벽동기화" style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px;">완벽동기화</button>
-                    <button class="auth-btn" onclick="toggleAuth()">로그인</button>
+                    <div class="header-buttons">
+                        <button class="perfect-sync-btn" onclick="perfectSync()" title="완벽동기화">📤</button>
+                        <button class="merge-btn" onclick="mergeData()" title="데이터통합" style="background: #ffc107; color: #000; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">통합</button>
+                        <button class="auth-btn" onclick="toggleAuth()">로그인</button>
+                    </div>
                 </div>
                 <div class="header-info">
                     <span class="total-count">전체 문의 수: <span id="totalCount">0</span>개</span>
