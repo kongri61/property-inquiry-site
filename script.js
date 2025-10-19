@@ -2,16 +2,389 @@
 let currentUser = null;
 
 // 캐시 무효화를 위한 타임스탬프
-console.log('Script.js 로드됨 - 버전 1.2 (2024-12-20 13:00) - replaceChild 제거됨');
+console.log('Script.js 로드됨 - 버전 3.0 (2024-12-20 15:00) - 실시간 동기화 시스템');
+
+// 간단한 실시간 동기화 시스템
+let syncInterval = null;
+
+// 실시간 동기화 시작
+function startRealtimeSync() {
+    console.log('실시간 동기화 시작');
+    
+    // 5초마다 동기화 체크
+    syncInterval = setInterval(() => {
+        checkForUpdates();
+    }, 5000);
+}
+
+// 업데이트 체크
+function checkForUpdates() {
+    // URL에서 동기화 데이터 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const syncData = urlParams.get('sync');
+    
+    if (syncData) {
+        try {
+            const decodedData = decodeURIComponent(syncData);
+            const urlInquiries = JSON.parse(decodedData);
+            
+            if (urlInquiries.length !== inquiries.length) {
+                console.log('동기화 데이터 발견:', urlInquiries.length, '개');
+                inquiries = urlInquiries;
+                localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                loadInquiries();
+                updateTotalCount();
+                
+                // URL에서 sync 파라미터 제거
+                const newUrl = window.location.href.split('?')[0];
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        } catch (error) {
+            console.error('동기화 오류:', error);
+        }
+    }
+}
+
+// 실시간 동기화 중지
+function stopRealtimeSync() {
+    if (syncInterval) {
+        clearInterval(syncInterval);
+        syncInterval = null;
+        console.log('실시간 동기화 중지');
+    }
+}
+
+// 전역 함수로 동기화 기능 노출 (브라우저 주소창에서 직접 사용 가능)
+window.syncData = function() {
+    console.log('=== 동기화 시작 ===');
+    console.log('현재 데이터 개수:', inquiries.length);
+    
+    // URL에서 동기화 시도
+    if (syncFromURL()) {
+        alert(`URL 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+        return;
+    }
+    
+    // Firebase 동기화 시도
+    loadInquiriesFromFirestore().then(() => {
+        console.log('동기화 완료 - 데이터 개수:', inquiries.length);
+        loadInquiries();
+        updateTotalCount();
+        alert(`Firebase 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+    }).catch(error => {
+        console.error('동기화 실패:', error);
+        alert('동기화 실패: ' + error.message);
+    });
+};
+
+window.shareData = function() {
+    shareToURL();
+};
+
+// 브라우저 주소창에서 직접 사용할 수 있는 함수들
+window.showSyncButtons = function() {
+    console.log('showSyncButtons 함수 호출됨');
+    
+    // 기존 버튼들 제거
+    const existingBtns = document.querySelectorAll('#syncBtn, #shareBtn');
+    existingBtns.forEach(btn => btn.remove());
+    
+    // 동기화 버튼
+    const syncBtn = document.createElement('button');
+    syncBtn.id = 'syncBtn';
+    syncBtn.innerHTML = '🔄 동기화';
+    syncBtn.style.cssText = `
+        position: fixed !important;
+        top: 10px !important;
+        right: 10px !important;
+        z-index: 999999 !important;
+        background: #007bff !important;
+        color: white !important;
+        border: none !important;
+        padding: 10px 15px !important;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+        font-family: Arial, sans-serif !important;
+    `;
+    syncBtn.onclick = () => syncData();
+    
+    // 공유 버튼
+    const shareBtn = document.createElement('button');
+    shareBtn.id = 'shareBtn';
+    shareBtn.innerHTML = '📤 공유';
+    shareBtn.style.cssText = `
+        position: fixed !important;
+        top: 10px !important;
+        right: 120px !important;
+        z-index: 999999 !important;
+        background: #28a745 !important;
+        color: white !important;
+        border: none !important;
+        padding: 10px 15px !important;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+        font-family: Arial, sans-serif !important;
+    `;
+    shareBtn.onclick = () => shareData();
+    
+    document.body.appendChild(syncBtn);
+    document.body.appendChild(shareBtn);
+    
+    alert('✅ 동기화 버튼이 추가되었습니다!\n\n🔄 동기화: 데이터 새로고침\n📤 공유: URL로 데이터 공유\n\n현재 데이터: ' + inquiries.length + '개');
+    console.log('동기화 버튼 수동 추가 완료');
+};
+
+// 간단한 동기화 함수 (주소창에서 직접 사용)
+window.sync = function() {
+    console.log('sync 함수 호출됨');
+    syncData();
+};
+
+// 간단한 공유 함수 (주소창에서 직접 사용)
+window.share = function() {
+    console.log('share 함수 호출됨');
+    shareData();
+};
+
+// 완벽한 동기화 시스템
+window.perfectSync = function() {
+    const dataToShare = JSON.stringify(inquiries);
+    const encodedData = encodeURIComponent(dataToShare);
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('sync', encodedData);
+    
+    const shareUrl = currentUrl.toString();
+    
+    // 드래그 가능한 창 생성
+    const copyArea = document.createElement('div');
+    copyArea.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        padding: 20px;
+        z-index: 999999;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        max-width: 90%;
+        width: 600px;
+    `;
+    copyArea.innerHTML = `
+        <h3>📤 완벽한 동기화</h3>
+        <p><strong>현재 데이터: ${inquiries.length}개</strong></p>
+        <p>아래 URL을 드래그해서 복사하세요:</p>
+        <textarea readonly style="width: 100%; height: 150px; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">${shareUrl}</textarea>
+        <div style="text-align: center; margin-top: 15px;">
+            <button onclick="this.parentElement.parentElement.remove()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">닫기</button>
+        </div>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">
+            💡 사용법: 이 URL을 모바일에서 열면 자동으로 동기화됩니다!
+        </p>
+    `;
+    document.body.appendChild(copyArea);
+    
+    console.log('완벽한 동기화 URL 생성:', shareUrl);
+};
 
 // 현재 문의 목록 (실제 문의작성으로만 관리)
 let inquiries = [];
 
-// Firebase Firestore 데이터 동기화 함수들
+// 간단한 동기화 시스템 (Firebase 대체)
 
-// Firestore에서 데이터 불러오기
+// 간단한 URL 기반 동기화 시스템 (Firebase 대체)
+
+// URL에서 데이터 동기화
+function syncFromURL() {
+    console.log('=== URL 동기화 시작 ===');
+    
+    try {
+        // URL 파라미터에서 데이터 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const syncData = urlParams.get('sync');
+        
+        if (syncData) {
+            console.log('URL에서 동기화 데이터 발견');
+            const decodedData = decodeURIComponent(syncData);
+            const urlInquiries = JSON.parse(decodedData);
+            
+            if (Array.isArray(urlInquiries) && urlInquiries.length > 0) {
+                inquiries = urlInquiries;
+                localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                console.log('URL 동기화 완료:', inquiries.length, '개');
+                loadInquiries();
+                updateTotalCount();
+                return true;
+            }
+        }
+        
+        return false;
+    } catch (error) {
+        console.error('URL 동기화 오류:', error);
+        return false;
+    }
+}
+
+// URL로 데이터 공유 (네이버 환경 최적화)
+function shareToURL() {
+    console.log('=== URL 공유 시작 ===');
+    
+    try {
+        const dataToShare = JSON.stringify(inquiries);
+        const encodedData = encodeURIComponent(dataToShare);
+        
+        // 현재 URL에 동기화 데이터 추가
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('sync', encodedData);
+        
+        console.log('공유 URL 생성:', currentUrl.toString());
+        
+        // 네이버 환경에서도 작동하는 공유 방법
+        if (navigator.clipboard && window.isSecureContext) {
+            // HTTPS 환경에서 클립보드 사용
+            navigator.clipboard.writeText(currentUrl.toString()).then(() => {
+                alert(`✅ 동기화 URL이 클립보드에 복사되었습니다!\n\n다른 기기에서 이 URL을 열면 데이터가 동기화됩니다.\n\n현재 데이터: ${inquiries.length}개`);
+            }).catch(() => {
+                // 클립보드 실패 시 수동 표시
+                showShareModal(currentUrl.toString());
+            });
+        } else {
+            // HTTP 환경이나 클립보드 지원 안함
+            showShareModal(currentUrl.toString());
+        }
+        
+    } catch (error) {
+        console.error('URL 공유 오류:', error);
+        alert('URL 공유 실패: ' + error.message);
+    }
+}
+
+// 공유 모달 표시
+function showShareModal(url) {
+    // 기존 모달 제거
+    const existingModal = document.getElementById('shareModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 공유 모달 생성
+    const modal = document.createElement('div');
+    modal.id = 'shareModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    `;
+    
+    modalContent.innerHTML = `
+        <h3>📤 데이터 공유</h3>
+        <p>다른 기기에서 이 URL을 열면 데이터가 동기화됩니다.</p>
+        <p><strong>현재 데이터: ${inquiries.length}개</strong></p>
+        <textarea readonly style="width: 100%; height: 100px; margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">${url}</textarea>
+        <div style="text-align: center;">
+            <button onclick="copyToClipboard('${url}')" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">복사</button>
+            <button onclick="closeShareModal()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">닫기</button>
+        </div>
+    `;
+    
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    // 모달 외부 클릭 시 닫기
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            closeShareModal();
+        }
+    };
+}
+
+// 클립보드 복사
+function copyToClipboard(text) {
+    try {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('✅ URL이 클립보드에 복사되었습니다!');
+        }).catch(() => {
+            // 수동 복사 방법
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('✅ URL이 클립보드에 복사되었습니다!');
+        });
+    } catch (error) {
+        alert('복사 실패: ' + error.message);
+    }
+}
+
+// 공유 모달 닫기
+function closeShareModal() {
+    const modal = document.getElementById('shareModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+async function loadInquiriesFromStorage() {
+    console.log('=== localStorage에서 데이터 불러오기 시작 ===');
+    
+    try {
+        const savedInquiries = localStorage.getItem('allInquiries');
+        
+        if (savedInquiries) {
+            const loadedInquiries = JSON.parse(savedInquiries);
+            inquiries = loadedInquiries;
+            console.log('localStorage에서 불러온 데이터:', loadedInquiries.length, '개');
+            console.log('localStorage 데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
+        } else {
+            console.log('localStorage에 데이터 없음 - 빈 배열로 초기화');
+            inquiries = [];
+        }
+        
+        return Promise.resolve();
+        
+    } catch (error) {
+        console.error('localStorage 데이터 불러오기 오류:', error);
+        inquiries = [];
+        return Promise.reject(error);
+    }
+    
+    console.log('=== localStorage 데이터 불러오기 완료 ===');
+}
+
+// Firebase 연결 시도 (실패 시 localStorage 사용)
 async function loadInquiriesFromFirestore() {
-    console.log('=== Firestore에서 데이터 불러오기 시작 ===');
+    console.log('=== Firebase 연결 시도 ===');
+    
+    // Firebase가 초기화되지 않았으면 localStorage 사용
+    if (typeof db === 'undefined') {
+        console.log('Firebase가 초기화되지 않음 - localStorage 사용');
+        return loadInquiriesFromStorage();
+    }
     
     try {
         const snapshot = await db.collection('inquiries').orderBy('id', 'desc').get();
@@ -22,32 +395,24 @@ async function loadInquiriesFromFirestore() {
         });
         
         console.log('Firestore에서 불러온 데이터:', firestoreInquiries.length, '개');
-        console.log('Firestore 데이터 ID 목록:', firestoreInquiries.map(inq => inq.id));
         
         if (firestoreInquiries.length > 0) {
-            // Firestore에 데이터가 있으면 사용
             inquiries = firestoreInquiries;
-            console.log('Firestore 데이터 사용');
+            // localStorage도 동기화
+            localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+            console.log('Firestore 데이터 사용 및 localStorage 동기화');
         } else {
-            // Firestore에 데이터가 없으면 빈 배열로 초기화 (샘플 데이터 사용 안함)
-            console.log('Firestore에 데이터 없음 - 빈 배열로 초기화');
-            inquiries = [];
+            // Firestore에 데이터가 없으면 localStorage 확인
+            return loadInquiriesFromStorage();
         }
         
-        // UI 업데이트
-        loadInquiries();
-        updateTotalCount();
+        return Promise.resolve();
         
     } catch (error) {
         console.error('Firestore 데이터 불러오기 오류:', error);
-        // 오류 시 빈 배열로 초기화 (샘플 데이터 사용 안함)
-        console.log('Firestore 오류 - 빈 배열로 초기화');
-        inquiries = [];
-        loadInquiries();
-        updateTotalCount();
+        console.log('Firestore 실패 - localStorage 사용');
+        return loadInquiriesFromStorage();
     }
-    
-    console.log('=== Firestore 데이터 불러오기 완료 ===');
 }
 
 // Firestore에 데이터 저장하기
@@ -93,33 +458,64 @@ async function saveInquiriesToFirestore() {
     console.log('=== Firestore 데이터 저장 완료 ===');
 }
 
-// 실시간 데이터 동기화 설정
+// 간단한 동기화 설정 (Firebase 실패 시 localStorage 사용)
 function setupRealtimeSync() {
-    console.log('=== 실시간 동기화 설정 시작 ===');
+    console.log('=== 동기화 설정 시작 ===');
     
-    db.collection('inquiries')
-        .orderBy('id', 'desc')
-        .onSnapshot(snapshot => {
-            console.log('실시간 데이터 변경 감지');
+    // Firebase가 사용 가능한지 확인
+    if (typeof db !== 'undefined') {
+        console.log('Firebase 사용 가능 - 실시간 동기화 설정');
+        
+        try {
+            db.collection('inquiries')
+                .orderBy('id', 'desc')
+                .onSnapshot(snapshot => {
+                    console.log('실시간 데이터 변경 감지 - 문서 개수:', snapshot.size);
+                    
+                    const firestoreInquiries = [];
+                    snapshot.forEach(doc => {
+                        firestoreInquiries.push(doc.data());
+                    });
+                    
+                    console.log('Firestore에서 받은 데이터 개수:', firestoreInquiries.length);
+                    
+                    // Firestore 데이터가 있으면 사용하고 localStorage도 업데이트
+                    if (firestoreInquiries.length > 0) {
+                        inquiries = firestoreInquiries;
+                        localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                        loadInquiries();
+                        updateTotalCount();
+                        console.log('실시간 데이터 업데이트 완료 - localStorage도 동기화됨');
+                    } else {
+                        console.log('Firestore에 데이터 없음 - localStorage 데이터 유지');
+                    }
+                }, error => {
+                    console.error('실시간 동기화 오류:', error);
+                    console.log('Firebase 연결 실패 - localStorage만 사용');
+                    
+                    // Firebase 연결 실패 시 localStorage 데이터 로드
+                    const savedInquiries = localStorage.getItem('allInquiries');
+                    if (savedInquiries) {
+                        try {
+                            inquiries = JSON.parse(savedInquiries);
+                            loadInquiries();
+                            updateTotalCount();
+                            console.log('localStorage 데이터로 복구 완료');
+                        } catch (parseError) {
+                            console.error('localStorage 데이터 파싱 오류:', parseError);
+                        }
+                    }
+                });
             
-            const firestoreInquiries = [];
-            snapshot.forEach(doc => {
-                firestoreInquiries.push(doc.data());
-            });
-            
-            if (firestoreInquiries.length > 0) {
-                inquiries = firestoreInquiries;
-                loadInquiries();
-                updateTotalCount();
-                console.log('실시간 데이터 업데이트 완료');
-            }
-        }, error => {
-            console.error('실시간 동기화 오류 (무시됨):', error);
-            // 권한 오류는 무시하고 계속 진행
-            console.log('Firebase 권한 없음 - localStorage만 사용');
-        });
-    
-    console.log('=== 실시간 동기화 설정 완료 ===');
+            console.log('=== Firebase 실시간 동기화 설정 완료 ===');
+        } catch (error) {
+            console.error('Firebase 실시간 동기화 설정 오류:', error);
+            console.log('Firebase 실패 - localStorage만 사용');
+        }
+    } else {
+        console.log('Firebase 사용 불가 - localStorage만 사용');
+        console.log('=== localStorage 동기화 설정 완료 ===');
+    }
 }
 
 // 새로운 ID 생성 함수
@@ -142,34 +538,157 @@ const itemsPerPage = 10;
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('페이지 로드됨');
+    console.log('=== 페이지 로드 시작 ===');
     console.log('사용자 에이전트:', navigator.userAgent);
+    console.log('Firebase 초기화 상태:', typeof firebase !== 'undefined' ? '성공' : '실패');
+    console.log('Firestore DB 상태:', typeof db !== 'undefined' ? '성공' : '실패');
     
-    // localStorage 우선 데이터 로드 (삭제된 항목이 다시 나타나지 않도록 수정)
-    const savedInquiries = localStorage.getItem('allInquiries');
-    if (savedInquiries) {
-        try {
-            const loadedInquiries = JSON.parse(savedInquiries);
-            inquiries = loadedInquiries;
-            console.log('localStorage에서 데이터 로드:', loadedInquiries.length, '개');
-            console.log('localStorage 데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
-        } catch (error) {
-            console.error('localStorage 데이터 파싱 오류:', error);
-            loadInquiriesFromFirestore();
-        }
+    // Firebase 연결 테스트
+    if (typeof db !== 'undefined') {
+        console.log('Firebase 연결 테스트 시작...');
+        db.collection('test').limit(1).get()
+            .then(snapshot => {
+                console.log('✅ Firebase 연결 성공!');
+                console.log('Firebase 프로젝트 ID:', firebase.app().options.projectId);
+            })
+            .catch(error => {
+                console.error('❌ Firebase 연결 실패:', error);
+                console.log('오류 코드:', error.code);
+                console.log('오류 메시지:', error.message);
+            });
     } else {
-        console.log('localStorage에 데이터 없음 - Firestore에서 로드');
-        loadInquiriesFromFirestore();
+        console.error('❌ Firebase가 초기화되지 않음');
     }
     
-    // 실시간 동기화 설정
-    setupRealtimeSync();
-    
-    // 저장된 데이터의 작성자 이름 수정
-    fixAuthorNamesInStorage();
+    // 먼저 URL에서 동기화 시도 (자동)
+    if (syncFromURL()) {
+        console.log('URL 동기화 성공 - 자동으로 데이터 로드됨');
+        alert('✅ 자동 동기화 완료!\n현재 데이터: ' + inquiries.length + '개');
+        // 동기화 설정
+        setupRealtimeSync();
+        // 저장된 데이터의 작성자 이름 수정
+        fixAuthorNamesInStorage();
+    } else {
+        // URL 동기화 실패 시 Firebase/localStorage 시도
+        loadInquiriesFromFirestore().then(() => {
+            console.log('데이터 로드 완료');
+            
+            // UI 업데이트
+            loadInquiries();
+            updateTotalCount();
+            
+            // 동기화 설정
+            setupRealtimeSync();
+            
+            // 저장된 데이터의 작성자 이름 수정
+            fixAuthorNamesInStorage();
+            
+        }).catch(error => {
+            console.error('데이터 로드 실패:', error);
+            
+            // 실패 시 빈 배열로 초기화
+            inquiries = [];
+            
+            // UI 업데이트
+            loadInquiries();
+            updateTotalCount();
+            
+            // 동기화 설정
+            setupRealtimeSync();
+            
+            // 저장된 데이터의 작성자 이름 수정
+            fixAuthorNamesInStorage();
+        });
+    }
     
     // "~전부보기" 텍스트 제거
     removeAllPropertyTypeSuffixes();
+    
+    // 동기화 테스트를 위한 새로고침 버튼 추가
+    addSyncTestButton();
+    
+    // 즉시 동기화 버튼 추가 (여러 방법으로 시도)
+    function addSyncButtonsNow() {
+        console.log('=== 동기화 버튼 즉시 추가 시작 ===');
+        
+        // 기존 버튼들 제거
+        const existingBtns = document.querySelectorAll('#syncBtn, #shareBtn, #syncButton, #shareButton');
+        existingBtns.forEach(btn => btn.remove());
+        
+        // 동기화 버튼 생성
+        const syncBtn = document.createElement('button');
+        syncBtn.id = 'syncBtn';
+        syncBtn.innerHTML = '🔄 동기화';
+        syncBtn.style.cssText = `
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 999999 !important;
+            background: #007bff !important;
+            color: white !important;
+            border: none !important;
+            padding: 10px 15px !important;
+            border-radius: 5px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+            font-family: Arial, sans-serif !important;
+        `;
+        syncBtn.onclick = function() {
+            console.log('동기화 버튼 클릭됨');
+            syncData();
+        };
+        
+        // 공유 버튼 생성
+        const shareBtn = document.createElement('button');
+        shareBtn.id = 'shareBtn';
+        shareBtn.innerHTML = '📤 공유';
+        shareBtn.style.cssText = `
+            position: fixed !important;
+            top: 10px !important;
+            right: 120px !important;
+            z-index: 999999 !important;
+            background: #28a745 !important;
+            color: white !important;
+            border: none !important;
+            padding: 10px 15px !important;
+            border-radius: 5px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+            font-family: Arial, sans-serif !important;
+        `;
+        shareBtn.onclick = function() {
+            console.log('공유 버튼 클릭됨');
+            shareData();
+        };
+        
+        // 버튼들을 body에 추가
+        document.body.appendChild(syncBtn);
+        document.body.appendChild(shareBtn);
+        
+        console.log('동기화 버튼 즉시 추가 완료');
+        console.log('현재 데이터 개수:', inquiries.length);
+        
+        return true;
+    }
+    
+    // 여러 방법으로 버튼 추가 시도
+    addSyncButtonsNow(); // 즉시 실행
+    
+    setTimeout(addSyncButtonsNow, 1000); // 1초 후
+    setTimeout(addSyncButtonsNow, 2000); // 2초 후
+    setTimeout(addSyncButtonsNow, 3000); // 3초 후
+    setTimeout(addSyncButtonsNow, 5000); // 5초 후
+    
+    // 페이지 로드 완료 후에도 시도
+    window.addEventListener('load', addSyncButtonsNow);
+    document.addEventListener('DOMContentLoaded', addSyncButtonsNow);
+    
+    // 실시간 동기화 시작
+    startRealtimeSync();
     
     // 강화된 데이터 동기화 실행
     syncDataAcrossDevices();
@@ -569,13 +1088,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('localStorage 저장 오류:', error);
             }
             
-            // Firestore에 저장 시도 (로그인 상태에서만)
-            try {
-                console.log('Firestore 저장 시작...');
-                await saveInquiriesToFirestore();
-                console.log('Firestore 저장 완료');
-            } catch (error) {
-                console.error('Firestore 저장 오류 (무시됨):', error);
+            // Firebase에 저장 시도 (사용 가능한 경우에만)
+            if (typeof db !== 'undefined') {
+                try {
+                    console.log('Firestore 저장 시작...');
+                    await saveInquiriesToFirestore();
+                    console.log('Firestore 저장 성공 - 모든 기기에서 동기화됨');
+                } catch (error) {
+                    console.error('Firestore 저장 실패:', error);
+                    console.log('Firebase 연결 실패 - localStorage에만 저장됨');
+                }
+            } else {
+                console.log('Firebase 사용 불가 - localStorage에만 저장됨');
             }
             
             // 새 매물이 추가되었으므로 첫 번째 페이지로 이동
@@ -1027,11 +1551,17 @@ async function deleteInquiry(inquiryId) {
             console.error('localStorage 저장 오류:', error);
         }
         
-        // Firestore에도 저장 시도 (권한이 있으면)
-        try {
-            await saveInquiriesToFirestore();
-        } catch (error) {
-            console.error('Firestore 저장 오류 (무시됨):', error);
+        // Firebase에도 저장 시도 (사용 가능한 경우에만)
+        if (typeof db !== 'undefined') {
+            try {
+                await saveInquiriesToFirestore();
+                console.log('Firestore 삭제 동기화 완료 - 모든 기기에서 삭제됨');
+            } catch (error) {
+                console.error('Firestore 삭제 동기화 실패:', error);
+                console.log('Firebase 연결 실패 - localStorage에만 삭제됨');
+            }
+        } else {
+            console.log('Firebase 사용 불가 - localStorage에만 삭제됨');
         }
         
         // 현재 페이지가 비어있고 이전 페이지가 있다면 이전 페이지로 이동
@@ -1553,10 +2083,150 @@ function removeAllPropertyTypeSuffixes() {
     });
 }
 
-// DOM이 로드되면 실행
-document.addEventListener('DOMContentLoaded', function() {
-    removeAllPropertyTypeSuffixes();
-});
+// HTML 버튼용 동기화 함수들
+function syncData() {
+    console.log('=== 동기화 시작 ===');
+    console.log('현재 데이터 개수:', inquiries.length);
+    
+    // URL에서 동기화 시도
+    if (syncFromURL()) {
+        alert(`URL 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+        return;
+    }
+    
+    // Firebase 동기화 시도
+    loadInquiriesFromFirestore().then(() => {
+        console.log('동기화 완료 - 데이터 개수:', inquiries.length);
+        loadInquiries();
+        updateTotalCount();
+        alert(`Firebase 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+    }).catch(error => {
+        console.error('동기화 실패:', error);
+        alert('동기화 실패: ' + error.message);
+    });
+}
+
+function shareData() {
+    shareToURL();
+}
+
+// 동기화 테스트 버튼 추가
+function addSyncTestButton() {
+    // 기존 버튼들 제거
+    const existingBtns = document.querySelectorAll('#syncTestBtn, #shareBtn');
+    existingBtns.forEach(btn => btn.remove());
+    
+    // 동기화 테스트 버튼
+    const syncBtn = document.createElement('button');
+    syncBtn.id = 'syncTestBtn';
+    syncBtn.innerHTML = '🔄 동기화';
+    syncBtn.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        margin-right: 5px;
+    `;
+    
+    syncBtn.onclick = function() {
+        console.log('=== 동기화 테스트 시작 ===');
+        console.log('현재 데이터 개수:', inquiries.length);
+        
+        // URL에서 동기화 시도
+        if (syncFromURL()) {
+            alert(`URL 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+            return;
+        }
+        
+        // Firebase 동기화 시도
+        loadInquiriesFromFirestore().then(() => {
+            console.log('동기화 테스트 완료 - 데이터 개수:', inquiries.length);
+            loadInquiries();
+            updateTotalCount();
+            alert(`Firebase 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+        }).catch(error => {
+            console.error('동기화 테스트 실패:', error);
+            alert('동기화 실패: ' + error.message);
+        });
+    };
+    
+    // 공유 버튼
+    const shareBtn = document.createElement('button');
+    shareBtn.id = 'shareBtn';
+    shareBtn.innerHTML = '📤 공유';
+    shareBtn.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 80px;
+        z-index: 9999;
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    `;
+    
+    shareBtn.onclick = function() {
+        shareToURL();
+    };
+    
+    // 강제 동기화 버튼 (기존 데이터용)
+    const forceSyncBtn = document.createElement('button');
+    forceSyncBtn.id = 'forceSyncBtn';
+    forceSyncBtn.innerHTML = '⚡ 강제동기화';
+    forceSyncBtn.style.cssText = `
+        position: fixed;
+        top: 50px;
+        right: 10px;
+        z-index: 9999;
+        background: #ff6b35;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    `;
+    
+    forceSyncBtn.onclick = function() {
+        console.log('=== 강제 동기화 시작 ===');
+        
+        // localStorage에서 데이터 강제 로드
+        const savedInquiries = localStorage.getItem('allInquiries');
+        if (savedInquiries) {
+            try {
+                inquiries = JSON.parse(savedInquiries);
+                console.log('강제 동기화 완료:', inquiries.length, '개');
+                loadInquiries();
+                updateTotalCount();
+                alert(`강제 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
+            } catch (error) {
+                console.error('강제 동기화 오류:', error);
+                alert('강제 동기화 실패: ' + error.message);
+            }
+        } else {
+            alert('저장된 데이터가 없습니다.');
+        }
+    };
+    
+    document.body.appendChild(forceSyncBtn);
+    
+    document.body.appendChild(syncBtn);
+    document.body.appendChild(shareBtn);
+    console.log('동기화 버튼들 추가됨');
+}
 
 // 모바일에서 거래종류 텍스트를 두 줄로 나누는 함수
 function formatPropertyTypeForMobile(text) {

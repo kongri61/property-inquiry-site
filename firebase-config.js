@@ -9,8 +9,27 @@ const firebaseConfig = {
     measurementId: "G-WPHLXTG1NF"
 };
 
-// Firebase 초기화
-firebase.initializeApp(firebaseConfig);
-
-// Firestore 데이터베이스 참조
-const db = firebase.firestore(); 
+// Firebase 초기화 (오류 처리 포함)
+try {
+    // Firebase가 이미 초기화되었는지 확인
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log('✅ Firebase 초기화 성공');
+    } else {
+        console.log('✅ Firebase 이미 초기화됨');
+    }
+    
+    // Firestore 데이터베이스 참조
+    const db = firebase.firestore();
+    
+    // Firestore 설정
+    db.settings({
+        timestampsInSnapshots: true
+    });
+    
+    console.log('✅ Firestore 설정 완료');
+    
+} catch (error) {
+    console.error('❌ Firebase 초기화 실패:', error);
+    console.log('Firebase 없이 localStorage만 사용합니다.');
+} 

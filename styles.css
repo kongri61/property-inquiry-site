@@ -49,6 +49,12 @@ body {
     margin-bottom: 20px;
 }
 
+.header-top .sync-btn,
+.header-top .share-btn,
+.header-top .auth-btn {
+    margin-left: 8px;
+}
+
 /* 회사 정보 스타일 */
 .company-info {
     display: flex;
@@ -101,6 +107,13 @@ body {
     text-align: center;
 }
 
+/* 헤더 버튼들 */
+.header-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 /* 인증 버튼 (로그인/로그아웃) */
 .auth-btn {
     padding: 8px 16px;
@@ -117,6 +130,46 @@ body {
 .auth-btn:hover {
     background: #f8f9fa;
     border-color: #999;
+}
+
+/* 동기화 버튼 */
+.sync-btn, .share-btn, .perfect-sync-btn {
+    padding: 8px 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    min-width: 40px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-btn {
+    background: #28a745;
+}
+
+.perfect-sync-btn {
+    background: #17a2b8 !important;
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    min-width: auto !important;
+}
+
+.perfect-sync-btn:hover {
+    background: #138496 !important;
+}
+
+.sync-btn:hover {
+    background: #0056b3;
+}
+
+.share-btn:hover {
+    background: #1e7e34;
 }
 
 .header-info {

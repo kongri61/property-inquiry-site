@@ -40,7 +40,7 @@
     <meta name="twitter:title" content="매물 의뢰하기 - 피에이 공인중개사사무소">
     <meta name="twitter:description" content="피에이 공인중개사사무소에서 제공하는 매물 의뢰 서비스입니다.">
     
-    <link rel="stylesheet" href="styles.css?v=8.0&t=202412202900&r=99999&force_update=true&lastmod=20241220&build=1734703200000&cache_buster=naver_fix" id="css-link">
+    <link rel="stylesheet" href="styles.css?v=9.0&t=202412202950&r=99999&force_update=true&lastmod=20241220&build=1734703200000&cache_buster=sync_buttons" id="css-link">
     <script>
         // 즉시 실행되는 캐시 무효화
         (function() {
@@ -80,6 +80,9 @@
                         </div>
                     </div>
                     <h1 class="main-title">매물 의뢰하기</h1>
+                    <button class="sync-btn" onclick="syncData()" title="동기화">🔄</button>
+                    <button class="share-btn" onclick="shareData()" title="공유">📤</button>
+                    <button class="perfect-sync-btn" onclick="perfectSync()" title="완벽동기화" style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px;">완벽동기화</button>
                     <button class="auth-btn" onclick="toggleAuth()">로그인</button>
                 </div>
                 <div class="header-info">
@@ -356,6 +359,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
-    <script src="script.js?v=3.0&t=202412202900&r=99999&force_cache_clear=true&naver_seo=true&lastmod=20241220&build=1734703200000&cache_buster=naver_fix"></script>
+    <script src="script.js?v=4.0&t=202412202950&r=99999&force_cache_clear=true&naver_seo=true&lastmod=20241220&build=1734703200000&cache_buster=sync_buttons"></script>
 </body>
 </html> 
