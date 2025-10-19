@@ -86,7 +86,10 @@
                 </div>
                 <div class="header-info">
                     <span class="total-count">전체 문의 수: <span id="totalCount">0</span>개</span>
-                    <button class="write-btn" onclick="showWriteModal()">문의작성</button>
+                    <div class="header-actions">
+                        <button class="merge-btn" onclick="mergeAllData()" title="데이터 통합">🔄</button>
+                        <button class="write-btn" onclick="showWriteModal()">문의작성</button>
+                    </div>
                 </div>
             </header>
 

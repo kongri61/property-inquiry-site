@@ -2153,6 +2153,94 @@ window.forceShowSyncButton = function() {
     }
 };
 
+// PC와 모바일 데이터 통합 함수
+window.mergeAllData = function() {
+    console.log('=== PC와 모바일 데이터 통합 시작 ===');
+    
+    // 현재 데이터 백업
+    const currentData = JSON.parse(JSON.stringify(inquiries));
+    console.log('현재 데이터 개수:', currentData.length);
+    
+    // localStorage에서 모든 데이터 수집
+    const allStoredData = [];
+    
+    // 현재 브라우저의 데이터
+    const currentStorage = localStorage.getItem('allInquiries');
+    if (currentStorage) {
+        try {
+            const parsed = JSON.parse(currentStorage);
+            if (Array.isArray(parsed)) {
+                allStoredData.push(...parsed);
+                console.log('현재 브라우저 데이터 추가:', parsed.length);
+            }
+        } catch (e) {
+            console.log('현재 브라우저 데이터 파싱 실패');
+        }
+    }
+    
+    // URL에서 동기화 데이터 수집
+    const urlParams = new URLSearchParams(window.location.search);
+    const syncData = urlParams.get('sync');
+    if (syncData) {
+        try {
+            const decoded = decodeURIComponent(syncData);
+            const parsed = JSON.parse(decoded);
+            if (Array.isArray(parsed)) {
+                allStoredData.push(...parsed);
+                console.log('URL 동기화 데이터 추가:', parsed.length);
+            }
+        } catch (e) {
+            console.log('URL 동기화 데이터 파싱 실패');
+        }
+    }
+    
+    // 중복 제거 (ID 기준)
+    const uniqueData = [];
+    const seenIds = new Set();
+    
+    allStoredData.forEach(item => {
+        if (item.id && !seenIds.has(item.id)) {
+            seenIds.add(item.id);
+            uniqueData.push(item);
+        } else if (!item.id) {
+            // ID가 없는 경우 새로 생성
+            item.id = Date.now() + Math.random();
+            uniqueData.push(item);
+        }
+    });
+    
+    console.log('통합 전 총 데이터:', allStoredData.length);
+    console.log('중복 제거 후 데이터:', uniqueData.length);
+    
+    // ID 재정렬 (1부터 시작)
+    uniqueData.forEach((item, index) => {
+        item.id = index + 1;
+    });
+    
+    // 통합된 데이터로 업데이트
+    inquiries = uniqueData;
+    
+    // localStorage에 저장
+    localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+    
+    // UI 업데이트
+    loadInquiries();
+    updateTotalCount();
+    
+    // Firebase에도 저장 시도
+    saveInquiriesToFirestore().catch(error => {
+        console.log('Firebase 저장 실패 (무시됨):', error);
+    });
+    
+    console.log('=== 데이터 통합 완료 ===');
+    console.log('최종 데이터 개수:', inquiries.length);
+    
+    // 결과 표시
+    alert(`✅ 데이터 통합 완료!\n\n통합 전: ${allStoredData.length}개\n통합 후: ${inquiries.length}개\n\n중복 제거: ${allStoredData.length - inquiries.length}개`);
+    
+    return inquiries;
+};
+
 // HTML 버튼용 동기화 함수들
 function syncData() {
     console.log('=== 동기화 시작 ===');
