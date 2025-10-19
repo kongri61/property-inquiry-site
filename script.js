@@ -600,36 +600,17 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.remove();
     });
     
-    // 동기화 버튼 강제 표시 (로그인 상태 확인 후)
+    // 동기화 버튼 생성 (항상 실행)
+    setTimeout(() => {
+        createSyncButton();
+    }, 500);
+    
+    // 로그인 상태 확인 후 동기화 버튼 표시/숨김
     setTimeout(() => {
         if (currentUser) {
-            const syncBtn = document.querySelector('.sync-btn');
-            if (syncBtn) {
-                syncBtn.style.display = 'flex';
-                syncBtn.style.visibility = 'visible';
-                syncBtn.style.opacity = '1';
-                syncBtn.classList.add('show');
-                console.log('✅ 페이지 로드 시 동기화 버튼 강제 표시');
-            } else {
-                // 동기화 버튼이 없으면 생성
-                const headerButtons = document.querySelector('.header-buttons');
-                if (headerButtons) {
-                    const newSyncBtn = document.createElement('button');
-                    newSyncBtn.className = 'sync-btn';
-                    newSyncBtn.id = 'syncButton';
-                    newSyncBtn.textContent = '📤';
-                    newSyncBtn.title = '동기화';
-                    newSyncBtn.onclick = function() { perfectSync(); };
-                    newSyncBtn.style.display = 'flex';
-                    newSyncBtn.style.visibility = 'visible';
-                    newSyncBtn.style.opacity = '1';
-                    newSyncBtn.classList.add('show');
-                    
-                    const authBtn = document.querySelector('.auth-btn');
-                    headerButtons.insertBefore(newSyncBtn, authBtn);
-                    console.log('✅ 동기화 버튼 생성 완료');
-                }
-            }
+            showSyncButton();
+        } else {
+            hideSyncButton();
         }
     }, 1000);
     
@@ -922,52 +903,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeLoginModal();
                 updateAuthButton();
                 
-                // 로그인 성공 후 동기화 버튼 강제 표시 (여러 방법 시도)
+                // 로그인 성공 후 동기화 버튼 표시
                 setTimeout(() => {
-                    // 방법 1: ID로 찾기
-                    let syncBtn = document.getElementById('syncButton');
-                    if (syncBtn) {
-                        syncBtn.style.display = 'flex';
-                        syncBtn.style.visibility = 'visible';
-                        syncBtn.style.opacity = '1';
-                        syncBtn.classList.add('show');
-                        console.log('✅ 방법1: ID로 동기화 버튼 표시');
-                    } else {
-                        // 방법 2: 클래스로 찾기
-                        syncBtn = document.querySelector('.sync-btn');
-                        if (syncBtn) {
-                            syncBtn.style.display = 'flex';
-                            syncBtn.style.visibility = 'visible';
-                            syncBtn.style.opacity = '1';
-                            syncBtn.classList.add('show');
-                            console.log('✅ 방법2: 클래스로 동기화 버튼 표시');
-                        } else {
-                            // 방법 3: 모든 버튼 중에서 찾기
-                            const allButtons = document.querySelectorAll('button');
-                            allButtons.forEach(btn => {
-                                if (btn.textContent.includes('📤') || btn.title === '동기화') {
-                                    btn.style.display = 'flex';
-                                    btn.style.visibility = 'visible';
-                                    btn.style.opacity = '1';
-                                    btn.classList.add('show');
-                                    console.log('✅ 방법3: 텍스트로 동기화 버튼 표시');
-                                }
-                            });
-                        }
-                    }
+                    showSyncButton();
                 }, 100);
-                
-                // 추가로 500ms 후에도 한 번 더 시도
-                setTimeout(() => {
-                    const syncBtn = document.querySelector('.sync-btn');
-                    if (syncBtn) {
-                        syncBtn.style.display = 'flex !important';
-                        syncBtn.style.visibility = 'visible !important';
-                        syncBtn.style.opacity = '1 !important';
-                        syncBtn.classList.add('show');
-                        console.log('✅ 500ms 후 동기화 버튼 강제 표시');
-                    }
-                }, 500);
                 
                 console.log('로그인 성공:', currentUser);
                 
@@ -1249,36 +1188,13 @@ function updateAuthButton() {
             console.log('버튼 텍스트: 로그아웃');
             
             // 로그인 시 동기화 버튼 표시
-            if (syncBtn) {
-                syncBtn.style.display = 'flex';
-                syncBtn.style.visibility = 'visible';
-                syncBtn.style.opacity = '1';
-                syncBtn.classList.add('show');
-                console.log('✅ 동기화 버튼 표시됨');
-            } else {
-                console.log('❌ 동기화 버튼을 찾을 수 없음');
-                // 다른 방법으로 찾기 시도
-                const altSyncBtn = document.querySelector('.sync-btn');
-                if (altSyncBtn) {
-                    altSyncBtn.style.display = 'flex';
-                    altSyncBtn.style.visibility = 'visible';
-                    altSyncBtn.style.opacity = '1';
-                    altSyncBtn.classList.add('show');
-                    console.log('✅ 대체 방법으로 동기화 버튼 표시됨');
-                }
-            }
+            showSyncButton();
         } else {
             authBtn.textContent = '로그인';
             console.log('버튼 텍스트: 로그인');
             
             // 로그아웃 시 동기화 버튼 숨김
-            if (syncBtn) {
-                syncBtn.style.display = 'none';
-                syncBtn.style.visibility = 'hidden';
-                syncBtn.style.opacity = '0';
-                syncBtn.classList.remove('show');
-                console.log('동기화 버튼 숨김');
-            }
+            hideSyncButton();
         }
     } else {
         console.log('인증 버튼을 찾을 수 없음');
@@ -2149,6 +2065,60 @@ window.debugSyncButton = function() {
         console.log('❌ 동기화 버튼을 찾을 수 없음');
     }
 };
+
+// 동기화 버튼 생성 함수
+function createSyncButton() {
+    console.log('=== 동기화 버튼 생성 시작 ===');
+    
+    // 기존 동기화 버튼 제거
+    const existingSyncBtn = document.querySelector('.sync-btn');
+    if (existingSyncBtn) {
+        existingSyncBtn.remove();
+        console.log('기존 동기화 버튼 제거됨');
+    }
+    
+    // 새 동기화 버튼 생성
+    const headerButtons = document.querySelector('.header-buttons');
+    if (headerButtons) {
+        const syncBtn = document.createElement('button');
+        syncBtn.className = 'sync-btn';
+        syncBtn.id = 'syncButton';
+        syncBtn.textContent = '📤';
+        syncBtn.title = '동기화';
+        syncBtn.onclick = function() { perfectSync(); };
+        syncBtn.style.display = 'none'; // 기본적으로 숨김
+        
+        const authBtn = document.querySelector('.auth-btn');
+        headerButtons.insertBefore(syncBtn, authBtn);
+        console.log('✅ 동기화 버튼 생성 완료');
+    } else {
+        console.log('❌ header-buttons를 찾을 수 없음');
+    }
+}
+
+// 동기화 버튼 표시 함수
+function showSyncButton() {
+    const syncBtn = document.querySelector('.sync-btn');
+    if (syncBtn) {
+        syncBtn.style.display = 'flex';
+        syncBtn.style.visibility = 'visible';
+        syncBtn.style.opacity = '1';
+        syncBtn.classList.add('show');
+        console.log('✅ 동기화 버튼 표시됨');
+    }
+}
+
+// 동기화 버튼 숨김 함수
+function hideSyncButton() {
+    const syncBtn = document.querySelector('.sync-btn');
+    if (syncBtn) {
+        syncBtn.style.display = 'none';
+        syncBtn.style.visibility = 'hidden';
+        syncBtn.style.opacity = '0';
+        syncBtn.classList.remove('show');
+        console.log('동기화 버튼 숨김');
+    }
+}
 
 // 모바일에서 동기화 버튼 강제 표시 함수
 window.forceShowSyncButton = function() {
