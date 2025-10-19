@@ -1156,7 +1156,7 @@ function updateAuthButton() {
 }
 
 // 로그인 모달 표시
-function showLoginModal() {
+window.showLoginModal = function() {
     console.log('로그인 모달 표시 함수 호출');
     const loginModal = document.getElementById('loginModal');
     if (loginModal) {
@@ -1279,19 +1279,19 @@ function showLoginModal() {
     } else {
         console.log('로그인 모달을 찾을 수 없음');
     }
-}
+};
 
 // 로그인 모달 닫기
-function closeLoginModal() {
+window.closeLoginModal = function() {
     console.log('로그인 모달 닫기');
     const loginModal = document.getElementById('loginModal');
     if (loginModal) {
         loginModal.style.display = 'none';
     }
-}
+};
 
 // 인증 토글 (로그인/로그아웃)
-function toggleAuth() {
+window.toggleAuth = function() {
     console.log('toggleAuth 호출됨, currentUser:', currentUser);
     console.log('기기 타입:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? '모바일' : 'PC');
     
@@ -1333,7 +1333,7 @@ function toggleAuth() {
             }, 100);
         }
     }
-}
+};
 
 // 문의 목록 로드
 function loadInquiries() {
@@ -1536,7 +1536,7 @@ function lastPage() {
 }
 
 // 문의작성 모달 표시
-function showWriteModal() {
+window.showWriteModal = function() {
     document.getElementById('writeModal').style.display = 'flex';
     resetForm();
     
@@ -1575,12 +1575,12 @@ function showWriteModal() {
     }, 100);
     
     console.log('문의작성 모달 열림 - 상세주소 필드 강제 표시');
-}
+};
 
 // 문의작성 모달 닫기
-function closeWriteModal() {
+window.closeWriteModal = function() {
     document.getElementById('writeModal').style.display = 'none';
-}
+};
 
 // 상세보기 모달 표시
 function showDetailModal(inquiryId) {
