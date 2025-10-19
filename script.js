@@ -88,64 +88,7 @@ window.shareData = function() {
     shareToURL();
 };
 
-// 브라우저 주소창에서 직접 사용할 수 있는 함수들
-window.showSyncButtons = function() {
-    console.log('showSyncButtons 함수 호출됨');
-    
-    // 기존 버튼들 제거
-    const existingBtns = document.querySelectorAll('#syncBtn, #shareBtn');
-    existingBtns.forEach(btn => btn.remove());
-    
-    // 동기화 버튼
-    const syncBtn = document.createElement('button');
-    syncBtn.id = 'syncBtn';
-    syncBtn.innerHTML = '🔄 동기화';
-    syncBtn.style.cssText = `
-        position: fixed !important;
-        top: 10px !important;
-        right: 10px !important;
-        z-index: 999999 !important;
-        background: #007bff !important;
-        color: white !important;
-        border: none !important;
-        padding: 10px 15px !important;
-        border-radius: 5px !important;
-        cursor: pointer !important;
-        font-size: 14px !important;
-        font-weight: bold !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-        font-family: Arial, sans-serif !important;
-    `;
-    syncBtn.onclick = () => syncData();
-    
-    // 공유 버튼
-    const shareBtn = document.createElement('button');
-    shareBtn.id = 'shareBtn';
-    shareBtn.innerHTML = '📤 공유';
-    shareBtn.style.cssText = `
-        position: fixed !important;
-        top: 10px !important;
-        right: 120px !important;
-        z-index: 999999 !important;
-        background: #28a745 !important;
-        color: white !important;
-        border: none !important;
-        padding: 10px 15px !important;
-        border-radius: 5px !important;
-        cursor: pointer !important;
-        font-size: 14px !important;
-        font-weight: bold !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-        font-family: Arial, sans-serif !important;
-    `;
-    shareBtn.onclick = () => shareData();
-    
-    document.body.appendChild(syncBtn);
-    document.body.appendChild(shareBtn);
-    
-    alert('✅ 동기화 버튼이 추가되었습니다!\n\n🔄 동기화: 데이터 새로고침\n📤 공유: URL로 데이터 공유\n\n현재 데이터: ' + inquiries.length + '개');
-    console.log('동기화 버튼 수동 추가 완료');
-};
+// 동적 버튼 생성 함수 제거됨
 
 // 간단한 동기화 함수 (주소창에서 직접 사용)
 window.sync = function() {
@@ -616,16 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // "~전부보기" 텍스트 제거
     removeAllPropertyTypeSuffixes();
     
-    // 동기화 테스트를 위한 새로고침 버튼 추가
-    addSyncTestButton();
-    
-    // 즉시 동기화 버튼 추가 (여러 방법으로 시도)
-    function addSyncButtonsNow() {
-        console.log('=== 동기화 버튼 즉시 추가 시작 ===');
-        
-        // 기존 버튼들 제거
-        const existingBtns = document.querySelectorAll('#syncBtn, #shareBtn, #syncButton, #shareButton');
-        existingBtns.forEach(btn => btn.remove());
+    // 동적 버튼 생성 함수들 제거됨
         
         // 동기화 버튼 생성
         const syncBtn = document.createElement('button');
@@ -687,17 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
     
-    // 여러 방법으로 버튼 추가 시도
-    addSyncButtonsNow(); // 즉시 실행
-    
-    setTimeout(addSyncButtonsNow, 1000); // 1초 후
-    setTimeout(addSyncButtonsNow, 2000); // 2초 후
-    setTimeout(addSyncButtonsNow, 3000); // 3초 후
-    setTimeout(addSyncButtonsNow, 5000); // 5초 후
-    
-    // 페이지 로드 완료 후에도 시도
-    window.addEventListener('load', addSyncButtonsNow);
-    document.addEventListener('DOMContentLoaded', addSyncButtonsNow);
+    // 동적 버튼 생성 호출들 제거됨
     
     // 실시간 동기화 시작
     startRealtimeSync();
@@ -2123,122 +2047,7 @@ function shareData() {
 }
 
 // 동기화 테스트 버튼 추가
-function addSyncTestButton() {
-    // 기존 버튼들 제거
-    const existingBtns = document.querySelectorAll('#syncTestBtn, #shareBtn');
-    existingBtns.forEach(btn => btn.remove());
-    
-    // 동기화 테스트 버튼
-    const syncBtn = document.createElement('button');
-    syncBtn.id = 'syncTestBtn';
-    syncBtn.innerHTML = '🔄 동기화';
-    syncBtn.style.cssText = `
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        z-index: 9999;
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        margin-right: 5px;
-    `;
-    
-    syncBtn.onclick = function() {
-        console.log('=== 동기화 테스트 시작 ===');
-        console.log('현재 데이터 개수:', inquiries.length);
-        
-        // URL에서 동기화 시도
-        if (syncFromURL()) {
-            alert(`URL 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
-            return;
-        }
-        
-        // Firebase 동기화 시도
-        loadInquiriesFromFirestore().then(() => {
-            console.log('동기화 테스트 완료 - 데이터 개수:', inquiries.length);
-            loadInquiries();
-            updateTotalCount();
-            alert(`Firebase 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
-        }).catch(error => {
-            console.error('동기화 테스트 실패:', error);
-            alert('동기화 실패: ' + error.message);
-        });
-    };
-    
-    // 공유 버튼
-    const shareBtn = document.createElement('button');
-    shareBtn.id = 'shareBtn';
-    shareBtn.innerHTML = '📤 공유';
-    shareBtn.style.cssText = `
-        position: fixed;
-        top: 10px;
-        right: 80px;
-        z-index: 9999;
-        background: #28a745;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    `;
-    
-    shareBtn.onclick = function() {
-        shareToURL();
-    };
-    
-    // 강제 동기화 버튼 (기존 데이터용)
-    const forceSyncBtn = document.createElement('button');
-    forceSyncBtn.id = 'forceSyncBtn';
-    forceSyncBtn.innerHTML = '⚡ 강제동기화';
-    forceSyncBtn.style.cssText = `
-        position: fixed;
-        top: 50px;
-        right: 10px;
-        z-index: 9999;
-        background: #ff6b35;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    `;
-    
-    forceSyncBtn.onclick = function() {
-        console.log('=== 강제 동기화 시작 ===');
-        
-        // localStorage에서 데이터 강제 로드
-        const savedInquiries = localStorage.getItem('allInquiries');
-        if (savedInquiries) {
-            try {
-                inquiries = JSON.parse(savedInquiries);
-                console.log('강제 동기화 완료:', inquiries.length, '개');
-                loadInquiries();
-                updateTotalCount();
-                alert(`강제 동기화 완료!\n현재 데이터 개수: ${inquiries.length}개`);
-            } catch (error) {
-                console.error('강제 동기화 오류:', error);
-                alert('강제 동기화 실패: ' + error.message);
-            }
-        } else {
-            alert('저장된 데이터가 없습니다.');
-        }
-    };
-    
-    document.body.appendChild(forceSyncBtn);
-    
-    document.body.appendChild(syncBtn);
-    document.body.appendChild(shareBtn);
-    console.log('동기화 버튼들 추가됨');
-}
+// 동적 버튼 생성 함수들 제거됨
 
 // 모바일에서 거래종류 텍스트를 두 줄로 나누는 함수
 function formatPropertyTypeForMobile(text) {
