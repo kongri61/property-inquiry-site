@@ -156,6 +156,13 @@ body {
     justify-content: center;
 }
 
+/* 로그인 시 동기화 버튼 표시 */
+.sync-btn.show {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 .sync-btn:hover {
     background: #218838;
 }
