@@ -143,8 +143,10 @@ window.perfectSync = function() {
     
     const shareUrl = currentUrl.toString();
     
-    // QR 코드 생성
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
+    // QR 코드 생성 (여러 API 시도)
+    const qrCodeUrl1 = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
+    const qrCodeUrl2 = `https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=${encodeURIComponent(shareUrl)}`;
+    const qrCodeUrl3 = `https://quickchart.io/qr?text=${encodeURIComponent(shareUrl)}&size=200`;
     
     // 드래그 가능한 창 생성
     const copyArea = document.createElement('div');
@@ -171,13 +173,23 @@ window.perfectSync = function() {
         <div style="display: flex; gap: 20px; margin: 15px 0;">
             <div style="flex: 1;">
                 <h4>📱 모바일에서 스캔:</h4>
-                <img src="${qrCodeUrl}" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px;">
+                <div style="text-align: center;">
+                    <img src="${qrCodeUrl1}" alt="QR Code 1" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <img src="${qrCodeUrl2}" alt="QR Code 2" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px; display: none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <img src="${qrCodeUrl3}" alt="QR Code 3" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px; display: none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="width: 150px; height: 150px; border: 2px dashed #ccc; border-radius: 5px; display: none; align-items: center; justify-content: center; background: #f8f9fa;">
+                        <div style="text-align: center; color: #666; font-size: 12px;">
+                            QR 코드 생성 실패<br>
+                            URL을 직접 복사하세요
+                        </div>
+                    </div>
+                </div>
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">QR 코드를 모바일로 스캔하세요</p>
             </div>
             <div style="flex: 1;">
                 <h4>💻 PC에서 복사:</h4>
                 <textarea readonly style="width: 100%; height: 120px; font-size: 11px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: none;">${shareUrl}</textarea>
-                <button onclick="navigator.clipboard.writeText('${shareUrl}').then(() => alert('URL이 클립보드에 복사되었습니다!'))" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 12px;">📋 복사</button>
+                <button onclick="navigator.clipboard.writeText('${shareUrl}').then(() => alert('URL이 클립보드에 복사되었습니다!')).catch(() => alert('복사 실패! URL을 직접 선택해서 복사하세요.'))" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 12px;">📋 복사</button>
             </div>
         </div>
         
@@ -189,7 +201,8 @@ window.perfectSync = function() {
             <strong>💡 사용법:</strong><br>
             1. <strong>모바일</strong>: QR 코드를 카메라로 스캔<br>
             2. <strong>PC</strong>: URL을 복사해서 다른 PC에서 열기<br>
-            3. 자동으로 데이터가 동기화됩니다!
+            3. <strong>대안</strong>: URL을 카톡/문자로 전송<br>
+            4. 자동으로 데이터가 동기화됩니다!
         </div>
     `;
     document.body.appendChild(copyArea);
