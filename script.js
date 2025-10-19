@@ -152,7 +152,7 @@ window.share = function() {
     shareData();
 };
 
-// 완벽한 동기화 시스템
+// 동기화 시스템
 window.perfectSync = function() {
     const dataToShare = JSON.stringify(inquiries);
     const encodedData = encodeURIComponent(dataToShare);
@@ -178,7 +178,7 @@ window.perfectSync = function() {
         width: 600px;
     `;
     copyArea.innerHTML = `
-        <h3>📤 완벽한 동기화</h3>
+        <h3>📤 동기화</h3>
         <p><strong>현재 데이터: ${inquiries.length}개</strong></p>
         <p>아래 URL을 드래그해서 복사하세요:</p>
         <textarea readonly style="width: 100%; height: 150px; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">${shareUrl}</textarea>
@@ -194,41 +194,9 @@ window.perfectSync = function() {
     console.log('완벽한 동기화 URL 생성:', shareUrl);
 };
 
-// PC와 모바일 데이터 통합 함수
+// 간단한 데이터 통합 함수 (필요시 사용)
 window.mergeData = function() {
-    // PC 데이터 (5개)
-    const pcData = [
-        {"id":5,"type":"buy","category":"상가 임대","title":"ㅂㅂㅂ","author":"ㅈ**","date":"2025-10-19","details":{"transactionType":"월세","location":"경기도 부천시 원미동 123","price":"협의","propertyType":"상가 임대","contact":"010-5555-5555","content":"ㅂㅂㅂㅂ"}},
-        {"id":4,"type":"buy","category":"상가 임대","title":"상가임대","author":"홍**","date":"2025-10-18","details":{"transactionType":"월세","location":"인천광역시 남동구 장수동 ","price":"협의","propertyType":"상가 임대","contact":"010-3265-4877","content":"상가임대구합니다"}},
-        {"id":3,"type":"sell","category":"건물 매매","title":"건물매매","author":"장**","date":"2025-10-18","details":{"transactionType":"매매","location":"인천광역시 부평구 부평동 123-5","price":"협의","propertyType":"건물 매매","contact":"010-6665-3254","content":"건물매매원합니다"}},
-        {"id":2,"type":"buy","category":"상가 매매","title":"상가매매","author":"김**","date":"2025-10-18","details":{"transactionType":"매매","location":"인천광역시 연수구 동춘동 123-2","price":"협의","propertyType":"상가 매매","contact":"010-8885-2226","content":"상가매매합니다"}},
-        {"id":1,"type":"buy","category":"상가 임대","title":"상가임대","author":"강**","date":"2025-10-18","details":{"transactionType":"월세","location":"인천광역시 남동구 만수동 55-6","price":"협의","propertyType":"상가 임대","contact":"010-9996-5521","content":"상가임대 부탁합니다"}}
-    ];
-    
-    // 모바일 데이터 (2개) - 예시
-    const mobileData = [
-        {"id":6,"type":"buy","category":"사무실 임대","title":"사무실구함","author":"이**","date":"2025-10-20","details":{"transactionType":"월세","location":"서울특별시 강남구","price":"협의","propertyType":"사무실 임대","contact":"010-1234-5678","content":"사무실 임대 구합니다"}},
-        {"id":7,"type":"sell","category":"상가 매매","title":"상가매도","author":"박**","date":"2025-10-20","details":{"transactionType":"매매","location":"인천광역시 서구","price":"협의","propertyType":"상가 매매","contact":"010-9876-5432","content":"상가 매도합니다"}}
-    ];
-    
-    // 기존 데이터와 새 데이터 통합 (중복 제거)
-    const allData = [...pcData, ...mobileData];
-    const uniqueData = allData.filter((item, index, self) => 
-        index === self.findIndex(t => t.id === item.id)
-    );
-    
-    // ID 재정렬
-    uniqueData.forEach((item, index) => {
-        item.id = index + 1;
-    });
-    
-    inquiries = uniqueData;
-    localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-    loadInquiries();
-    updateTotalCount();
-    
-    alert(`✅ 데이터 통합 완료!\nPC: 5개 + 모바일: 2개 = 총 ${inquiries.length}개`);
-    console.log('통합된 데이터:', inquiries);
+    alert('데이터 통합 기능은 완벽동기화 버튼으로 대체되었습니다.');
 };
 
 // 현재 문의 목록 (실제 문의작성으로만 관리)
