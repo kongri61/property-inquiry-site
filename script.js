@@ -143,6 +143,9 @@ window.perfectSync = function() {
     
     const shareUrl = currentUrl.toString();
     
+    // QR 코드 생성
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
+    
     // 드래그 가능한 창 생성
     const copyArea = document.createElement('div');
     copyArea.style.cssText = `
@@ -158,18 +161,36 @@ window.perfectSync = function() {
         box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         max-width: 90%;
         width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
     `;
     copyArea.innerHTML = `
         <h3>📤 동기화</h3>
         <p><strong>현재 데이터: ${inquiries.length}개</strong></p>
-        <p>아래 URL을 드래그해서 복사하세요:</p>
-        <textarea readonly style="width: 100%; height: 150px; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">${shareUrl}</textarea>
+        
+        <div style="display: flex; gap: 20px; margin: 15px 0;">
+            <div style="flex: 1;">
+                <h4>📱 모바일에서 스캔:</h4>
+                <img src="${qrCodeUrl}" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px;">
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">QR 코드를 모바일로 스캔하세요</p>
+            </div>
+            <div style="flex: 1;">
+                <h4>💻 PC에서 복사:</h4>
+                <textarea readonly style="width: 100%; height: 120px; font-size: 11px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: none;">${shareUrl}</textarea>
+                <button onclick="navigator.clipboard.writeText('${shareUrl}').then(() => alert('URL이 클립보드에 복사되었습니다!'))" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 12px;">📋 복사</button>
+            </div>
+        </div>
+        
         <div style="text-align: center; margin-top: 15px;">
             <button onclick="this.parentElement.parentElement.remove()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">닫기</button>
         </div>
-        <p style="font-size: 12px; color: #666; margin-top: 10px;">
-            💡 사용법: 이 URL을 다른 기기에서 열면 자동으로 동기화됩니다!
-        </p>
+        
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 15px; font-size: 12px;">
+            <strong>💡 사용법:</strong><br>
+            1. <strong>모바일</strong>: QR 코드를 카메라로 스캔<br>
+            2. <strong>PC</strong>: URL을 복사해서 다른 PC에서 열기<br>
+            3. 자동으로 데이터가 동기화됩니다!
+        </div>
     `;
     document.body.appendChild(copyArea);
     
@@ -454,29 +475,29 @@ function setupRealtimeSync() {
         console.log('Firebase 사용 가능 - 실시간 동기화 설정');
         
         try {
-            db.collection('inquiries')
-                .orderBy('id', 'desc')
-                .onSnapshot(snapshot => {
+    db.collection('inquiries')
+        .orderBy('id', 'desc')
+        .onSnapshot(snapshot => {
                     console.log('실시간 데이터 변경 감지 - 문서 개수:', snapshot.size);
-                    
-                    const firestoreInquiries = [];
-                    snapshot.forEach(doc => {
-                        firestoreInquiries.push(doc.data());
-                    });
-                    
+            
+            const firestoreInquiries = [];
+            snapshot.forEach(doc => {
+                firestoreInquiries.push(doc.data());
+            });
+            
                     console.log('Firestore에서 받은 데이터 개수:', firestoreInquiries.length);
                     
                     // Firestore 데이터가 있으면 사용하고 localStorage도 업데이트
-                    if (firestoreInquiries.length > 0) {
-                        inquiries = firestoreInquiries;
+            if (firestoreInquiries.length > 0) {
+                inquiries = firestoreInquiries;
                         localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-                        loadInquiries();
-                        updateTotalCount();
+                loadInquiries();
+                updateTotalCount();
                         console.log('실시간 데이터 업데이트 완료 - localStorage도 동기화됨');
                     } else {
                         console.log('Firestore에 데이터 없음 - localStorage 데이터 유지');
-                    }
-                }, error => {
+            }
+        }, error => {
                     console.error('실시간 동기화 오류:', error);
                     console.log('Firebase 연결 실패 - localStorage만 사용');
                     
@@ -565,10 +586,10 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTotalCount();
             
             // 동기화 설정
-            setupRealtimeSync();
-            
-            // 저장된 데이터의 작성자 이름 수정
-            fixAuthorNamesInStorage();
+    setupRealtimeSync();
+    
+    // 저장된 데이터의 작성자 이름 수정
+    fixAuthorNamesInStorage();
             
         }).catch(error => {
             console.error('데이터 로드 실패:', error);
@@ -1024,11 +1045,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Firebase에 저장 시도 (사용 가능한 경우에만)
             if (typeof db !== 'undefined') {
-                try {
-                    console.log('Firestore 저장 시작...');
-                    await saveInquiriesToFirestore();
+            try {
+                console.log('Firestore 저장 시작...');
+                await saveInquiriesToFirestore();
                     console.log('Firestore 저장 성공 - 모든 기기에서 동기화됨');
-                } catch (error) {
+            } catch (error) {
                     console.error('Firestore 저장 실패:', error);
                     console.log('Firebase 연결 실패 - localStorage에만 저장됨');
                 }
@@ -1500,10 +1521,10 @@ async function deleteInquiry(inquiryId) {
         
         // Firebase에도 저장 시도 (사용 가능한 경우에만)
         if (typeof db !== 'undefined') {
-            try {
-                await saveInquiriesToFirestore();
+        try {
+            await saveInquiriesToFirestore();
                 console.log('Firestore 삭제 동기화 완료 - 모든 기기에서 삭제됨');
-            } catch (error) {
+        } catch (error) {
                 console.error('Firestore 삭제 동기화 실패:', error);
                 console.log('Firebase 연결 실패 - localStorage에만 삭제됨');
             }
