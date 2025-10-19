@@ -2,7 +2,7 @@
 let currentUser = null;
 
 // 캐시 무효화를 위한 타임스탬프
-console.log('Script.js 로드됨 - 버전 5.0 (2024-12-20 16:00) - 버튼 정리 완료');
+console.log('Script.js 로드됨 - 버전 6.0 (2024-12-20 17:00) - 로그인 시 동기화 버튼 표시');
 
 // 강제 캐시 무효화
 if (window.location.search.indexOf('force_refresh') === -1) {
@@ -18,6 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('페이지 로드 시 고정 버튼 제거:', btn.id);
         btn.remove();
     });
+    
+    // 동기화 버튼 강제 숨김 (로그인 상태 확인 전)
+    const syncButton = document.getElementById('syncButton');
+    if (syncButton) {
+        syncButton.style.display = 'none';
+        console.log('동기화 버튼 강제 숨김');
+    }
 });
 
 // window load 시에도 고정 버튼들 제거
@@ -27,6 +34,13 @@ window.addEventListener('load', function() {
         console.log('윈도우 로드 시 고정 버튼 제거:', btn.id);
         btn.remove();
     });
+    
+    // 동기화 버튼 강제 숨김 (로그인 상태 확인 전)
+    const syncButton = document.getElementById('syncButton');
+    if (syncButton) {
+        syncButton.style.display = 'none';
+        console.log('윈도우 로드 시 동기화 버튼 강제 숨김');
+    }
 });
 
 // 간단한 실시간 동기화 시스템
