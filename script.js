@@ -889,6 +889,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeLoginModal();
                 updateAuthButton();
                 
+                // 로그인 성공 후 동기화 버튼 강제 표시
+                setTimeout(() => {
+                    const syncBtn = document.getElementById('syncButton');
+                    if (syncBtn) {
+                        syncBtn.style.display = 'flex';
+                        console.log('✅ 로그인 후 동기화 버튼 강제 표시');
+                    } else {
+                        console.log('❌ 로그인 후 동기화 버튼을 찾을 수 없음');
+                    }
+                }, 100);
+                
                 console.log('로그인 성공:', currentUser);
                 
                 // 목록 다시 로드 (삭제 버튼 표시) - 현재 데이터 유지
@@ -1158,6 +1169,11 @@ function updateAuthButton() {
     const authBtn = document.querySelector('.auth-btn');
     const syncBtn = document.getElementById('syncButton');
     
+    console.log('updateAuthButton 호출됨');
+    console.log('currentUser:', currentUser);
+    console.log('authBtn 찾음:', !!authBtn);
+    console.log('syncBtn 찾음:', !!syncBtn);
+    
     if (authBtn) {
         if (currentUser) {
             authBtn.textContent = '로그아웃';
@@ -1166,7 +1182,15 @@ function updateAuthButton() {
             // 로그인 시 동기화 버튼 표시
             if (syncBtn) {
                 syncBtn.style.display = 'flex';
-                console.log('동기화 버튼 표시됨');
+                console.log('✅ 동기화 버튼 표시됨');
+            } else {
+                console.log('❌ 동기화 버튼을 찾을 수 없음');
+                // 다른 방법으로 찾기 시도
+                const altSyncBtn = document.querySelector('.sync-btn');
+                if (altSyncBtn) {
+                    altSyncBtn.style.display = 'flex';
+                    console.log('✅ 대체 방법으로 동기화 버튼 표시됨');
+                }
             }
         } else {
             authBtn.textContent = '로그인';
