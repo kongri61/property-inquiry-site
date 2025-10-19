@@ -600,6 +600,20 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.remove();
     });
     
+    // 동기화 버튼 강제 표시 (로그인 상태 확인 후)
+    setTimeout(() => {
+        if (currentUser) {
+            const syncBtn = document.querySelector('.sync-btn');
+            if (syncBtn) {
+                syncBtn.style.display = 'flex';
+                syncBtn.style.visibility = 'visible';
+                syncBtn.style.opacity = '1';
+                syncBtn.classList.add('show');
+                console.log('✅ 페이지 로드 시 동기화 버튼 강제 표시');
+            }
+        }
+    }, 1000);
+    
     // 동적 버튼 생성 호출들 제거됨
     
     // 실시간 동기화 시작
@@ -2080,6 +2094,42 @@ function removeAllPropertyTypeSuffixes() {
         }
     });
 }
+
+// 디버깅용 함수 - 브라우저 콘솔에서 호출 가능
+window.debugSyncButton = function() {
+    console.log('=== 동기화 버튼 디버깅 ===');
+    console.log('현재 사용자:', currentUser);
+    
+    // 모든 버튼 찾기
+    const syncBtnById = document.getElementById('syncButton');
+    const syncBtnByClass = document.querySelector('.sync-btn');
+    const allButtons = document.querySelectorAll('button');
+    
+    console.log('ID로 찾은 버튼:', syncBtnById);
+    console.log('클래스로 찾은 버튼:', syncBtnByClass);
+    console.log('모든 버튼 개수:', allButtons.length);
+    
+    allButtons.forEach((btn, index) => {
+        console.log(`버튼 ${index}:`, {
+            text: btn.textContent,
+            id: btn.id,
+            className: btn.className,
+            style: btn.style.display,
+            visible: btn.offsetParent !== null
+        });
+    });
+    
+    // 강제로 동기화 버튼 표시
+    if (syncBtnByClass) {
+        syncBtnByClass.style.display = 'flex';
+        syncBtnByClass.style.visibility = 'visible';
+        syncBtnByClass.style.opacity = '1';
+        syncBtnByClass.classList.add('show');
+        console.log('✅ 동기화 버튼 강제 표시 완료');
+    } else {
+        console.log('❌ 동기화 버튼을 찾을 수 없음');
+    }
+};
 
 // HTML 버튼용 동기화 함수들
 function syncData() {
