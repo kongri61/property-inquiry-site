@@ -958,6 +958,14 @@ body {
         text-align: center;
     }
     
+    .header-buttons {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
+    }
+    
     .company-info {
         flex-direction: row;
         gap: 5px;
@@ -1006,6 +1014,14 @@ body {
         padding: 6px 12px;
         font-size: 11px;
         min-width: 60px;
+    }
+    
+    .perfect-sync-btn,
+    .merge-btn {
+        font-size: 11px !important;
+        padding: 6px 8px !important;
+        min-width: 40px !important;
+        height: 28px !important;
     }
     
     .list-page {
@@ -1350,33 +1366,4 @@ body {
     }
 }
 
-/* 모바일 헤더 버튼 최적화 */
-@media (max-width: 768px) {
-    .header-top {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-    }
-    
-    .header-buttons {
-        justify-content: center;
-        gap: 10px;
-        margin-top: 10px;
-    }
-    
-    .perfect-sync-btn,
-    .merge-btn,
-    .auth-btn {
-        font-size: 12px;
-        padding: 6px 12px;
-        min-width: 50px;
-        height: 28px;
-    }
-    
-    .header-info {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        margin-top: 10px;
-    }
-} 
+/* 모바일 헤더 버튼 최적화 - 기존 CSS와 통합됨 */ 
