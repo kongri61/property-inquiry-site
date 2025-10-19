@@ -11,6 +11,24 @@ if (window.location.search.indexOf('force_refresh') === -1) {
     window.location.replace(url.toString());
 }
 
+// 페이지 로드 시 고정 버튼들 즉시 제거
+document.addEventListener('DOMContentLoaded', function() {
+    const existingFixedBtns = document.querySelectorAll('#syncBtn, #shareBtn, #syncTestBtn, #forceSyncBtn, #syncButton, #shareButton');
+    existingFixedBtns.forEach(btn => {
+        console.log('페이지 로드 시 고정 버튼 제거:', btn.id);
+        btn.remove();
+    });
+});
+
+// window load 시에도 고정 버튼들 제거
+window.addEventListener('load', function() {
+    const existingFixedBtns = document.querySelectorAll('#syncBtn, #shareBtn, #syncTestBtn, #forceSyncBtn, #syncButton, #shareButton');
+    existingFixedBtns.forEach(btn => {
+        console.log('윈도우 로드 시 고정 버튼 제거:', btn.id);
+        btn.remove();
+    });
+});
+
 // 간단한 실시간 동기화 시스템
 let syncInterval = null;
 
@@ -559,67 +577,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // "~전부보기" 텍스트 제거
     removeAllPropertyTypeSuffixes();
     
-    // 동적 버튼 생성 함수들 제거됨
-        
-        // 동기화 버튼 생성
-        const syncBtn = document.createElement('button');
-        syncBtn.id = 'syncBtn';
-        syncBtn.innerHTML = '🔄 동기화';
-        syncBtn.style.cssText = `
-            position: fixed !important;
-            top: 10px !important;
-            right: 10px !important;
-            z-index: 999999 !important;
-            background: #007bff !important;
-            color: white !important;
-            border: none !important;
-            padding: 10px 15px !important;
-            border-radius: 5px !important;
-            cursor: pointer !important;
-            font-size: 14px !important;
-            font-weight: bold !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-            font-family: Arial, sans-serif !important;
-        `;
-        syncBtn.onclick = function() {
-            console.log('동기화 버튼 클릭됨');
-            syncData();
-        };
-        
-        // 공유 버튼 생성
-        const shareBtn = document.createElement('button');
-        shareBtn.id = 'shareBtn';
-        shareBtn.innerHTML = '📤 공유';
-        shareBtn.style.cssText = `
-            position: fixed !important;
-            top: 10px !important;
-            right: 120px !important;
-            z-index: 999999 !important;
-            background: #28a745 !important;
-            color: white !important;
-            border: none !important;
-            padding: 10px 15px !important;
-            border-radius: 5px !important;
-            cursor: pointer !important;
-            font-size: 14px !important;
-            font-weight: bold !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-            font-family: Arial, sans-serif !important;
-        `;
-        shareBtn.onclick = function() {
-            console.log('공유 버튼 클릭됨');
-            shareData();
-        };
-        
-        // 버튼들을 body에 추가
-        document.body.appendChild(syncBtn);
-        document.body.appendChild(shareBtn);
-        
-        console.log('동기화 버튼 즉시 추가 완료');
-        console.log('현재 데이터 개수:', inquiries.length);
-        
-        return true;
-    }
+    // 동적 버튼 생성 코드 완전 제거됨
+    
+    // 기존 고정 버튼들 제거
+    const existingFixedBtns = document.querySelectorAll('#syncBtn, #shareBtn, #syncTestBtn, #forceSyncBtn, #syncButton, #shareButton');
+    existingFixedBtns.forEach(btn => {
+        console.log('고정 버튼 제거:', btn.id);
+        btn.remove();
+    });
     
     // 동적 버튼 생성 호출들 제거됨
     
