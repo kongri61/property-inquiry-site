@@ -643,8 +643,22 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         if (currentUser) {
             showSyncButton();
+            // 데이터 통합 버튼도 표시
+            const mergeBtn = document.querySelector('.merge-btn');
+            if (mergeBtn) {
+                mergeBtn.style.display = 'inline-block';
+                mergeBtn.style.visibility = 'visible';
+                mergeBtn.style.opacity = '1';
+            }
         } else {
             hideSyncButton();
+            // 데이터 통합 버튼도 숨김
+            const mergeBtn = document.querySelector('.merge-btn');
+            if (mergeBtn) {
+                mergeBtn.style.display = 'none';
+                mergeBtn.style.visibility = 'hidden';
+                mergeBtn.style.opacity = '0';
+            }
         }
     }, 1000);
     
@@ -1209,12 +1223,14 @@ function checkLoginStatus() {
 // 인증 버튼 업데이트
 function updateAuthButton() {
     const authBtn = document.querySelector('.auth-btn');
-    const syncBtn = document.getElementById('syncButton');
+    const syncBtn = document.querySelector('.sync-btn');
+    const mergeBtn = document.querySelector('.merge-btn');
     
     console.log('updateAuthButton 호출됨');
     console.log('currentUser:', currentUser);
     console.log('authBtn 찾음:', !!authBtn);
     console.log('syncBtn 찾음:', !!syncBtn);
+    console.log('mergeBtn 찾음:', !!mergeBtn);
     
     if (authBtn) {
         if (currentUser) {
@@ -1223,12 +1239,28 @@ function updateAuthButton() {
             
             // 로그인 시 동기화 버튼 표시
             showSyncButton();
+            
+            // 로그인 시 데이터 통합 버튼 표시
+            if (mergeBtn) {
+                mergeBtn.style.display = 'inline-block';
+                mergeBtn.style.visibility = 'visible';
+                mergeBtn.style.opacity = '1';
+                console.log('데이터 통합 버튼 표시됨');
+            }
         } else {
             authBtn.textContent = '로그인';
             console.log('버튼 텍스트: 로그인');
             
             // 로그아웃 시 동기화 버튼 숨김
             hideSyncButton();
+            
+            // 로그아웃 시 데이터 통합 버튼 숨김
+            if (mergeBtn) {
+                mergeBtn.style.display = 'none';
+                mergeBtn.style.visibility = 'hidden';
+                mergeBtn.style.opacity = '0';
+                console.log('데이터 통합 버튼 숨김');
+            }
         }
     } else {
         console.log('인증 버튼을 찾을 수 없음');

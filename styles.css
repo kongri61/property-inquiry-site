@@ -195,7 +195,7 @@ body {
     transition: all 0.3s ease;
     min-width: 36px;
     height: 32px;
-    display: flex;
+    display: none; /* 기본적으로 숨김 */
     align-items: center;
     justify-content: center;
 }
@@ -216,6 +216,7 @@ body {
         min-width: 40px;
         height: 36px;
         font-size: 16px;
+        display: none; /* 모바일에서도 기본적으로 숨김 */
     }
 }
 
