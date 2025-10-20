@@ -2186,9 +2186,15 @@ function hideSyncButton() {
     }
 }
 
-// 모바일에서 동기화 버튼 강제 표시 함수
+// 모바일에서 동기화 버튼 강제 표시 함수 (로그인 상태 확인)
 window.forceShowSyncButton = function() {
-    console.log('=== 모바일 동기화 버튼 강제 표시 ===');
+    console.log('=== 모바일 동기화 버튼 강제 표시 (로그인 상태 확인) ===');
+    
+    // 로그인 상태 확인
+    if (!currentUser) {
+        console.log('로그아웃 상태 - 동기화 버튼 표시하지 않음');
+        return;
+    }
     
     // 기존 버튼 찾기
     let syncBtn = document.querySelector('.sync-btn');
@@ -2215,7 +2221,7 @@ window.forceShowSyncButton = function() {
         syncBtn.style.visibility = 'visible !important';
         syncBtn.style.opacity = '1 !important';
         syncBtn.classList.add('show');
-        console.log('✅ 동기화 버튼 강제 표시 완료');
+        console.log('✅ 동기화 버튼 강제 표시 완료 (로그인 상태)');
     }
 };
 

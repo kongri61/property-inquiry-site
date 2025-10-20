@@ -154,15 +154,13 @@ body {
     opacity: 1 !important;
 }
 
-/* 모바일에서 동기화 버튼 표시 */
+/* 모바일에서 동기화 버튼 스타일 (로그인 시에만 표시) */
 @media (max-width: 768px) {
     .sync-btn {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
         min-width: 40px;
         height: 36px;
         font-size: 16px;
+        display: none; /* 기본적으로 숨김 */
     }
     
     .sync-btn.show {
