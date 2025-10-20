@@ -68,21 +68,72 @@ body {
     margin-left: 8px;
 }
 
-/* 회사 정보 스타일 - 완전 제거 */
+/* 회사 정보 스타일 */
 .company-info {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 회사 마크 스타일 */
+.company-mark {
+    flex-shrink: 0;
+}
+
+.mark-shape {
+    width: 60px;
+    height: 40px;
+    background: linear-gradient(135deg, #2c5530 0%, #4a7c59 50%, #6ba86b 100%);
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: perspective(100px) rotateX(5deg) rotateY(-5deg);
+}
+
+.mark-shape::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    border-radius: 8px;
+}
+
+.mark-text {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    letter-spacing: 1px;
 }
 
 .company-name {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+    justify-content: center;
 }
 
 .company-title {
-    display: none;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.2;
+    text-align: left;
 }
 
 .company-subtitle {
-    display: none;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.2;
+    text-align: left;
 }
 
 .main-title {
@@ -999,19 +1050,34 @@ body {
     }
     
     .company-info {
-        display: none !important;
+        flex-direction: row;
+        gap: 8px;
+        align-items: flex-start;
+        justify-content: center;
+    }
+    
+    .mark-shape {
+        width: 50px;
+        height: 35px;
+        font-size: 16px;
+    }
+    
+    .mark-text {
+        font-size: 16px;
     }
     
     .company-name {
-        display: none !important;
+        margin-left: 0;
+        margin-top: 0;
+        align-items: flex-start;
     }
     
     .company-title {
-        display: none !important;
+        font-size: 18px !important;
     }
     
     .company-subtitle {
-        display: none !important;
+        font-size: 12px !important;
     }
     
     .main-title {
@@ -1290,21 +1356,44 @@ body {
 
 /* 모바일 전용 강화 스타일 */
 @media (max-width: 768px) {
-    /* 회사명 완전 제거 */
+    /* 회사명 강화 */
     .header .company-info {
-        display: none !important;
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 8px !important;
+        align-items: flex-start !important;
+        justify-content: center !important;
+    }
+    
+    .header .company-info .company-mark {
+        display: flex !important;
+    }
+    
+    .header .company-info .company-mark .mark-shape {
+        width: 45px !important;
+        height: 30px !important;
+    }
+    
+    .header .company-info .company-mark .mark-text {
+        font-size: 14px !important;
     }
     
     .header .company-info .company-name {
-        display: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
     }
     
     .header .company-info .company-name .company-title {
-        display: none !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        text-align: left !important;
     }
     
     .header .company-info .company-name .company-subtitle {
-        display: none !important;
+        font-size: 11px !important;
+        text-align: left !important;
+        margin-left: 0 !important;
     }
     
     /* 등록일 컬럼 강화 */
@@ -1357,19 +1446,25 @@ body {
 /* 매우 작은 화면 (480px 이하) */
 @media (max-width: 480px) {
     .header .company-info {
-        display: none !important;
+        display: flex !important;
+        gap: 6px !important;
     }
     
-    .header .company-info .company-name {
-        display: none !important;
+    .header .company-info .company-mark .mark-shape {
+        width: 40px !important;
+        height: 28px !important;
+    }
+    
+    .header .company-info .company-mark .mark-text {
+        font-size: 12px !important;
     }
     
     .header .company-info .company-name .company-title {
-        display: none !important;
+        font-size: 14px !important;
     }
     
     .header .company-info .company-name .company-subtitle {
-        display: none !important;
+        font-size: 10px !important;
     }
 } 
 
