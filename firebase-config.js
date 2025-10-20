@@ -1,12 +1,12 @@
-// Firebase 설정
+// Firebase 설정 - 환경변수 사용
 const firebaseConfig = {
-    apiKey: "AIzaSyAKWH86caO8oltDaQomsUMT0kX0PqTb_uQ",
-    authDomain: "property-inquiry-site.firebaseapp.com",
-    projectId: "property-inquiry-site",
-    storageBucket: "property-inquiry-site.firebasestorage.app",
-    messagingSenderId: "379557316701",
-    appId: "1:379557316701:web:6e67d6d0adc84d10bfe5b4",
-    measurementId: "G-WPHLXTG1NF"
+    apiKey: process.env.VITE_FIREBASE_API_KEY || "AIzaSyAKWH86caO8oltDaQomsUMT0kX0PqTb_uQ",
+    authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || "property-inquiry-site.firebaseapp.com",
+    projectId: process.env.VITE_FIREBASE_PROJECT_ID || "property-inquiry-site",
+    storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || "property-inquiry-site.firebasestorage.app",
+    messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "379557316701",
+    appId: process.env.VITE_FIREBASE_APP_ID || "1:379557316701:web:6e67d6d0adc84d10bfe5b4",
+    measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID || "G-WPHLXTG1NF"
 };
 
 // Firebase 초기화 (오류 처리 포함)
@@ -32,4 +32,4 @@ try {
 } catch (error) {
     console.error('❌ Firebase 초기화 실패:', error);
     console.log('Firebase 없이 localStorage만 사용합니다.');
-} 
+}

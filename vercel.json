@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "VITE_FIREBASE_API_KEY": "AIzaSyAKWH86caO8oltDaQomsUMT0kX0PqTb_uQ",
+    "VITE_FIREBASE_AUTH_DOMAIN": "property-inquiry-site.firebaseapp.com",
+    "VITE_FIREBASE_PROJECT_ID": "property-inquiry-site",
+    "VITE_FIREBASE_STORAGE_BUCKET": "property-inquiry-site.firebasestorage.app",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "379557316701",
+    "VITE_FIREBASE_APP_ID": "1:379557316701:web:6e67d6d0adc84d10bfe5b4",
+    "VITE_FIREBASE_MEASUREMENT_ID": "G-WPHLXTG1NF"
+  }
+}
