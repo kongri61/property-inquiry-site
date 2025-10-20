@@ -72,7 +72,7 @@ body {
 .company-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
 }
 
 /* 회사 마크 스타일 */
@@ -1025,7 +1025,7 @@ body {
     
     .company-info {
         flex-direction: row;
-        gap: 8px;
+        gap: 4px;
         align-items: flex-start;
         justify-content: center;
     }
@@ -1329,7 +1329,7 @@ body {
     .header .company-info {
         display: flex !important;
         flex-direction: row !important;
-        gap: 8px !important;
+        gap: 4px !important;
         align-items: flex-start !important;
         justify-content: center !important;
     }
@@ -1412,7 +1412,7 @@ body {
 @media (max-width: 480px) {
     .header .company-info {
         display: flex !important;
-        gap: 6px !important;
+        gap: 3px !important;
     }
     
     .header .company-info .company-mark .logo-image {
