@@ -62,18 +62,6 @@ body {
     gap: 10px;
 }
 
-.company-logo {
-    width: 60px !important;
-    height: 60px !important;
-    object-fit: contain !important;
-    border-radius: 4px !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    margin-right: 10px !important;
-    flex-shrink: 0 !important;
-}
-
 
 .company-name {
     display: flex;
@@ -1027,12 +1015,6 @@ body {
         align-items: flex-start;
     }
     
-    .company-logo {
-        width: 50px !important;
-        height: 50px !important;
-        margin-right: 8px !important;
-    }
-    
     .company-title {
         font-size: 18px !important;
     }
@@ -1383,12 +1365,6 @@ body {
 
 /* 매우 작은 화면 (480px 이하) */
 @media (max-width: 480px) {
-    .company-logo {
-        width: 45px !important;
-        height: 45px !important;
-        margin-right: 6px !important;
-    }
-    
     .header .company-info .company-name .company-title {
         font-size: 16px !important;
     }
