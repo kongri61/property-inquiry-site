@@ -49,43 +49,40 @@ body {
     margin-bottom: 20px;
 }
 
+.header-top .company-info {
+    flex: 0 0 auto;
+}
+
+.header-top .main-title {
+    flex: 1;
+    text-align: center;
+}
+
+.header-top .header-buttons {
+    flex: 0 0 auto;
+}
+
 .header-top .sync-btn,
 .header-top .share-btn,
 .header-top .auth-btn {
     margin-left: 8px;
 }
 
-/* 회사 정보 스타일 */
+/* 회사 정보 스타일 - 완전 제거 */
 .company-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: none;
 }
 
-
 .company-name {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-left: -16px;
-    align-items: flex-start;
-    justify-content: center;
+    display: none;
 }
 
 .company-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    line-height: 1.2;
-    text-align: left;
+    display: none;
 }
 
 .company-subtitle {
-    font-size: 12px;
-    color: #666;
-    line-height: 1.2;
-    text-align: left;
-    margin-left: 0;
+    display: none;
 }
 
 .main-title {
@@ -93,7 +90,6 @@ body {
     font-weight: bold;
     color: #333;
     margin: 0;
-    flex-grow: 1;
     text-align: center;
 }
 
@@ -1003,24 +999,19 @@ body {
     }
     
     .company-info {
-        flex-direction: row;
-        gap: 5px;
-        align-items: flex-start;
-        justify-content: center;
+        display: none !important;
     }
     
     .company-name {
-        margin-left: -8px;
-        margin-top: 0;
-        align-items: flex-start;
+        display: none !important;
     }
     
     .company-title {
-        font-size: 18px !important;
+        display: none !important;
     }
     
     .company-subtitle {
-        font-size: 12px !important;
+        display: none !important;
     }
     
     .main-title {
@@ -1299,21 +1290,21 @@ body {
 
 /* 모바일 전용 강화 스타일 */
 @media (max-width: 768px) {
-    /* 회사명 강화 */
+    /* 회사명 완전 제거 */
+    .header .company-info {
+        display: none !important;
+    }
+    
     .header .company-info .company-name {
-        align-items: flex-start !important;
+        display: none !important;
     }
     
     .header .company-info .company-name .company-title {
-        font-size: 18px !important;
-        font-weight: bold !important;
-        text-align: left !important;
+        display: none !important;
     }
     
     .header .company-info .company-name .company-subtitle {
-        font-size: 12px !important;
-        text-align: left !important;
-        margin-left: 0 !important;
+        display: none !important;
     }
     
     /* 등록일 컬럼 강화 */
@@ -1365,12 +1356,20 @@ body {
 
 /* 매우 작은 화면 (480px 이하) */
 @media (max-width: 480px) {
+    .header .company-info {
+        display: none !important;
+    }
+    
+    .header .company-info .company-name {
+        display: none !important;
+    }
+    
     .header .company-info .company-name .company-title {
-        font-size: 16px !important;
+        display: none !important;
     }
     
     .header .company-info .company-name .company-subtitle {
-        font-size: 11px !important;
+        display: none !important;
     }
 } 
 
