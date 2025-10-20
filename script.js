@@ -143,10 +143,8 @@ window.perfectSync = function() {
     
     const shareUrl = currentUrl.toString();
     
-    // QR 코드 생성 (여러 API 시도)
-    const qrCodeUrl1 = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
-    const qrCodeUrl2 = `https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=${encodeURIComponent(shareUrl)}`;
-    const qrCodeUrl3 = `https://quickchart.io/qr?text=${encodeURIComponent(shareUrl)}&size=200`;
+    // QR 코드 생성 (단일 API 사용)
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
     
     // 드래그 가능한 창 생성
     const copyArea = document.createElement('div');
@@ -174,9 +172,7 @@ window.perfectSync = function() {
             <div style="flex: 1;">
                 <h4>📱 모바일에서 스캔:</h4>
                 <div style="text-align: center;">
-                    <img src="${qrCodeUrl1}" alt="QR Code 1" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <img src="${qrCodeUrl2}" alt="QR Code 2" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px; display: none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <img src="${qrCodeUrl3}" alt="QR Code 3" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px; display: none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <img src="${qrCodeUrl}" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <div style="width: 150px; height: 150px; border: 2px dashed #ccc; border-radius: 5px; display: none; align-items: center; justify-content: center; background: #f8f9fa;">
                         <div style="text-align: center; color: #666; font-size: 12px;">
                             QR 코드 생성 실패<br>
