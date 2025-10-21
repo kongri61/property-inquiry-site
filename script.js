@@ -143,9 +143,6 @@ window.perfectSync = function() {
     
     const shareUrl = currentUrl.toString();
     
-    // QR 코드 생성 (단일 API 사용)
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
-    
     // 드래그 가능한 창 생성
     const copyArea = document.createElement('div');
     copyArea.style.cssText = `
@@ -168,25 +165,10 @@ window.perfectSync = function() {
         <h3>📤 동기화</h3>
         <p><strong>현재 데이터: ${inquiries.length}개</strong></p>
         
-        <div style="display: flex; gap: 20px; margin: 15px 0;">
-            <div style="flex: 1;">
-                <h4>📱 모바일에서 스캔:</h4>
-                <div style="text-align: center;">
-                    <img src="${qrCodeUrl}" alt="QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="width: 150px; height: 150px; border: 2px dashed #ccc; border-radius: 5px; display: none; align-items: center; justify-content: center; background: #f8f9fa;">
-                        <div style="text-align: center; color: #666; font-size: 12px;">
-                            QR 코드 생성 실패<br>
-                            URL을 직접 복사하세요
-                        </div>
-                    </div>
-                </div>
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">QR 코드를 모바일로 스캔하세요</p>
-            </div>
-            <div style="flex: 1;">
-                <h4>💻 PC에서 복사:</h4>
-                <textarea readonly style="width: 100%; height: 120px; font-size: 11px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: none;">${shareUrl}</textarea>
-                <button onclick="navigator.clipboard.writeText('${shareUrl}').then(() => alert('URL이 클립보드에 복사되었습니다!')).catch(() => alert('복사 실패! URL을 직접 선택해서 복사하세요.'))" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 12px;">📋 복사</button>
-            </div>
+        <div style="margin: 15px 0;">
+            <h4>📋 동기화 URL 복사:</h4>
+            <textarea readonly style="width: 100%; height: 120px; font-size: 11px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: none;">${shareUrl}</textarea>
+            <button onclick="navigator.clipboard.writeText('${shareUrl}').then(() => alert('URL이 클립보드에 복사되었습니다!')).catch(() => alert('복사 실패! URL을 직접 선택해서 복사하세요.'))" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 12px;">📋 복사</button>
         </div>
         
         <div style="text-align: center; margin-top: 15px;">
@@ -195,9 +177,9 @@ window.perfectSync = function() {
         
         <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 15px; font-size: 12px;">
             <strong>💡 사용법:</strong><br>
-            1. <strong>모바일</strong>: QR 코드를 카메라로 스캔<br>
-            2. <strong>PC</strong>: URL을 복사해서 다른 PC에서 열기<br>
-            3. <strong>대안</strong>: URL을 카톡/문자로 전송<br>
+            1. <strong>복사</strong>: 위의 "📋 복사" 버튼 클릭<br>
+            2. <strong>전송</strong>: 복사된 URL을 카톡/문자로 전송<br>
+            3. <strong>동기화</strong>: 다른 기기에서 URL을 열기<br>
             4. 자동으로 데이터가 동기화됩니다!
         </div>
     `;
@@ -218,9 +200,9 @@ let inquiries = [];
 
 // 간단한 URL 기반 동기화 시스템 (Firebase 대체)
 
-// URL에서 데이터 동기화
+// URL에서 데이터 동기화 (병합 방식)
 function syncFromURL() {
-    console.log('=== URL 동기화 시작 ===');
+    console.log('=== URL 동기화 시작 (병합 방식) ===');
     
     try {
         // URL 파라미터에서 데이터 확인
@@ -233,9 +215,27 @@ function syncFromURL() {
             const urlInquiries = JSON.parse(decodedData);
             
             if (Array.isArray(urlInquiries) && urlInquiries.length > 0) {
-                inquiries = urlInquiries;
+                console.log('기존 데이터 개수:', inquiries.length);
+                console.log('URL 데이터 개수:', urlInquiries.length);
+                
+                // 기존 데이터의 ID 목록 생성
+                const existingIds = new Set(inquiries.map(inq => inq.id));
+                console.log('기존 ID 목록:', Array.from(existingIds));
+                
+                // 새 데이터만 필터링 (중복 제거)
+                const newInquiries = urlInquiries.filter(inq => !existingIds.has(inq.id));
+                console.log('새로 추가될 데이터 개수:', newInquiries.length);
+                
+                // 기존 데이터에 새 데이터 추가
+                inquiries = [...inquiries, ...newInquiries];
+                
+                // ID 재정렬 (1부터 시작)
+                inquiries.forEach((inquiry, index) => {
+                    inquiry.id = index + 1;
+                });
+                
                 localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-                console.log('URL 동기화 완료:', inquiries.length, '개');
+                console.log('URL 동기화 완료 (병합):', inquiries.length, '개');
                 loadInquiries();
                 updateTotalCount();
                 return true;
@@ -393,9 +393,9 @@ async function loadInquiriesFromStorage() {
     console.log('=== localStorage 데이터 불러오기 완료 ===');
 }
 
-// Firebase 연결 시도 (실패 시 localStorage 사용)
+// Firebase 연결 시도 (실패 시 localStorage 사용) - 병합 방식
 async function loadInquiriesFromFirestore() {
-    console.log('=== Firebase 연결 시도 ===');
+    console.log('=== Firebase 연결 시도 (병합 방식) ===');
     
     // Firebase가 초기화되지 않았으면 localStorage 사용
     if (typeof db === 'undefined') {
@@ -412,12 +412,28 @@ async function loadInquiriesFromFirestore() {
         });
         
         console.log('Firestore에서 불러온 데이터:', firestoreInquiries.length, '개');
+        console.log('현재 메모리 데이터:', inquiries.length, '개');
         
         if (firestoreInquiries.length > 0) {
-            inquiries = firestoreInquiries;
+            // 기존 데이터의 ID 목록 생성
+            const existingIds = new Set(inquiries.map(inq => inq.id));
+            console.log('기존 ID 목록:', Array.from(existingIds));
+            
+            // 새 데이터만 필터링 (중복 제거)
+            const newInquiries = firestoreInquiries.filter(inq => !existingIds.has(inq.id));
+            console.log('새로 추가될 데이터 개수:', newInquiries.length);
+            
+            // 기존 데이터에 새 데이터 추가
+            inquiries = [...inquiries, ...newInquiries];
+            
+            // ID 재정렬 (1부터 시작)
+            inquiries.forEach((inquiry, index) => {
+                inquiry.id = index + 1;
+            });
+            
             // localStorage도 동기화
             localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-            console.log('Firestore 데이터 사용 및 localStorage 동기화');
+            console.log('Firestore 데이터 병합 완료 - localStorage도 동기화');
         } else {
             // Firestore에 데이터가 없으면 localStorage 확인
             return loadInquiriesFromStorage();
@@ -484,7 +500,7 @@ function setupRealtimeSync() {
         console.log('Firebase 사용 가능 - 실시간 동기화 설정');
         
         try {
-    db.collection('inquiries')
+        db.collection('inquiries')
         .orderBy('id', 'desc')
         .onSnapshot(snapshot => {
                     console.log('실시간 데이터 변경 감지 - 문서 개수:', snapshot.size);
@@ -495,14 +511,30 @@ function setupRealtimeSync() {
             });
             
                     console.log('Firestore에서 받은 데이터 개수:', firestoreInquiries.length);
+                    console.log('현재 메모리 데이터 개수:', inquiries.length);
                     
-                    // Firestore 데이터가 있으면 사용하고 localStorage도 업데이트
+                    // Firestore 데이터가 있으면 병합하고 localStorage도 업데이트
             if (firestoreInquiries.length > 0) {
-                inquiries = firestoreInquiries;
+                // 기존 데이터의 ID 목록 생성
+                const existingIds = new Set(inquiries.map(inq => inq.id));
+                console.log('기존 ID 목록:', Array.from(existingIds));
+                
+                // 새 데이터만 필터링 (중복 제거)
+                const newInquiries = firestoreInquiries.filter(inq => !existingIds.has(inq.id));
+                console.log('새로 추가될 데이터 개수:', newInquiries.length);
+                
+                // 기존 데이터에 새 데이터 추가
+                inquiries = [...inquiries, ...newInquiries];
+                
+                // ID 재정렬 (1부터 시작)
+                inquiries.forEach((inquiry, index) => {
+                    inquiry.id = index + 1;
+                });
+                
                         localStorage.setItem('allInquiries', JSON.stringify(inquiries));
                 loadInquiries();
                 updateTotalCount();
-                        console.log('실시간 데이터 업데이트 완료 - localStorage도 동기화됨');
+                        console.log('실시간 데이터 병합 완료 - localStorage도 동기화됨');
                     } else {
                         console.log('Firestore에 데이터 없음 - localStorage 데이터 유지');
             }
@@ -535,7 +567,7 @@ function setupRealtimeSync() {
     }
 }
 
-// 새로운 ID 생성 함수
+// 새로운 ID 생성 함수 (중복 방지 강화)
 function generateNewId() {
     // inquiries 배열이 비어있으면 1부터 시작
     if (inquiries.length === 0) {
@@ -545,7 +577,14 @@ function generateNewId() {
     
     // 현재 inquiries 배열에서 가장 큰 ID 찾기
     const maxId = Math.max(...inquiries.map(inquiry => inquiry.id));
-    const newId = maxId + 1;
+    let newId = maxId + 1;
+    
+    // ID 중복 방지 (혹시 모를 경우를 대비)
+    const existingIds = new Set(inquiries.map(inquiry => inquiry.id));
+    while (existingIds.has(newId)) {
+        newId++;
+    }
+    
     console.log('새 ID 생성 - 현재 최대 ID:', maxId, '새 ID:', newId);
     return newId;
 }
