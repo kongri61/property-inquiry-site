@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 contact: document.querySelector('.contact-input').value,
                 title: document.querySelector('.title-input').value,
                 content: document.querySelector('.content-textarea').value,
-                date: new Date().toISOString().split('T')[0]
+                date: new Date().toISOString()
             };
             
             console.log('수집된 폼 데이터:', inquiryData);
@@ -1562,7 +1562,7 @@ function loadInquiries() {
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${formatPropertyTypeForMobile(inquiry.category)}</span></td>
             <td><span class="clickable-text" onclick="showDetailModal(${inquiry.id})">${inquiry.title}</span></td>
             <td>${authorDisplay}</td>
-            <td>${inquiry.date}</td>
+            <td>${inquiry.date.split('T')[0]}</td>
             <td>${deleteButton}</td>
         `;
         tbody.appendChild(row);
@@ -1772,7 +1772,7 @@ function showDetailModal(inquiryId) {
             <p><strong>거래종류:</strong> ${inquiry.category}</p>
             <p><strong>제목:</strong> ${inquiry.title}</p>
             <p><strong>작성자:</strong> ${inquiry.author}</p>
-            <p><strong>등록일:</strong> ${inquiry.date}</p>
+            <p><strong>등록일:</strong> ${inquiry.date.split('T')[0]}</p>
         </div>
         <div class="detail-item">
             <h4>상세 정보</h4>
