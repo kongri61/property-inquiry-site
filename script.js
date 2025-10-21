@@ -200,9 +200,9 @@ let inquiries = [];
 
 // 간단한 URL 기반 동기화 시스템 (Firebase 대체)
 
-// URL에서 데이터 동기화 (병합 방식)
+// URL에서 데이터 동기화 (안전한 병합 방식)
 function syncFromURL() {
-    console.log('=== URL 동기화 시작 (병합 방식) ===');
+    console.log('=== URL 동기화 시작 (안전한 병합 방식) ===');
     
     try {
         // URL 파라미터에서 데이터 확인
@@ -218,13 +218,19 @@ function syncFromURL() {
                 console.log('기존 데이터 개수:', inquiries.length);
                 console.log('URL 데이터 개수:', urlInquiries.length);
                 
-                // 기존 데이터의 ID 목록 생성
-                const existingIds = new Set(inquiries.map(inq => inq.id));
-                console.log('기존 ID 목록:', Array.from(existingIds));
+                // 등록일 기준 중복 체크 함수
+                function isDuplicate(existing, newItem) {
+                    return existing.date === newItem.date && 
+                           existing.title === newItem.title;
+                }
                 
-                // 새 데이터만 필터링 (중복 제거)
-                const newInquiries = urlInquiries.filter(inq => !existingIds.has(inq.id));
+                // 새 데이터만 필터링 (내용 기반 중복 제거)
+                const newInquiries = urlInquiries.filter(urlInq => 
+                    !inquiries.some(existingInq => isDuplicate(existingInq, urlInq))
+                );
+                
                 console.log('새로 추가될 데이터 개수:', newInquiries.length);
+                console.log('중복 제거된 데이터 개수:', urlInquiries.length - newInquiries.length);
                 
                 // 기존 데이터에 새 데이터 추가
                 inquiries = [...inquiries, ...newInquiries];
@@ -235,7 +241,7 @@ function syncFromURL() {
                 });
                 
                 localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-                console.log('URL 동기화 완료 (병합):', inquiries.length, '개');
+                console.log('URL 동기화 완료 (안전한 병합):', inquiries.length, '개');
                 loadInquiries();
                 updateTotalCount();
                 return true;
@@ -393,9 +399,9 @@ async function loadInquiriesFromStorage() {
     console.log('=== localStorage 데이터 불러오기 완료 ===');
 }
 
-// Firebase 연결 시도 (실패 시 localStorage 사용) - 병합 방식
+// Firebase 연결 시도 (실패 시 localStorage 사용) - 안전한 병합 방식
 async function loadInquiriesFromFirestore() {
-    console.log('=== Firebase 연결 시도 (병합 방식) ===');
+    console.log('=== Firebase 연결 시도 (안전한 병합 방식) ===');
     
     // Firebase가 초기화되지 않았으면 localStorage 사용
     if (typeof db === 'undefined') {
@@ -415,13 +421,22 @@ async function loadInquiriesFromFirestore() {
         console.log('현재 메모리 데이터:', inquiries.length, '개');
         
         if (firestoreInquiries.length > 0) {
-            // 기존 데이터의 ID 목록 생성
-            const existingIds = new Set(inquiries.map(inq => inq.id));
-            console.log('기존 ID 목록:', Array.from(existingIds));
+            // 내용 기반 중복 체크 함수
+            function isDuplicate(existing, newItem) {
+                return existing.title === newItem.title && 
+                       existing.details && newItem.details &&
+                       existing.details.location === newItem.details.location &&
+                       existing.details.contact === newItem.details.contact &&
+                       existing.date === newItem.date;
+            }
             
-            // 새 데이터만 필터링 (중복 제거)
-            const newInquiries = firestoreInquiries.filter(inq => !existingIds.has(inq.id));
+            // 새 데이터만 필터링 (내용 기반 중복 제거)
+            const newInquiries = firestoreInquiries.filter(firestoreInq => 
+                !inquiries.some(existingInq => isDuplicate(existingInq, firestoreInq))
+            );
+            
             console.log('새로 추가될 데이터 개수:', newInquiries.length);
+            console.log('중복 제거된 데이터 개수:', firestoreInquiries.length - newInquiries.length);
             
             // 기존 데이터에 새 데이터 추가
             inquiries = [...inquiries, ...newInquiries];
@@ -433,7 +448,7 @@ async function loadInquiriesFromFirestore() {
             
             // localStorage도 동기화
             localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-            console.log('Firestore 데이터 병합 완료 - localStorage도 동기화');
+            console.log('Firestore 데이터 안전한 병합 완료 - localStorage도 동기화');
         } else {
             // Firestore에 데이터가 없으면 localStorage 확인
             return loadInquiriesFromStorage();
@@ -513,15 +528,21 @@ function setupRealtimeSync() {
                     console.log('Firestore에서 받은 데이터 개수:', firestoreInquiries.length);
                     console.log('현재 메모리 데이터 개수:', inquiries.length);
                     
-                    // Firestore 데이터가 있으면 병합하고 localStorage도 업데이트
+                    // Firestore 데이터가 있으면 안전한 병합하고 localStorage도 업데이트
             if (firestoreInquiries.length > 0) {
-                // 기존 데이터의 ID 목록 생성
-                const existingIds = new Set(inquiries.map(inq => inq.id));
-                console.log('기존 ID 목록:', Array.from(existingIds));
+                // 등록일 기준 중복 체크 함수
+                function isDuplicate(existing, newItem) {
+                    return existing.date === newItem.date && 
+                           existing.title === newItem.title;
+                }
                 
-                // 새 데이터만 필터링 (중복 제거)
-                const newInquiries = firestoreInquiries.filter(inq => !existingIds.has(inq.id));
+                // 새 데이터만 필터링 (내용 기반 중복 제거)
+                const newInquiries = firestoreInquiries.filter(firestoreInq => 
+                    !inquiries.some(existingInq => isDuplicate(existingInq, firestoreInq))
+                );
+                
                 console.log('새로 추가될 데이터 개수:', newInquiries.length);
+                console.log('중복 제거된 데이터 개수:', firestoreInquiries.length - newInquiries.length);
                 
                 // 기존 데이터에 새 데이터 추가
                 inquiries = [...inquiries, ...newInquiries];
@@ -534,7 +555,7 @@ function setupRealtimeSync() {
                         localStorage.setItem('allInquiries', JSON.stringify(inquiries));
                 loadInquiries();
                 updateTotalCount();
-                        console.log('실시간 데이터 병합 완료 - localStorage도 동기화됨');
+                        console.log('실시간 데이터 안전한 병합 완료 - localStorage도 동기화됨');
                     } else {
                         console.log('Firestore에 데이터 없음 - localStorage 데이터 유지');
             }
