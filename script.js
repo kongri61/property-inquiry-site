@@ -2109,14 +2109,28 @@ function syncDataAcrossDevices() {
                 console.log('메모리 데이터 개수:', inquiries.length);
                 console.log('localStorage 데이터 개수:', loadedInquiries.length);
                 
-                // 메모리 데이터가 더 많으면 (새로 추가된 데이터가 있으면) localStorage를 업데이트
-                if (inquiries.length > loadedInquiries.length) {
-                    console.log('메모리 데이터가 더 많음 - localStorage 업데이트');
-                    localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-                } else {
-                    console.log('localStorage 데이터로 메모리 업데이트');
-                    inquiries = loadedInquiries;
-                }
+                // 안전한 병합 방식으로 데이터 통합
+                const existingIds = new Set(inquiries.map(inq => inq.id));
+                const newInquiries = loadedInquiries.filter(loadedInq => 
+                    !inquiries.some(existingInq => 
+                        existingInq.date === loadedInq.date && 
+                        existingInq.title === loadedInq.title
+                    )
+                );
+                
+                console.log('새로 추가될 데이터 개수:', newInquiries.length);
+                
+                // 기존 데이터에 새 데이터 추가 (안전한 병합)
+                inquiries = [...inquiries, ...newInquiries];
+                
+                // ID 재정렬 (1부터 시작)
+                inquiries.forEach((inquiry, index) => {
+                    inquiry.id = index + 1;
+                });
+                
+                // localStorage 업데이트
+                localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                console.log('데이터 안전한 병합 완료:', inquiries.length, '개');
                 
                 // UI 강제 업데이트
                 currentPage = 1;
