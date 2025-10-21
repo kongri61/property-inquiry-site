@@ -56,7 +56,7 @@ function startRealtimeSync() {
     }, 5000);
 }
 
-// 업데이트 체크
+// 업데이트 체크 (안전한 병합 방식)
 function checkForUpdates() {
     // URL에서 동기화 데이터 확인
     const urlParams = new URLSearchParams(window.location.search);
@@ -67,9 +67,32 @@ function checkForUpdates() {
             const decodedData = decodeURIComponent(syncData);
             const urlInquiries = JSON.parse(decodedData);
             
-            if (urlInquiries.length !== inquiries.length) {
-                console.log('동기화 데이터 발견:', urlInquiries.length, '개');
-                inquiries = urlInquiries;
+            if (Array.isArray(urlInquiries) && urlInquiries.length > 0) {
+                console.log('실시간 동기화 데이터 발견:', urlInquiries.length, '개');
+                console.log('현재 데이터 개수:', inquiries.length);
+                
+                // 등록일 기준 중복 체크 함수
+                function isDuplicate(existing, newItem) {
+                    return existing.date === newItem.date && 
+                           existing.title === newItem.title;
+                }
+                
+                // 새 데이터만 필터링 (내용 기반 중복 제거)
+                const newInquiries = urlInquiries.filter(urlInq => 
+                    !inquiries.some(existingInq => isDuplicate(existingInq, urlInq))
+                );
+                
+                console.log('새로 추가될 데이터 개수:', newInquiries.length);
+                console.log('중복 제거된 데이터 개수:', urlInquiries.length - newInquiries.length);
+                
+                // 기존 데이터에 새 데이터 추가 (안전한 병합)
+                inquiries = [...inquiries, ...newInquiries];
+                
+                // ID 재정렬 (1부터 시작)
+                inquiries.forEach((inquiry, index) => {
+                    inquiry.id = index + 1;
+                });
+                
                 localStorage.setItem('allInquiries', JSON.stringify(inquiries));
                 loadInquiries();
                 updateTotalCount();
@@ -77,9 +100,11 @@ function checkForUpdates() {
                 // URL에서 sync 파라미터 제거
                 const newUrl = window.location.href.split('?')[0];
                 window.history.replaceState({}, document.title, newUrl);
+                
+                console.log('실시간 동기화 완료 (안전한 병합):', inquiries.length, '개');
             }
         } catch (error) {
-            console.error('동기화 오류:', error);
+            console.error('실시간 동기화 오류:', error);
         }
     }
 }
