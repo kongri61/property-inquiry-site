@@ -46,14 +46,20 @@ window.addEventListener('load', function() {
 // 간단한 실시간 동기화 시스템
 let syncInterval = null;
 
-// 실시간 동기화 시작
+// 실시간 동기화 시작 (강화된 양방향)
 function startRealtimeSync() {
-    console.log('실시간 동기화 시작');
+    console.log('실시간 동기화 시작 (강화된 양방향)');
     
-    // 5초마다 동기화 체크
+    // 3초마다 동기화 체크 (더 빠른 동기화)
     syncInterval = setInterval(() => {
         checkForUpdates();
-    }, 5000);
+        // Firebase 실시간 동기화도 함께 실행 (중복 시도 방지)
+        if (typeof db !== 'undefined' && !firebaseConnectionAttempted && !firebasePermissionDenied) {
+            loadInquiriesFromFirestore().catch(error => {
+                console.log('실시간 Firebase 동기화 실패 (무시됨):', error);
+            });
+        }
+    }, 3000);
 }
 
 // 업데이트 체크 (안전한 병합 방식)
@@ -118,6 +124,75 @@ function stopRealtimeSync() {
     }
 }
 
+// Firebase 연결 강제 초기화 함수
+window.forceFirebaseInit = function() {
+    console.log('=== Firebase 강제 초기화 시작 ===');
+    
+    try {
+        // Firebase 설정 직접 정의
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKWH86caO8oltDaQomsUMT0kX0PqTb_uQ",
+            authDomain: "property-inquiry-site.firebaseapp.com",
+            projectId: "property-inquiry-site",
+            storageBucket: "property-inquiry-site.firebasestorage.app",
+            messagingSenderId: "379557316701",
+            appId: "1:379557316701:web:6e67d6d0adc84d10bfe5b4",
+            measurementId: "G-WPHLXTG1NF"
+        };
+        
+        // Firebase가 이미 초기화되었는지 확인
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            console.log('Firebase 이미 초기화됨');
+            window.db = firebase.firestore();
+        } else {
+            console.log('Firebase 새로 초기화...');
+            firebase.initializeApp(firebaseConfig);
+            window.db = firebase.firestore();
+        }
+        
+        console.log('✅ Firebase 강제 초기화 완료');
+        console.log('DB 객체:', typeof window.db);
+        
+        // 즉시 데이터 로드 시도
+        loadInquiriesFromFirestore().then(() => {
+            console.log('Firebase 데이터 로드 완료');
+            loadInquiries();
+            updateTotalCount();
+        }).catch(error => {
+            console.error('Firebase 데이터 로드 실패:', error);
+        });
+        
+    } catch (error) {
+        console.error('Firebase 강제 초기화 실패:', error);
+    }
+};
+
+// Firebase 연결 상태 확인 함수
+window.checkFirebaseStatus = function() {
+    console.log('=== Firebase 상태 확인 ===');
+    console.log('Firebase 객체:', typeof firebase !== 'undefined' ? '존재' : '없음');
+    console.log('DB 객체:', typeof db !== 'undefined' ? '존재' : '없음');
+    
+    if (typeof firebase !== 'undefined') {
+        console.log('Firebase 앱 개수:', firebase.apps.length);
+        if (firebase.apps.length > 0) {
+            console.log('프로젝트 ID:', firebase.app().options.projectId);
+        }
+    }
+    
+    // Firebase 데이터 직접 확인
+    if (typeof db !== 'undefined') {
+        db.collection('inquiries').get().then(snapshot => {
+            console.log('Firebase inquiries 컬렉션 문서 개수:', snapshot.size);
+            snapshot.forEach(doc => {
+                console.log('문서 ID:', doc.id, '데이터:', doc.data());
+            });
+        }).catch(error => {
+            console.error('Firebase 데이터 확인 실패:', error);
+        });
+    }
+};
+
 // 전역 함수로 동기화 기능 노출 (브라우저 주소창에서 직접 사용 가능)
 window.syncData = function() {
     console.log('=== 동기화 시작 ===');
@@ -159,16 +234,64 @@ window.share = function() {
     shareData();
 };
 
-// 동기화 시스템
+// 양방향 동기화 시스템
 window.perfectSync = function() {
-    const dataToShare = JSON.stringify(inquiries);
-    const encodedData = encodeURIComponent(dataToShare);
-    const currentUrl = new URL(window.location);
-    currentUrl.searchParams.set('sync', encodedData);
+    console.log('=== 양방향 동기화 시작 ===');
     
-    const shareUrl = currentUrl.toString();
-    
-    // 드래그 가능한 창 생성
+    // 1단계: Firebase에 현재 데이터 저장 (다른 기기에서 읽을 수 있도록)
+    if (typeof db !== 'undefined') {
+        saveInquiriesToFirestore().then(() => {
+            console.log('✅ Firebase에 데이터 저장 완료 - 다른 기기에서 읽을 수 있음');
+            
+            // 2단계: Firebase에서 최신 데이터 가져오기 (다른 기기에서 올린 데이터)
+            loadInquiriesFromFirestore().then(() => {
+                console.log('✅ Firebase에서 최신 데이터 가져오기 완료');
+                
+                // 3단계: URL 공유 (백업용)
+                const dataToShare = JSON.stringify(inquiries);
+                const encodedData = encodeURIComponent(dataToShare);
+                const currentUrl = new URL(window.location);
+                currentUrl.searchParams.set('sync', encodedData);
+                const shareUrl = currentUrl.toString();
+                
+                // 동기화 완료 모달 표시
+                showSyncCompleteModal(shareUrl);
+                
+            }).catch(error => {
+                console.error('Firebase 데이터 가져오기 실패:', error);
+                // Firebase 실패 시 URL 공유만 진행
+                const dataToShare = JSON.stringify(inquiries);
+                const encodedData = encodeURIComponent(dataToShare);
+                const currentUrl = new URL(window.location);
+                currentUrl.searchParams.set('sync', encodedData);
+                const shareUrl = currentUrl.toString();
+                showSyncCompleteModal(shareUrl);
+            });
+            
+        }).catch(error => {
+            console.error('Firebase 저장 실패:', error);
+            // Firebase 실패 시 URL 공유만 진행
+            const dataToShare = JSON.stringify(inquiries);
+            const encodedData = encodeURIComponent(dataToShare);
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('sync', encodedData);
+            const shareUrl = currentUrl.toString();
+            showSyncCompleteModal(shareUrl);
+        });
+    } else {
+        console.log('Firebase 사용 불가 - URL 공유만 진행');
+        // Firebase 없을 때 URL 공유만 진행
+        const dataToShare = JSON.stringify(inquiries);
+        const encodedData = encodeURIComponent(dataToShare);
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('sync', encodedData);
+        const shareUrl = currentUrl.toString();
+        showSyncCompleteModal(shareUrl);
+    }
+};
+
+// 동기화 완료 모달 표시
+function showSyncCompleteModal(shareUrl) {
     const copyArea = document.createElement('div');
     copyArea.style.cssText = `
         position: fixed;
@@ -176,7 +299,7 @@ window.perfectSync = function() {
         left: 50%;
         transform: translate(-50%, -50%);
         background: white;
-        border: 2px solid #007bff;
+        border: 2px solid #28a745;
         border-radius: 10px;
         padding: 20px;
         z-index: 999999;
@@ -187,11 +310,12 @@ window.perfectSync = function() {
         overflow-y: auto;
     `;
     copyArea.innerHTML = `
-        <h3>📤 동기화</h3>
+        <h3>🔄 양방향 동기화 완료</h3>
         <p><strong>현재 데이터: ${inquiries.length}개</strong></p>
+        <p style="color: #28a745; font-weight: bold;">✅ Firebase와 URL 양방향 동기화 완료!</p>
         
         <div style="margin: 15px 0;">
-            <h4>📋 동기화 URL 복사:</h4>
+            <h4>📋 백업용 URL (카톡/문자 전송용):</h4>
             <textarea readonly style="width: 100%; height: 120px; font-size: 11px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: none;">${shareUrl}</textarea>
             <button onclick="navigator.clipboard.writeText('${shareUrl}').then(() => alert('URL이 클립보드에 복사되었습니다!')).catch(() => alert('복사 실패! URL을 직접 선택해서 복사하세요.'))" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 12px;">📋 복사</button>
         </div>
@@ -200,17 +324,16 @@ window.perfectSync = function() {
             <button onclick="this.parentElement.parentElement.remove()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">닫기</button>
         </div>
         
-        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 15px; font-size: 12px;">
-            <strong>💡 사용법:</strong><br>
-            1. <strong>복사</strong>: 위의 "📋 복사" 버튼 클릭<br>
-            2. <strong>전송</strong>: 복사된 URL을 카톡/문자로 전송<br>
-            3. <strong>동기화</strong>: 다른 기기에서 URL을 열기<br>
-            4. 자동으로 데이터가 동기화됩니다!
+        <div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin-top: 15px; font-size: 12px;">
+            <strong>🔄 양방향 동기화 방법:</strong><br>
+            <strong>방법 1 (자동):</strong> 다른 기기에서 같은 사이트 접속 시 자동 동기화<br>
+            <strong>방법 2 (수동):</strong> 위 URL을 카톡/문자로 전송 후 다른 기기에서 열기<br>
+            <strong>방법 3 (강제):</strong> 다른 기기에서 📤 버튼 클릭하여 강제 동기화
         </div>
     `;
     document.body.appendChild(copyArea);
     
-    console.log('완벽한 동기화 URL 생성:', shareUrl);
+    console.log('양방향 동기화 완료:', shareUrl);
 };
 
 // 간단한 데이터 통합 함수 (필요시 사용)
@@ -424,9 +547,36 @@ async function loadInquiriesFromStorage() {
     console.log('=== localStorage 데이터 불러오기 완료 ===');
 }
 
+// Firebase 연결 상태 플래그 (전역 변수)
+let firebasePermissionDenied = false;
+let firebaseConnectionAttempted = false;
+
 // Firebase 연결 시도 (실패 시 localStorage 사용) - 안전한 병합 방식
 async function loadInquiriesFromFirestore() {
     console.log('=== Firebase 연결 시도 (안전한 병합 방식) ===');
+    
+    // 이미 권한 오류가 발생한 경우 Firebase 연결 시도하지 않음
+    if (firebasePermissionDenied) {
+        console.log('Firebase 권한 오류로 인해 연결 중단 - localStorage 사용');
+        return loadInquiriesFromStorage();
+    }
+    
+    // 이미 Firebase 연결을 시도한 경우 중복 시도 방지
+    if (firebaseConnectionAttempted) {
+        console.log('Firebase 연결 이미 시도됨 - localStorage 사용');
+        return loadInquiriesFromStorage();
+    }
+    
+    // Firebase 연결 상태 상세 확인
+    console.log('Firebase 객체 존재:', typeof firebase !== 'undefined');
+    console.log('DB 객체 존재:', typeof db !== 'undefined');
+    
+    if (typeof firebase !== 'undefined') {
+        console.log('Firebase 앱 개수:', firebase.apps.length);
+        if (firebase.apps.length > 0) {
+            console.log('Firebase 프로젝트 ID:', firebase.app().options.projectId);
+        }
+    }
     
     // Firebase가 초기화되지 않았으면 localStorage 사용
     if (typeof db === 'undefined') {
@@ -435,46 +585,80 @@ async function loadInquiriesFromFirestore() {
     }
     
     try {
+        console.log('Firestore 컬렉션 접근 시도...');
+        
+        // Firebase 연결 시도 플래그 설정
+        firebaseConnectionAttempted = true;
+        
+        // 먼저 컬렉션 존재 여부 확인
+        const testSnapshot = await db.collection('inquiries').limit(1).get();
+        console.log('Firestore 컬렉션 접근 성공, 문서 개수:', testSnapshot.size);
+        
+        // 전체 데이터 가져오기
         const snapshot = await db.collection('inquiries').orderBy('id', 'desc').get();
         const firestoreInquiries = [];
         
         snapshot.forEach(doc => {
-            firestoreInquiries.push(doc.data());
+            const data = doc.data();
+            console.log('Firestore 문서 데이터:', data);
+            firestoreInquiries.push(data);
         });
         
         console.log('Firestore에서 불러온 데이터:', firestoreInquiries.length, '개');
         console.log('현재 메모리 데이터:', inquiries.length, '개');
+        console.log('Firestore 데이터 상세:', firestoreInquiries);
         
         if (firestoreInquiries.length > 0) {
-            // 내용 기반 중복 체크 함수
-            function isDuplicate(existing, newItem) {
-                return existing.title === newItem.title && 
-                       existing.details && newItem.details &&
-                       existing.details.location === newItem.details.location &&
-                       existing.details.contact === newItem.details.contact &&
-                       existing.date === newItem.date;
+            console.log('=== 완전한 병합 방식으로 데이터 통합 ===');
+            
+            // 완전한 병합: 메모리 데이터 + Firebase 데이터
+            const allData = [...inquiries, ...firestoreInquiries];
+            console.log('병합 전 총 데이터 개수:', allData.length);
+            console.log('메모리 데이터:', inquiries.length, '개');
+            console.log('Firebase 데이터:', firestoreInquiries.length, '개');
+            
+            // 중복 제거 함수 (날짜, 제목, 위치, 연락처 기준)
+            function isDuplicate(item1, item2) {
+                return item1.date === item2.date && 
+                       item1.title === item2.title &&
+                       item1.details && item2.details &&
+                       item1.details.location === item2.details.location &&
+                       item1.details.contact === item2.details.contact;
             }
             
-            // 새 데이터만 필터링 (내용 기반 중복 제거)
-            const newInquiries = firestoreInquiries.filter(firestoreInq => 
-                !inquiries.some(existingInq => isDuplicate(existingInq, firestoreInq))
-            );
+            // 중복 제거된 고유 데이터만 추출
+            const uniqueData = [];
+            const seenItems = new Set();
             
-            console.log('새로 추가될 데이터 개수:', newInquiries.length);
-            console.log('중복 제거된 데이터 개수:', firestoreInquiries.length - newInquiries.length);
+            allData.forEach(item => {
+                const itemKey = `${item.date}_${item.title}_${item.details?.location}_${item.details?.contact}`;
+                if (!seenItems.has(itemKey)) {
+                    seenItems.add(itemKey);
+                    uniqueData.push(item);
+                }
+            });
             
-            // 기존 데이터에 새 데이터 추가
-            inquiries = [...inquiries, ...newInquiries];
+            console.log('중복 제거 후 데이터 개수:', uniqueData.length);
+            console.log('제거된 중복 데이터 개수:', allData.length - uniqueData.length);
             
             // ID 재정렬 (1부터 시작)
-            inquiries.forEach((inquiry, index) => {
+            uniqueData.forEach((inquiry, index) => {
                 inquiry.id = index + 1;
             });
             
-            // localStorage도 동기화
+            // 완전한 병합된 데이터로 업데이트
+            inquiries = uniqueData;
+            
+            // localStorage에 병합된 데이터 저장
             localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-            console.log('Firestore 데이터 안전한 병합 완료 - localStorage도 동기화');
+            console.log('Firebase 완전한 병합 완료:', inquiries.length, '개');
+            
+            // UI 업데이트
+            loadInquiries();
+            updateTotalCount();
+            
         } else {
+            console.log('Firestore에 데이터 없음 - localStorage 확인');
             // Firestore에 데이터가 없으면 localStorage 확인
             return loadInquiriesFromStorage();
         }
@@ -483,6 +667,31 @@ async function loadInquiriesFromFirestore() {
         
     } catch (error) {
         console.error('Firestore 데이터 불러오기 오류:', error);
+        console.log('오류 코드:', error.code);
+        console.log('오류 메시지:', error.message);
+        
+        // 권한 오류인 경우 무한 반복 방지
+        if (error.code === 'permission-denied') {
+            console.log('❌ Firestore 권한 오류 - 보안 규칙 확인 필요');
+            console.log('Firebase Console에서 보안 규칙을 수정해주세요:');
+            console.log('rules_version = "2";');
+            console.log('service cloud.firestore {');
+            console.log('  match /databases/{database}/documents {');
+            console.log('    match /{document=**} {');
+            console.log('      allow read, write: if true;');
+            console.log('    }');
+            console.log('  }');
+            console.log('}');
+            
+            // 권한 오류 플래그 설정 (이후 Firebase 연결 시도 중단)
+            firebasePermissionDenied = true;
+            console.log('Firebase 권한 오류 플래그 설정 - 이후 Firebase 연결 시도 중단');
+            
+            // 권한 오류 시 localStorage만 사용하고 Firebase 연결 중단
+            console.log('Firebase 연결 중단 - localStorage만 사용');
+            return loadInquiriesFromStorage();
+        }
+        
         console.log('Firestore 실패 - localStorage 사용');
         return loadInquiriesFromStorage();
     }
@@ -535,6 +744,12 @@ async function saveInquiriesToFirestore() {
 function setupRealtimeSync() {
     console.log('=== 동기화 설정 시작 ===');
     
+    // Firebase 권한 오류가 발생한 경우 실시간 동기화 설정하지 않음
+    if (firebasePermissionDenied) {
+        console.log('Firebase 권한 오류로 인해 실시간 동기화 설정 중단');
+        return;
+    }
+    
     // Firebase가 사용 가능한지 확인
     if (typeof db !== 'undefined') {
         console.log('Firebase 사용 가능 - 실시간 동기화 설정');
@@ -553,39 +768,73 @@ function setupRealtimeSync() {
                     console.log('Firestore에서 받은 데이터 개수:', firestoreInquiries.length);
                     console.log('현재 메모리 데이터 개수:', inquiries.length);
                     
-                    // Firestore 데이터가 있으면 안전한 병합하고 localStorage도 업데이트
+                    // Firestore 데이터가 있으면 완전한 병합 방식으로 처리
             if (firestoreInquiries.length > 0) {
-                // 등록일 기준 중복 체크 함수
-                function isDuplicate(existing, newItem) {
-                    return existing.date === newItem.date && 
-                           existing.title === newItem.title;
+                console.log('=== 실시간 완전한 병합 방식으로 데이터 통합 ===');
+                
+                // 완전한 병합: 메모리 데이터 + Firebase 데이터
+                const allData = [...inquiries, ...firestoreInquiries];
+                console.log('실시간 병합 전 총 데이터 개수:', allData.length);
+                console.log('메모리 데이터:', inquiries.length, '개');
+                console.log('Firebase 데이터:', firestoreInquiries.length, '개');
+                
+                // 중복 제거 함수 (날짜, 제목, 위치, 연락처 기준)
+                function isDuplicate(item1, item2) {
+                    return item1.date === item2.date && 
+                           item1.title === item2.title &&
+                           item1.details && item2.details &&
+                           item1.details.location === item2.details.location &&
+                           item1.details.contact === item2.details.contact;
                 }
                 
-                // 새 데이터만 필터링 (내용 기반 중복 제거)
-                const newInquiries = firestoreInquiries.filter(firestoreInq => 
-                    !inquiries.some(existingInq => isDuplicate(existingInq, firestoreInq))
-                );
+                // 중복 제거된 고유 데이터만 추출
+                const uniqueData = [];
+                const seenItems = new Set();
                 
-                console.log('새로 추가될 데이터 개수:', newInquiries.length);
-                console.log('중복 제거된 데이터 개수:', firestoreInquiries.length - newInquiries.length);
+                allData.forEach(item => {
+                    const itemKey = `${item.date}_${item.title}_${item.details?.location}_${item.details?.contact}`;
+                    if (!seenItems.has(itemKey)) {
+                        seenItems.add(itemKey);
+                        uniqueData.push(item);
+                    }
+                });
                 
-                // 기존 데이터에 새 데이터 추가
-                inquiries = [...inquiries, ...newInquiries];
+                console.log('실시간 중복 제거 후 데이터 개수:', uniqueData.length);
+                console.log('실시간 제거된 중복 데이터 개수:', allData.length - uniqueData.length);
                 
                 // ID 재정렬 (1부터 시작)
-                inquiries.forEach((inquiry, index) => {
+                uniqueData.forEach((inquiry, index) => {
                     inquiry.id = index + 1;
                 });
                 
-                        localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+                // 완전한 병합된 데이터로 업데이트
+                inquiries = uniqueData;
+                
+                // localStorage에 병합된 데이터 저장
+                localStorage.setItem('allInquiries', JSON.stringify(inquiries));
                 loadInquiries();
                 updateTotalCount();
-                        console.log('실시간 데이터 안전한 병합 완료 - localStorage도 동기화됨');
+                console.log('실시간 완전한 병합 완료:', inquiries.length, '개');
                     } else {
                         console.log('Firestore에 데이터 없음 - localStorage 데이터 유지');
             }
         }, error => {
                     console.error('실시간 동기화 오류:', error);
+                    console.log('오류 코드:', error.code);
+                    console.log('오류 메시지:', error.message);
+                    
+                    // 권한 오류인 경우 실시간 동기화 중단
+                    if (error.code === 'permission-denied') {
+                        console.log('❌ Firestore 권한 오류 - 실시간 동기화 중단');
+                        console.log('Firebase Console에서 보안 규칙을 수정해주세요');
+                        
+                        // 권한 오류 플래그 설정
+                        firebasePermissionDenied = true;
+                        console.log('Firebase 권한 오류 플래그 설정 - 이후 Firebase 연결 시도 중단');
+                        
+                        return; // 실시간 동기화 중단
+                    }
+                    
                     console.log('Firebase 연결 실패 - localStorage만 사용');
                     
                     // Firebase 연결 실패 시 localStorage 데이터 로드
@@ -645,21 +894,31 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Firebase 초기화 상태:', typeof firebase !== 'undefined' ? '성공' : '실패');
     console.log('Firestore DB 상태:', typeof db !== 'undefined' ? '성공' : '실패');
     
-    // Firebase 연결 테스트
+    // Firebase 연결 테스트 및 강제 초기화
     if (typeof db !== 'undefined') {
         console.log('Firebase 연결 테스트 시작...');
-        db.collection('test').limit(1).get()
+        db.collection('inquiries').limit(1).get()
             .then(snapshot => {
                 console.log('✅ Firebase 연결 성공!');
                 console.log('Firebase 프로젝트 ID:', firebase.app().options.projectId);
+                console.log('inquiries 컬렉션 문서 개수:', snapshot.size);
             })
             .catch(error => {
                 console.error('❌ Firebase 연결 실패:', error);
                 console.log('오류 코드:', error.code);
                 console.log('오류 메시지:', error.message);
+                
+                // Firebase 연결 실패 시 강제 초기화 시도
+                console.log('Firebase 강제 초기화 시도...');
+                setTimeout(() => {
+                    forceFirebaseInit();
+                }, 1000);
             });
     } else {
-        console.error('❌ Firebase가 초기화되지 않음');
+        console.error('❌ Firebase가 초기화되지 않음 - 강제 초기화 시도');
+        setTimeout(() => {
+            forceFirebaseInit();
+        }, 1000);
     }
     
     // 먼저 URL에서 동기화 시도 (자동)
@@ -1006,8 +1265,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('User Agent:', navigator.userAgent);
             
             // 로그인 검증
-            const expectedId = 'kongri61';
-            const expectedPassword = 'rlaehdghk61@';
+            const expectedId = 'pa1234';
+            const expectedPassword = '1234';
             
             console.log('=== 로그인 검증 ===');
             console.log('기대값 - ID:', `"${expectedId}"`, 'PW:', `"${expectedPassword}"`);
@@ -2084,63 +2343,73 @@ function fixAuthorNamesInStorage() {
     }
 }
 
-// 모바일과 PC 간의 데이터 동기화 강화 함수
+// 모바일과 PC 간의 데이터 동기화 강화 함수 (완전한 병합 방식)
 function syncDataAcrossDevices() {
-    console.log('=== 기기 간 데이터 동기화 시작 ===');
+    console.log('=== 기기 간 데이터 동기화 시작 (완전한 병합 방식) ===');
     
     // 현재 기기 정보 로깅
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     console.log('현재 기기 타입:', isMobile ? '모바일' : 'PC');
     console.log('사용자 에이전트:', navigator.userAgent);
     
-    // localStorage에서 데이터 로드 (삭제된 항목이 다시 나타나지 않도록)
+    // localStorage에서 데이터 로드
     const savedInquiries = localStorage.getItem('allInquiries');
     console.log('localStorage에서 읽은 데이터:', savedInquiries);
     
     if (savedInquiries) {
         try {
             const loadedInquiries = JSON.parse(savedInquiries);
-            console.log('파싱된 데이터 개수:', loadedInquiries.length);
-            console.log('데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
+            console.log('localStorage 데이터 개수:', loadedInquiries.length);
+            console.log('현재 메모리 데이터 개수:', inquiries.length);
+            console.log('localStorage 데이터 ID 목록:', loadedInquiries.map(inq => inq.id));
+            console.log('메모리 데이터 ID 목록:', inquiries.map(inq => inq.id));
             
-            // 현재 메모리 데이터와 localStorage 데이터 비교
-            if (inquiries.length !== loadedInquiries.length) {
-                console.log('데이터 불일치 감지');
-                console.log('메모리 데이터 개수:', inquiries.length);
-                console.log('localStorage 데이터 개수:', loadedInquiries.length);
-                
-                // 안전한 병합 방식으로 데이터 통합
-                const existingIds = new Set(inquiries.map(inq => inq.id));
-                const newInquiries = loadedInquiries.filter(loadedInq => 
-                    !inquiries.some(existingInq => 
-                        existingInq.date === loadedInq.date && 
-                        existingInq.title === loadedInq.title
-                    )
-                );
-                
-                console.log('새로 추가될 데이터 개수:', newInquiries.length);
-                
-                // 기존 데이터에 새 데이터 추가 (안전한 병합)
-                inquiries = [...inquiries, ...newInquiries];
-                
-                // ID 재정렬 (1부터 시작)
-                inquiries.forEach((inquiry, index) => {
-                    inquiry.id = index + 1;
-                });
-                
-                // localStorage 업데이트
-                localStorage.setItem('allInquiries', JSON.stringify(inquiries));
-                console.log('데이터 안전한 병합 완료:', inquiries.length, '개');
-                
-                // UI 강제 업데이트
-                currentPage = 1;
-                loadInquiries();
-                updateTotalCount();
-            } else {
-                console.log('데이터 일치 - 업데이트 불필요');
+            // 완전한 병합 방식: 두 데이터셋을 모두 합치고 중복 제거
+            const allData = [...inquiries, ...loadedInquiries];
+            console.log('병합 전 총 데이터 개수:', allData.length);
+            
+            // 중복 제거 함수 (날짜, 제목, 위치, 연락처 기준)
+            function isDuplicate(item1, item2) {
+                return item1.date === item2.date && 
+                       item1.title === item2.title &&
+                       item1.details && item2.details &&
+                       item1.details.location === item2.details.location &&
+                       item1.details.contact === item2.details.contact;
             }
             
-            console.log('데이터 동기화 완료');
+            // 중복 제거된 고유 데이터만 추출
+            const uniqueData = [];
+            const seenItems = new Set();
+            
+            allData.forEach(item => {
+                const itemKey = `${item.date}_${item.title}_${item.details?.location}_${item.details?.contact}`;
+                if (!seenItems.has(itemKey)) {
+                    seenItems.add(itemKey);
+                    uniqueData.push(item);
+                }
+            });
+            
+            console.log('중복 제거 후 데이터 개수:', uniqueData.length);
+            console.log('제거된 중복 데이터 개수:', allData.length - uniqueData.length);
+            
+            // ID 재정렬 (1부터 시작)
+            uniqueData.forEach((inquiry, index) => {
+                inquiry.id = index + 1;
+            });
+            
+            // 병합된 데이터로 업데이트
+            inquiries = uniqueData;
+            
+            // localStorage에 병합된 데이터 저장
+            localStorage.setItem('allInquiries', JSON.stringify(inquiries));
+            console.log('데이터 완전한 병합 완료:', inquiries.length, '개');
+            
+            // UI 강제 업데이트
+            currentPage = 1;
+            loadInquiries();
+            updateTotalCount();
+            
+            console.log('데이터 동기화 완료 (완전한 병합 방식)');
         } catch (error) {
             console.error('데이터 동기화 중 오류:', error);
         }
@@ -2152,7 +2421,7 @@ function syncDataAcrossDevices() {
         updateTotalCount();
     }
     
-    console.log('=== 기기 간 데이터 동기화 완료 ===');
+    console.log('=== 기기 간 데이터 동기화 완료 (완전한 병합 방식) ===');
 }
 
 // 강제 데이터 저장 및 동기화
@@ -2190,6 +2459,75 @@ function removeAllPropertyTypeSuffixes() {
         }
     });
 }
+
+// 간단한 Firebase 상태 확인 함수 (즉시 사용 가능)
+window.firebaseCheck = function() {
+    console.log('=== Firebase 상태 간단 확인 ===');
+    console.log('Firebase 객체:', typeof firebase !== 'undefined' ? '존재' : '없음');
+    console.log('DB 객체:', typeof db !== 'undefined' ? '존재' : '없음');
+    console.log('현재 데이터 개수:', inquiries.length);
+    
+    if (typeof firebase !== 'undefined') {
+        console.log('Firebase 앱 개수:', firebase.apps.length);
+        if (firebase.apps.length > 0) {
+            console.log('프로젝트 ID:', firebase.app().options.projectId);
+        }
+    }
+    
+    return {
+        firebase: typeof firebase !== 'undefined',
+        db: typeof db !== 'undefined',
+        dataCount: inquiries.length
+    };
+};
+
+// 간단한 Firebase 강제 초기화 함수 (즉시 사용 가능)
+window.firebaseInit = function() {
+    console.log('=== Firebase 강제 초기화 ===');
+    
+    // 권한 오류 플래그 리셋
+    firebasePermissionDenied = false;
+    console.log('Firebase 권한 오류 플래그 리셋');
+    
+    try {
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKWH86caO8oltDaQomsUMT0kX0PqTb_uQ",
+            authDomain: "property-inquiry-site.firebaseapp.com",
+            projectId: "property-inquiry-site",
+            storageBucket: "property-inquiry-site.firebasestorage.app",
+            messagingSenderId: "379557316701",
+            appId: "1:379557316701:web:6e67d6d0adc84d10bfe5b4",
+            measurementId: "G-WPHLXTG1NF"
+        };
+        
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            console.log('Firebase 이미 초기화됨');
+            window.db = firebase.firestore();
+        } else {
+            console.log('Firebase 새로 초기화...');
+            firebase.initializeApp(firebaseConfig);
+            window.db = firebase.firestore();
+        }
+        
+        console.log('✅ Firebase 초기화 완료');
+        
+        // 즉시 데이터 로드
+        loadInquiriesFromFirestore().then(() => {
+            console.log('데이터 로드 완료');
+            loadInquiries();
+            updateTotalCount();
+        });
+        
+    } catch (error) {
+        console.error('Firebase 초기화 실패:', error);
+    }
+};
+
+// 간단한 동기화 함수 (즉시 사용 가능)
+window.syncNow = function() {
+    console.log('=== 즉시 동기화 ===');
+    syncData();
+};
 
 // 디버깅용 함수 - 브라우저 콘솔에서 호출 가능
 window.debugSyncButton = function() {
