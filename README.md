@@ -41,11 +41,56 @@
 1. 모든 파일을 같은 디렉토리에 저장
 2. `index.html` 파일을 웹 브라우저에서 열기
 
-### 2. 웹 서버에 배포
+### 2. Git 저장소 설정 및 자동 배포 (한글 경로 문제 해결)
+
+#### 빠른 시작 (가장 쉬운 방법)
+프로젝트 디렉토리에서 **`RUN_ME_FIRST.bat`** 파일을 더블클릭하세요.
+또는 PowerShell에서:
+
+```powershell
+.\setup-git.ps1
+```
+
+이 스크립트는 다음을 수행합니다:
+- PowerShell UTF-8 인코딩 설정
+- Git 한글 경로 지원 설정
+- Git 저장소 초기화 (필요시)
+- 원격 저장소 확인
+
+### 3. 자동 배포 설정
+
+#### 방법 1: 배치 파일 사용 (가장 쉬운 방법)
+- **`auto-deploy.bat`** 더블클릭: 변경사항을 즉시 커밋하고 푸시
+- **`watch-and-deploy.bat`** 더블클릭: 파일 변경을 감시하며 자동 배포
+
+#### 방법 2: PowerShell 스크립트 사용
+변경사항을 커밋하고 푸시하면 자동으로 배포됩니다:
+
+```powershell
+.\auto-deploy.ps1
+```
+
+파일 변경을 감시하고 자동으로 배포:
+
+```powershell
+.\watch-and-deploy.ps1
+```
+
+이 스크립트는 파일 변경을 감지하면 자동으로 커밋, 푸시, 배포를 수행합니다.
+
+#### 방법 3: GitHub Actions 자동 배포
+GitHub에 푸시하면 자동으로 Vercel에 배포됩니다. 다음 시크릿을 GitHub 저장소에 설정해야 합니다:
+- `VERCEL_TOKEN`: Vercel API 토큰
+- `VERCEL_ORG_ID`: Vercel 조직 ID
+- `VERCEL_PROJECT_ID`: Vercel 프로젝트 ID
+
+자세한 내용은 `QUICK_START.md` 또는 `DEPLOYMENT.md`를 참조하세요.
+
+### 4. 웹 서버에 배포
 1. 모든 파일을 웹 서버의 디렉토리에 업로드
 2. 웹 브라우저에서 해당 URL 접속
 
-### 3. 블로그에 통합
+### 5. 블로그에 통합
 - `index.html`의 내용을 블로그 템플릿에 삽입
 - CSS와 JavaScript 파일을 블로그에 업로드하고 링크
 

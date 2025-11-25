@@ -1,5 +1,0 @@
-[33me282bf6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m 비밀번호 안내창 제거 및 로그인 보안 강화
-[33mcebc70b[m Fix: 비밀번호 입력창 클릭 시 브라우저 자동완성 방지 강화 - 더미 필드 추가 및 이벤트 리스너로 값 초기화
-[33m6959ea3[m Fix: 브라우저 자동완성 방지 기능 추가 - 로그인 폼에 autocomplete 속성 추가
-[33m21eb257[m Initial commit: 매물 의뢰서 웹사이트
-[33m9e8af9a[m Remove logo from blog link preview by adding Open Graph meta tags

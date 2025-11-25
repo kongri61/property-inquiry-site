@@ -46,3 +46,13 @@ pids
 *.tmp
 *.temp
 .vercel
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Project specific temporary files
+tatus check
+캐시 무효화
